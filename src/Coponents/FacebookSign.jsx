@@ -35,7 +35,7 @@ function FacebookSign() {
  })
  }
  navigate('/')
- toast.success('Authorize with google good job')
+ toast.success('Authorize with Facebook good job')
  }catch(error){
  toast.error('Could not Authorize with google')
 }
