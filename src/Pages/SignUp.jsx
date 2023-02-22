@@ -11,6 +11,7 @@ import { db } from "../FirebaseSDK";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { toast } from "react-toastify";
 import GoogleSign from "../Coponents/GoogleSign";
+import SelectCheckBox from "../Coponents/SelectCheckBox";
 
 function SignUp() {
   //SET ICON SHOW PASSWORD
@@ -145,6 +146,8 @@ function SignUp() {
           <label className="label">
             <span className="label-text">Insert Profile Image</span>
           </label>
+
+          <SelectCheckBox/>
          
           <label className="input-group ">
            

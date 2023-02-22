@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: white;
 }
 
 code {
@@ -23,3 +24,6 @@ width: fit-content;
   width: min-content;
   height: 35px;
 }
+
+                                        
+        

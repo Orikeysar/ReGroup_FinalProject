@@ -51,6 +51,14 @@ function Profile() {
     fetchUsersData();
         setLoading(false);
   }, [user.data, activeUser, user.uid]);
+  const handleFirstQuestions=()=>{
+    if(activeUser.firstLogIn){
+
+      navigate("/FirstSignUpQuestions");
+      
+    }
+  }
+  handleFirstQuestions();
 
   const onLogout = () => {
     auth.signOut();
