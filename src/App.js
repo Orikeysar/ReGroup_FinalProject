@@ -13,7 +13,7 @@ function App() {
     <>
       <div className="container">
         <Router>
-          <div className="topNavBar w-full ">
+          <div className="topNavBar w-full mb-2">
            
             <NavBar />
           </div>

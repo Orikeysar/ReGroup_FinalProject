@@ -1,6 +1,6 @@
 import React from "react";
 import { GiStarMedal, GiRingingBell } from "react-icons/gi";
-function Top10Modal() {
+function NotficationBell() {
   return (
     <div>
       {/* The button to open modal */}
@@ -9,7 +9,10 @@ function Top10Modal() {
         htmlFor="my-modal-4"
         className="showTop10 btn btn-ghost btn-circle bg-white h-5  "
       >
-        <GiStarMedal className="max-h-fit" />
+        <GiRingingBell className="max-h-fit" />
+        <div className="indicator  bg-white ">
+          <span className="badge badge-xs badge-primary indicator-item bg-info"></span>
+        </div>
       </label>
       {/* Put this part before </body> tag */}
       <input type="checkbox" id="my-modal-4" className="modal-toggle" />
@@ -28,4 +31,4 @@ function Top10Modal() {
   );
 }
 
-export default Top10Modal;
+export default NotficationBell;

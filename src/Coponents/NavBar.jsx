@@ -1,8 +1,8 @@
 import React from 'react'
 import Logo from '../asset/ReGroupIcon.png'
 import { useNavigate } from "react-router-dom";
-
-import { GiStarMedal,GiRingingBell } from 'react-icons/gi';
+import NotficationBell from "../Coponents/NotficationBell";
+import Top10Modal from './Top10Modal';
 function NavBar() {
     const navigate = useNavigate();
 
@@ -10,10 +10,7 @@ function NavBar() {
     navigate("/");
 
     }
-    const handleTop10Click =() =>{
-
-
-    }
+  
   return (
     <>
     <div className="navbar bg-base-100 mb-4">
@@ -26,17 +23,11 @@ function NavBar() {
      
     </div>
     <div className="navbar-end">
-      <button className="showTop10 btn btn-ghost btn-circle bg-white h-5  "  onClick={handleTop10Click} >
-      <GiStarMedal className='max-h-fit'/>
-      </button>
+      
+      <Top10Modal/>
       <button className="btn btn-ghost btn-circle  bg-white h-5  ">
-        <GiRingingBell className='max-h-fit'/>
-        <div className="indicator  bg-white ">
-           
-         
-          <span className="badge badge-xs badge-primary indicator-item bg-info"></span>
-         
-        </div>
+        <NotficationBell className='max-h-fit'/>
+       
       </button>
     </div>
     
