@@ -2,83 +2,85 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 import { getAuth } from "firebase/auth";
-import {
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { RxCounterClockwiseClock } from "react-icons/rx";
-import Spinner from "../Coponents/Spinner"
+import Spinner from "../Coponents/Spinner";
+import {userDataTest} from "../asset/UserDataExample"
 function Profile() {
-
- const navigate = useNavigate();
-;
- const [loading, setLoading] = useState(true);
-  const auth = getAuth();
-  const user = auth.currentUser;
-
-
-
-
- const [activeUser, setActiveUser] = useState(null)
-  
-  
-
+  // const [activeUser, setActiveUser] = useState();
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(() => {
+    // Read the initial value of the user data from localStorage
+    const storedUserData = localStorage.getItem("userData");
+    // If there is a stored value, parse it and use it as the initial state
+    return storedUserData ? JSON.parse(storedUserData) : {};
+  });
   useEffect(() => {
-   
-    const fetchUsersData = async () => {
-      
-        const UsersRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(UsersRef);
-        let userData = {};
-        if (docSnap.exists()) {
-          userData = { id: docSnap.id, data: docSnap.data() };
-        } else {
-          // doc.data() will be undefined in this case
-          toast("No such document!");
-        }
-        //       console.log(user)
-        // console.log(auth.currentUser.uid)
+    localStorage.setItem("userData", JSON.stringify(userDataTest));
+  }, [userData]);
 
-        setActiveUser(userData.data);
-      
-    
-    };
+  
+  
 
+  // const [loading, setLoading] = useState(true);
+  // const auth = getAuth();
+  // const user = auth.currentUser;
 
-    fetchUsersData();
-        setLoading(false);
-  }, [user.data, activeUser, user.uid]);
-  const handleFirstQuestions=()=>{
-    if(activeUser.firstLogIn){
+  
 
+  // useEffect(() => {
+  //   const fetchUsersData = async () => {
+  //     const UsersRef = doc(db, "users", user.uid);
+  //     const docSnap = await getDoc(UsersRef);
+  //     let userData = {};
+  //     if (docSnap.exists()) {
+  //       userData = { id: docSnap.id, data: docSnap.data() };
+  //     } else {
+  //       // doc.data() will be undefined in this case
+  //       toast("No such document!");
+  //     }
+  //     //       console.log(user)
+  //     // console.log(auth.currentUser.uid)
+
+  //     setActiveUser(userData.data);
+  //   };
+
+  //   fetchUsersData();
+  //   setLoading(false);
+  // }, [user.data, activeUser, user.uid]);
+  useEffect(()=>{
+
+    const handleFirstQuestions = () => {
+    console.log(userData)
+    if (userData.firstLogIn) {
       navigate("/FirstSignUpQuestions");
-      
     }
-  }
-  handleFirstQuestions();
+  };
+ handleFirstQuestions();
+  })
+   
 
   const onLogout = () => {
-    auth.signOut();
+    // auth.signOut();
     navigate("/sign-in");
   };
 
-  if(activeUser == null){
-
-    return <Spinner/>
+  if (userData == null) {
+    return <Spinner />;
   }
   return (
     <div className="container">
       <div className="row userInfo">
-        <div className="col-md-4 animated fadeIn " key={activeUser.name}>
+        <div className="col-md-4 animated fadeIn " key={userData.name}>
           <div className="card ">
             <div className="card-body flex-row">
               <div className="avatar w-2/5 ">
                 <div className="w-28 rounded-full object-fill">
                   <img
-                    src={activeUser.userImg}
+                    src={userData.userImg}
                     className="object-center object-fill"
                     alt=""
                   />
@@ -86,12 +88,12 @@ function Profile() {
               </div>
               <div className="userInfo text-center w-3/5">
                 <p className="card-title block underline  ">
-                  {activeUser.name}
+                  {userData.name}
                 </p>
                 <p className="card-text">
-                  {activeUser.email}
+                  {userData.email}
                   <br />
-                  <span className="degree">{activeUser.Degree}</span>
+                  <span className="degree">{userData.Degree}</span>
                 </p>
                 <button
                   type="button"
