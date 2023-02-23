@@ -140,15 +140,12 @@ function SignUp() {
               />
             </div>
           </label>
-
+          <MultiSelectCheckBox/>
            {/* INPUT IMAGES */}
           <div>
           <label className="label">
             <span className="label-text">Insert Profile Image</span>
-          </label>
-
-          <MultiSelectCheckBox/>
-         
+          </label>         
           <label className="input-group ">
            
             <input

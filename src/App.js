@@ -33,6 +33,10 @@ function App() {
             </Routes>
           </div>
         </Router>
+       
+        <div className="buttomNavBar w-full pb-2 absolute bottom-0">
+          <BottumNavBar/>
+        </div>
         <ToastContainer
           position="top-center"
           autoClose={5000}
@@ -45,9 +49,6 @@ function App() {
           pauseOnHover
           theme="light"
         />
-        <div className="buttomNavBar w-full pb-2 absolute bottom-0">
-          <BottumNavBar/>
-        </div>
       </div>
     </>
   );

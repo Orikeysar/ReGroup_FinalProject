@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import GoogleSign from "../Coponents/GoogleSign";
 import Logo from '../asset/ReGroupIcon.png'
 import FacebookSign from "../Coponents/FacebookSign";
+import { userDataTest } from "../asset/UserDataExample";
 function SignIn() {
   //SET ICON SHOW PASSWORD
   const [showPassword, setShowPassword] = useState(false);
@@ -31,25 +32,40 @@ function SignIn() {
   };
   //When SubmitForm SignIn
   const onSubmit = async (e) => {
-    try {
-      e.preventDefault();
+    // try {
+    //   e.preventDefault();
 
-      const auth = getAuth();
+    //   const auth = getAuth();
 
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+    //   const userCredential = await signInWithEmailAndPassword(
+    //     auth,
+    //     email,
+    //     password
+    //   );
 
-      if (userCredential.user) {
-        navigae("/");
-        toast.success('Sign in Complete')
-      }
-    } catch (eror) {
+    //   if (userCredential.user) {
+    //     navigae("/");
+    //     toast.success('Sign in Complete')
+    //   }
+    // } catch (eror) {
+    //   toast.error('Bad User Cradintial, try again');
+    // }
+    if (userData){
+      navigae("/");
+      toast.success('Sign in Complete');
+    } else {
       toast.error('Bad User Cradintial, try again');
     }
   };
+  const [userData, setUserData] = useState( )
+  useEffect(() => {
+    if(localStorage.getItem("userData")==undefined){
+      localStorage.setItem("userData", JSON.stringify(userDataTest))
+      
+    }
+    setUserData(localStorage.getItem("userData"))
+    })
+  
 
   return (
     <div className="pageContainer">

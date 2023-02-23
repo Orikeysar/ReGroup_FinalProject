@@ -16,7 +16,7 @@ function FirstSignUpQuestions() {
       degree: degree,
       curses: selectedCurses,
       firstLogIn: false,
-      img: img,
+      userImg: img,
     };
     
     console.log(user)
@@ -32,12 +32,10 @@ function FirstSignUpQuestions() {
     // If there is a stored value, parse it and use it as the initial state
     return storedUserData ? JSON.parse(storedUserData) : {};
   });
-  useEffect(() => {
-    localStorage.setItem("userData", JSON.stringify(userDataTest));
-  }, [userData]);
+  
 
   const [name, setName] = useState(userData.name);
-  const [img, setImg] = useState(userData.img);
+  const [img, setImg] = useState(userData.userImg);
   const [degree, setDegree] = useState(userData.degree);
   const [selectedCurses, setSelectedCurses] = useState([]);
 
@@ -72,7 +70,7 @@ function FirstSignUpQuestions() {
                 height: 120,
                 justifySelf: "center",
               }}
-              src={userData.img}
+              src={userData.userImg}
             ></img>
             <div
               style={{ margin: 15, justifySelf: "center", width: 290 }}

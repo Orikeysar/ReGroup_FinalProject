@@ -18,10 +18,6 @@ function Profile() {
     // If there is a stored value, parse it and use it as the initial state
     return storedUserData ? JSON.parse(storedUserData) : {};
   });
-  useEffect(() => {
-    localStorage.setItem("userData", JSON.stringify(userDataTest));
-  }, [userData]);
-
   
   
 
@@ -93,7 +89,7 @@ function Profile() {
                 <p className="card-text">
                   {userData.email}
                   <br />
-                  <span className="degree">{userData.Degree}</span>
+                  <span className="degree">{userData.degree}</span>
                 </p>
                 <button
                   type="button"
