@@ -17,6 +17,7 @@ function FirstSignUpQuestions() {
       curses: selectedCurses,
       firstLogIn: false,
       userImg: img,
+      recentActivities:userData.recentActivities
     };
     
     console.log(user)

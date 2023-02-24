@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { FaUserFriends,FaHandshake,BiLike } from 'react-icons/fa';
 
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -8,24 +9,21 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { RxCounterClockwiseClock } from "react-icons/rx";
 import Spinner from "../Coponents/Spinner";
-import {userDataTest} from "../asset/UserDataExample"
+import { userDataTest } from "../asset/UserDataExample";
+import RecentActivitiesCard from "../Coponents/RecentActivitiesCard";
 function Profile() {
   // const [activeUser, setActiveUser] = useState();
   const navigate = useNavigate();
+  const [type, setType] = useState("General");
+
   const [userData, setUserData] = useState(() => {
-    // Read the initial value of the user data from localStorage
-    const storedUserData = localStorage.getItem("userData");
-    // If there is a stored value, parse it and use it as the initial state
-    return storedUserData ? JSON.parse(storedUserData) : {};
+    const user = JSON.parse(localStorage.getItem("userData"));
+    return user;
   });
-  
-  
 
   // const [loading, setLoading] = useState(true);
   // const auth = getAuth();
   // const user = auth.currentUser;
-
-  
 
   // useEffect(() => {
   //   const fetchUsersData = async () => {
@@ -47,17 +45,15 @@ function Profile() {
   //   fetchUsersData();
   //   setLoading(false);
   // }, [user.data, activeUser, user.uid]);
-  useEffect(()=>{
-
+  useEffect(() => {
     const handleFirstQuestions = () => {
-    console.log(userData)
-    if (userData.firstLogIn) {
-      navigate("/FirstSignUpQuestions");
-    }
-  };
- handleFirstQuestions();
-  })
-   
+      console.log(userData);
+      if (userData.firstLogIn) {
+        navigate("/FirstSignUpQuestions");
+      }
+    };
+    handleFirstQuestions();
+  });
 
   const onLogout = () => {
     // auth.signOut();
@@ -67,6 +63,13 @@ function Profile() {
   if (userData == null) {
     return <Spinner />;
   }
+  const handleGeneralClick = () => {
+    setType("General");
+  };
+  const handleGroupsClick = () => {
+    setType("Groups");
+  };
+
   return (
     <div className="container">
       <div className="row userInfo">
@@ -83,9 +86,7 @@ function Profile() {
                 </div>
               </div>
               <div className="userInfo text-center w-3/5">
-                <p className="card-title block underline  ">
-                  {userData.name}
-                </p>
+                <p className="card-title block underline  ">{userData.name}</p>
                 <p className="card-text">
                   {userData.email}
                   <br />
@@ -110,9 +111,11 @@ function Profile() {
           <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
             {" "}
             <RxCounterClockwiseClock className=" mr-2 w-max " />
-            <p className=" font-bold text-lg">Recent Activities</p>{" "}
+            <p className=" font-bold text-lg">Recent Activities</p>
           </div>
-          <div></div>
+          <div>
+            <RecentActivitiesCard type={type} />
+          </div>
         </div>
       </div>
     </div>
