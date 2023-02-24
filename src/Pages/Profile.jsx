@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { FaUserFriends,FaHandshake,BiLike } from 'react-icons/fa';
+import { FaUserFriends, FaHandshake, BiLike } from "react-icons/fa";
 
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -14,7 +14,6 @@ import RecentActivitiesCard from "../Coponents/RecentActivitiesCard";
 function Profile() {
   // const [activeUser, setActiveUser] = useState();
   const navigate = useNavigate();
-  const [type, setType] = useState("General");
 
   const [userData, setUserData] = useState(() => {
     const user = JSON.parse(localStorage.getItem("userData"));
@@ -63,12 +62,6 @@ function Profile() {
   if (userData == null) {
     return <Spinner />;
   }
-  const handleGeneralClick = () => {
-    setType("General");
-  };
-  const handleGroupsClick = () => {
-    setType("Groups");
-  };
 
   return (
     <div className="container">
@@ -106,16 +99,8 @@ function Profile() {
       </div>
       {/* //LAST ACTIVITIES  */}
       <div className="lastActivities  mt-4 mb-4">
-        <div className="activitiesHeade   ">
-          <div></div>
-          <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
-            {" "}
-            <RxCounterClockwiseClock className=" mr-2 w-max " />
-            <p className=" font-bold text-lg">Recent Activities</p>
-          </div>
-          <div>
-            <RecentActivitiesCard type={type} />
-          </div>
+        <div>
+          <RecentActivitiesCard />
         </div>
       </div>
     </div>
