@@ -8,6 +8,9 @@ import NavBar from "./Coponents/NavBar";
 import BottumNavBar from "./Coponents/BottumNavBar";
 import Profile from "./Pages/Profile";
 import PraivteRoute from "./Coponents/PraivteRoute.jsx";
+import FriendsListCard from "./Coponents/FriendsListCard";
+import UserAchievemeant from "./Coponents/UserAchievemeant";
+import ForgotPassword from "./Pages/ForgotPassword";
 function App() {
   return (
     <>
@@ -27,6 +30,7 @@ function App() {
            
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
             </Routes>
           </div>
         </Router>
