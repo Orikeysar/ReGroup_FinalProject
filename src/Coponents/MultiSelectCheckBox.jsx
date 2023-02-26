@@ -12,11 +12,11 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 //מקבלת מערך ריק ופונקציה 
 export default function MultiSelectCheckBox({
-  selectedCurses,
-  handleSelectedCurses,
+  selectedCourses,
+  handleSelectedCourses,
 }) {
   const handleChange = (e) => {
-    handleSelectedCurses(e.value);
+    handleSelectedCourses(e.value);
   };
 
   {
@@ -24,7 +24,7 @@ export default function MultiSelectCheckBox({
     return (
       <div className="card flex justify-content-center">
         <MultiSelect
-          value={selectedCurses}
+          value={selectedCourses}
           onChange={handleChange}
           options={dataSelection}
           optionLabel="id"

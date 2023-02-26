@@ -14,7 +14,7 @@ function FirstSignUpQuestions() {
       name: name,
       email: userData.email,
       degree: degree,
-      curses: selectedCurses,
+      courses: selectedCourses,
       firstLogIn: false,
       userImg: img,
       recentActivities:userData.recentActivities
@@ -38,10 +38,10 @@ function FirstSignUpQuestions() {
   const [name, setName] = useState(userData.name);
   const [img, setImg] = useState(userData.userImg);
   const [degree, setDegree] = useState(userData.degree);
-  const [selectedCurses, setSelectedCurses] = useState([]);
+  const [selectedCourses, setSelectedCourses] = useState([]);
 
-  const handleSelectedCurses = (selectedCurses) => {
-    setSelectedCurses(selectedCurses);
+  const handleSelectedCourses = (selectedCourses) => {
+    setSelectedCourses(selectedCourses);
   };
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -104,8 +104,8 @@ function FirstSignUpQuestions() {
             {/*שולח מערך ריק של קורסים ומחזיר לנו מערך של אובייקטים של קורסים ומרנדר דרופדאון של בחירת קורסים*/}
             <div style={{ margin: 15, justifySelf: "center", width: 290 }}>
               <MultiSelectCheckBox
-                selectedCurses={selectedCurses}
-                handleSelectedCurses={handleSelectedCurses}
+                selectedCourses={selectedCourses}
+                handleSelectedCourses={handleSelectedCourses}
               ></MultiSelectCheckBox>
               
             </div>

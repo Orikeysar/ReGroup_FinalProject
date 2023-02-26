@@ -28,7 +28,7 @@ function SignIn() {
     }));
   };
   //When SubmitForm SignIn
-  const onSubmit = async (e) => {
+  const onSubmit =  (e) => {
     // try {
     //   e.preventDefault();
 
@@ -56,11 +56,12 @@ function SignIn() {
       toast.error("Bad User Cradintial, try again");
     }
   };
-  const [userData, setUserData] = useState(userDataTest);
-  useEffect(()=>{
-    localStorage.setItem("userData", JSON.stringify(userData));
+  const [userData, setUserData] = useState(()=>{
+    const user=userDataTest;
+    localStorage.setItem("userData", JSON.stringify(user));
+    return user;
 
-  },[])
+  });
 
   return (
     <div className="pageContainer">

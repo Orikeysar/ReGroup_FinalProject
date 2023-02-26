@@ -132,7 +132,7 @@ function RecentActivitiesCard() {
           <tbody>
             {activitiesTypeGroups.map((item) => (
               <tr key={uuidv4()}>
-                <td>{item.curse}</td>
+                <td>{item.course}</td>
                 <td>
                   {item.subjects
                     .map((sub, index) => {

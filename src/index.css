@@ -24,6 +24,16 @@ width: fit-content;
   width: min-content;
   height: 35px;
 }
-
+/* טבלת קורסים שלי  */
+.hover-row:hover td {
+  background-color: rgb(184, 192, 200);
+}
+.icon:hover {
+  transform: scale(1.2);
+}
+/* בחירת קורסים בקורסים שלי */
+.Multi-w-80 >div{
+width: 65%;
+}
                                         
         

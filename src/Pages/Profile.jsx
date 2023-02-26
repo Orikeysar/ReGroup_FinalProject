@@ -11,6 +11,7 @@ import { RxCounterClockwiseClock } from "react-icons/rx";
 import Spinner from "../Coponents/Spinner";
 import { userDataTest } from "../asset/UserDataExample";
 import RecentActivitiesCard from "../Coponents/RecentActivitiesCard";
+import CoursesList from "../Coponents/CoursesList";
 function Profile() {
   // const [activeUser, setActiveUser] = useState();
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ function Profile() {
     const user = JSON.parse(localStorage.getItem("userData"));
     return user;
   });
-
+console.log(userData)
   // const [loading, setLoading] = useState(true);
   // const auth = getAuth();
   // const user = auth.currentUser;
@@ -46,7 +47,7 @@ function Profile() {
   // }, [user.data, activeUser, user.uid]);
   useEffect(() => {
     const handleFirstQuestions = () => {
-      console.log(userData);
+      console.log(userData)
       if (userData.firstLogIn) {
         navigate("/FirstSignUpQuestions");
       }
@@ -98,9 +99,9 @@ function Profile() {
         </div>
       </div>
       {/* //LAST ACTIVITIES  */}
-      <div className="lastActivities  mt-4 mb-4">
+      <div className=" mt-4 mb-4">
         <div>
-          <RecentActivitiesCard />
+          <CoursesList/>
         </div>
       </div>
     </div>

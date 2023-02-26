@@ -4,7 +4,7 @@ export  const userDataTest={
     name: "Gal Binyamin",
     email: "galbb6@gmail.com",
     degree: "",
-    curses:{},
+    courses:[],
     firstLogIn: true,
     userImg:"https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
     recentActivities:[
@@ -25,7 +25,7 @@ export  const userDataTest={
         {
             timeStamp : "23.02.2023",
             type :"groups",
-            curse : "Simulation",
+            course : "Simulation",
             subjects:[
                 {name : "object" },
                 {name : "object" },
@@ -36,7 +36,7 @@ export  const userDataTest={
         {
             timeStamp : "19.02.2023",
             type :"groups",
-            curse : "c#",
+            course : "c#",
             subjects:[
                 {name : "object" },
                 {name : "object" },
@@ -55,7 +55,7 @@ export  const userDataTest={
         {
             timeStamp : "01.02.2023",
             type :"groups",
-            curse : "FrontEnd",
+            course : "FrontEnd",
             subjects:[
                 {name : "object" },
             ],

@@ -1,7 +1,7 @@
 //דאטה לדוגמא
 export const dataSelection = [
   {
-    id: "c#",
+    id: "C#",
     subjects: [
       {name : "object" },
       {name : "object" },
@@ -13,7 +13,7 @@ export const dataSelection = [
     ],
   },
   {
-    id: "simulation",
+    id: "Simulation",
     subjects: [
       {name : "object" },
       {name : "object" },
@@ -25,7 +25,7 @@ export const dataSelection = [
     ],
   },
   {
-    id: "clientide",
+    id: "Client Side",
     subjects: [
       {name : "object" },
       {name : "object" },
@@ -37,7 +37,7 @@ export const dataSelection = [
     ],
   },
   {
-    id: "serverSide",
+    id: "Server Side",
     subjects: [
       {name : "object" },
       {name : "object" },
@@ -49,7 +49,40 @@ export const dataSelection = [
     ],
   },
   {
-    id: "dataStructures",
+    id: "Data Structures",
+    subjects: [
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+    
+    ],
+  },{
+    id: "Human Resources",
+    subjects: [
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      
+    ],
+  },{
+    id: "Engineering economics",
+    subjects: [
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      {name : "object" },
+      
+    ],
+  },{
+    id: "Decision theory",
     subjects: [
       {name : "object" },
       {name : "object" },
