@@ -50,6 +50,16 @@ function SignIn() {
       toast.error('Bad User Cradintial, try again');
     }
   };
+<<<<<<< Updated upstream
+=======
+  const [userData, setUserData] = useState(()=>{
+    const user=userDataTest;
+    localStorage.setItem("userData", JSON.stringify(user));
+    localStorage.setItem("componentChoosen", "UserAchievemeant");
+    return user;
+
+  });
+>>>>>>> Stashed changes
 
   return (
     <div className="pageContainer">

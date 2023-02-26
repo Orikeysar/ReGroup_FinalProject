@@ -2,7 +2,59 @@ import React from "react";
 import SelectCheckBox from "../Coponents/SelectCheckBox.jsx"
 //מציג שאלון ראשוני למשתמש
 function FirstSignUpQuestions() {
+<<<<<<< Updated upstream
   const onSubmit = () => {};
+=======
+  // באישור שליחה של המשתמש ניצור אובייקט חדש של יוזר ונעדכן את הלוקל סטורג 
+  const onSubmitForm = (event) => {
+    event.preventDefault();
+    const user = {
+      id: userData.id,
+      name: name,
+      email: userData.email,
+      degree: degree,
+      friendsList: userData.friendsList,
+      courses: selectedCourses,
+      firstLogIn: false,
+      userImg: img,
+      recentActivities:userData.recentActivities
+    };
+    
+    console.log(user)
+    localStorage.setItem("userData", JSON.stringify(user));
+    navigate("/");
+
+  };
+  const navigate = useNavigate();
+
+  const [userData, setUserData] = useState(() => {
+    // Read the initial value of the user data from localStorage
+    const storedUserData = localStorage.getItem("userData");
+    // If there is a stored value, parse it and use it as the initial state
+    return storedUserData ? JSON.parse(storedUserData) : {};
+  });
+  
+
+  const [name, setName] = useState(userData.name);
+  const [img, setImg] = useState(userData.userImg);
+  const [degree, setDegree] = useState(userData.degree);
+  const [selectedCourses, setSelectedCourses] = useState([]);
+
+  const handleSelectedCourses = (selectedCourses) => {
+    setSelectedCourses(selectedCourses);
+  };
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+  };
+  const handleImgChange = (e) => {
+    setImg(e.target.value);
+  };
+  const handleDegreeChange = (e) => {
+    setDegree(e.target.value);
+  };
+
+
+>>>>>>> Stashed changes
   return (
     <div className="hero sizeForm">
       <div className="hero-content text-center">

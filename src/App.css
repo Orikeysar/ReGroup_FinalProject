@@ -39,3 +39,7 @@ body{
     transform: rotate(360deg);
   }
 }
+.p-orderlist-controls {
+  display: none;
+  
+  }
