@@ -16,7 +16,10 @@ function FriendsListCard() {
   const [selectedNames, setSelectedNames] = useState(null);
   const [filteredNames, setFilteredNames] = useState(null);
   
-  const [userData, setUserData] = useState(userDataTest);
+  const [userData, setUserData] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("userData"));
+    return user;
+  });
 
 
   useEffect(() => {
@@ -76,7 +79,7 @@ return <div>
       </div>
 
       <div className="card w-full justify-center">
-            <OrderList value={friends} onChange={(e) => setFriends(e.value)} itemTemplate={itemTemplate} filter filterBy="name" aria-controls={false} ></OrderList>
+            <OrderList value={friends} onChange={(e) => setFriends(e.value)} itemTemplate={itemTemplate} filter filterBy="name"  ></OrderList>
         </div>
     </div>
   );

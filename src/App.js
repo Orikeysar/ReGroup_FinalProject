@@ -1,39 +1,49 @@
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
+import FirstSignUpQuestions from "./Pages/FirstSignUpQuestions";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-import NavBar from "./Coponents/NavBar";
-import BottumNavBar from "./Coponents/BottumNavBar";
 import Profile from "./Pages/Profile";
 import PraivteRoute from "./Coponents/PraivteRoute.jsx";
-import FriendsListCard from "./Coponents/FriendsListCard";
-import UserAchievemeant from "./Coponents/UserAchievemeant";
+<<<<<<< Updated upstream
+=======
 import ForgotPassword from "./Pages/ForgotPassword";
+>>>>>>> Stashed changes
 function App() {
   return (
     <>
-      <div className="container">
+      <div className="container h-full">
         <Router>
-          <div className="topNavBar w-full mb-2">
+<<<<<<< Updated upstream
+          <div className="topNavBar w-full ">
            
             <NavBar />
           </div>
+=======
+          
+>>>>>>> Stashed changes
           <div className="bodyContent">
             <Routes>
              
               {/* //to render component inside of component and route you need to route inside route */}
           <Route path='/' element={<PraivteRoute/>}>
           <Route path="/" element={<Profile />} />
+          <Route path="/FirstSignUpQuestions" element={<FirstSignUpQuestions />} />
+
           </Route>
            
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
             </Routes>
           </div>
         </Router>
+<<<<<<< Updated upstream
+=======
+       
+        
+>>>>>>> Stashed changes
         <ToastContainer
           position="top-center"
           autoClose={5000}

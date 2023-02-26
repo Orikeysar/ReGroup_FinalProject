@@ -30,19 +30,19 @@ function UserAchievemeant() {
 
     return (
       <div className="col-12 mt-4">
-        <div className="grid grid-cols-6 gap-3 text-left ">
+        <div className="grid grid-cols-6 gap-3 text-center align-middle ">
           <div className="flex-column col-span-1">
             
             <Avatar
               image={product.AchievementImg}
-              size="normal"
+              size="large"
               shape="circle"
             />
           </div>
 
-          <div className=" align-middle text-center flex-col col-span-4 sm:align-items-start gap-3">
+          <div className=" align-top text-center flex-col col-span-4 sm:align-items-start gap-3">
             
-            <div className="font-semibold align-middle">
+            <div className="font-semibold align-top">
               {product.name}: {product.numberOfAchievementDoing}
             </div>
         
@@ -50,7 +50,7 @@ function UserAchievemeant() {
             <div className="card">
               <ProgressBar
                 value={ (( product.numberOfAchievementDoing/product.currentTopUse)*100) >100? 100 :( product.numberOfAchievementDoing/product.currentTopUse)*100 }
-              className ="self-center w-full border rounded-xl  "
+              className ="self-center w-full border rounded-xl align-middle "
                 displayValueTemplate={valueTemplate}
                 aria-valuemax={product.currentTopUse}
                 aria-valuenow ={product.numberOfAchievementDoing}
@@ -60,13 +60,13 @@ function UserAchievemeant() {
           
           </div>
 
-          <div className="flex-column  text-center self-center sm:align-items-end gap-3 sm:gap-2">
-            <Button
-              className=" btn-xs border-gray-500 bg-gray-600 text-white  rounded-md mb-2"
+          <div className="  text-left self-center sm:align-items-end gap-3 sm:gap-2">
+            <button
+              className=" btn-xs text-xs w-11 border-gray-500 bg-gray-600 text-white align-middle text-left rounded-md "
               value={product.name}
             >
               View
-            </Button>
+            </button>
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@ function UserAchievemeant() {
         </div>
       </div>
 
-      <div className="card w-full justify-center ">
+      <div className="card w-full  justify-center ">
         <OrderList
           value={userAchievements}
           itemTemplate={itemTemplate}

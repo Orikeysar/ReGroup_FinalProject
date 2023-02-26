@@ -7,7 +7,7 @@ import Spinner from "./Spinner";
 //IF WE HAVE GO TO PROFILE PAGE IF NOT GO TO SIGN IN PAGE
 function PraivteRoute() {
     const {logedIn,loading} = useAuthStatus()
-    if(loading){
+    if(loading ){
         return <Spinner/>
     }
   return (

@@ -7,7 +7,9 @@ function NavBar() {
     const navigate = useNavigate();
 
    const handleLogoClick=()=>{
-    navigate("/");
+    localStorage.setItem("componentChoosen", "UserAchievemeant");
+   //NEED TO CHECK IF NOT MAKING THE APP SLOWING DOWN
+    window.location.reload()
 
     }
   
