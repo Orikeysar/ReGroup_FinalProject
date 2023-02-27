@@ -7,7 +7,11 @@ import { toast } from "react-toastify";
 import GoogleSign from "../Coponents/GoogleSign";
 import Logo from "../asset/ReGroupIcon.png";
 import FacebookSign from "../Coponents/FacebookSign";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  getDoc,
+  doc,
+  collection,
+  getDocs,} from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 function SignIn() {
   //SET ICON SHOW PASSWORD
@@ -57,7 +61,29 @@ function SignIn() {
           toast.info("couldnt find data. please try again")
           window.location.reload()
         }
-
+        //GETTING ALL COURSES AND INSERT TO LOCAL STORAGE
+        let coursesTempList = [];
+      
+        const querySnapshot = await getDocs(collection(db, "courses"));
+        if (querySnapshot) {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            coursesTempList.push(doc.data());
+          });
+  
+          localStorage.setItem("courses", JSON.stringify(coursesTempList));
+        }
+  //GETTING ALL ACHIEVEMEANTS AND INSERT TO LOCAL STORAGE
+  let achievementsTempList = [];
+  const querySnapshotAchie = await getDocs(collection(db, "achievements"));
+  if (querySnapshotAchie) {
+    querySnapshotAchie.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      achievementsTempList.push(doc.data());
+    });
+  
+    localStorage.setItem("achievements", JSON.stringify(achievementsTempList));
+  }
         navigate("/");
         toast.success("Sign in Complete");
       }

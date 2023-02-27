@@ -15,6 +15,10 @@ export default function MultiSelectCheckBox({
   selectedCourses,
   handleSelectedCourses,
 }) {
+  const [coursesList, setCoursesList]=useState(() => {
+    const courses = JSON.parse(localStorage.getItem("courses"));
+    return courses;
+  });
   const handleChange = (e) => {
     handleSelectedCourses(e.value);
   };
@@ -26,7 +30,7 @@ export default function MultiSelectCheckBox({
         <MultiSelect
           value={selectedCourses}
           onChange={handleChange}
-          options={dataSelection}
+          options={coursesList}
           optionLabel="id"
           placeholder="Choose courses "
           maxSelectedLabels={2}

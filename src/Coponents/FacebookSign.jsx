@@ -3,7 +3,14 @@ import { FaFacebookF } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
 import { getAuth, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  serverTimestamp,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
 function FacebookSign() {
@@ -14,18 +21,17 @@ function FacebookSign() {
       const auth = getAuth();
       const provider = new FacebookAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      
+
       if (!result) {
-       toast.error("cound not signin to facebook")
+        toast.error("cound not signin to facebook");
       }
-       // The signed-in user info.
+      // The signed-in user info.
 
-        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
 
-        const credential = FacebookAuthProvider.credentialFromResult(result);
-        const accessToken = credential.accessToken;
+      const credential = FacebookAuthProvider.credentialFromResult(result);
+      const accessToken = credential.accessToken;
       const user = result.user;
-
 
       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
       //Check for user
@@ -70,32 +76,60 @@ function FacebookSign() {
         });
 
         toast.success("Build user with facebook success");
-}
-        const docUserRef = doc(db, "users", user.uid);
-        const docSnapUser = await getDoc(docUserRef);
-        //Check if user exists,if not, create user
-        if (docSnapUser.exists()) {
-          const userData = {
-            id: docSnapUser.uid,
-            data: docSnapUser.data(),
-          };
+      }
+      const docUserRef = doc(db, "users", user.uid);
+      const docSnapUser = await getDoc(docUserRef);
+      //Check if user exists,if not, create user
+      if (docSnapUser.exists()) {
+        const userData = {
+          id: docSnapUser.uid,
+          data: docSnapUser.data(),
+        };
 
-          localStorage.setItem("componentChoosen", "UserAchievemeant");
-          localStorage.setItem("activeUser", JSON.stringify(userData.data));
-          navigate("/");
-          toast.success("Sign in Complete");
-        } else {
-          toast.error("Could not get data from server");
+        localStorage.setItem("componentChoosen", "UserAchievemeant");
+        localStorage.setItem("activeUser", JSON.stringify(userData.data));
+
+        //GETTING ALL COURSES AND INSERT TO LOCAL STORAGE
+        let coursesTempList = [];
+        const querySnapshot = await getDocs(collection(db, "courses"));
+        if (querySnapshot) {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            coursesTempList.push(doc.data());
+          });
+
+          localStorage.setItem("courses", JSON.stringify(coursesTempList));
         }
-      
+        //GETTING ALL ACHIEVEMEANTS AND INSERT TO LOCAL STORAGE
+        let achievementsTempList = [];
+        const querySnapshotAchie = await getDocs(
+          collection(db, "achievements")
+        );
+        if (querySnapshotAchie) {
+          querySnapshotAchie.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            achievementsTempList.push(doc.data());
+          });
+
+          localStorage.setItem(
+            "achievements",
+            JSON.stringify(achievementsTempList)
+          );
+        }
+
+        navigate("/");
+        toast.success("Sign in Complete");
+      } else {
+        toast.error("Could not get data from server");
+      }
     } catch (error) {
-     // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = FacebookAuthProvider.credentialFromError(error);
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = FacebookAuthProvider.credentialFromError(error);
     }
   };
 

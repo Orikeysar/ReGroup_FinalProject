@@ -6,53 +6,65 @@ import { GiBookmarklet } from "react-icons/gi";
 import MultiSelectCheckBox from "../Coponents/MultiSelectCheckBox.jsx";
 import { FaTrash } from "react-icons/fa";
 import "primeicons/primeicons.css";
+import { doc, setDoc } from "firebase/firestore"; 
+import {db} from "../FirebaseSDK"
+
 
 function CoursesList() {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState(() => {
+  const [activeUser, setActiveUser] = useState(() => {
     // Read the initial value of the user data from localStorage
-    const storedUserData = localStorage.getItem("userData");
+    const storedactiveUser = localStorage.getItem("activeUser");
     // If there is a stored value, parse it and use it as the initial state
-    return JSON.parse(storedUserData);
+    return JSON.parse(storedactiveUser);
   });
-  const [couresUserList, setCoursesUserList] = useState(userData.courses);
-  const [selectedCourses, setSelectedCourses] = useState(userData.courses);
+  const [couresUserList, setCoursesUserList] = useState(activeUser.courses);
+  const [selectedCourses, setSelectedCourses] = useState(activeUser.courses);
   
-  const handleSelectedCourses = (selectedCourses) => {
+  const handleSelectedCourses =async (selectedCourses) => {
     setSelectedCourses(selectedCourses);
     setCoursesUserList(selectedCourses);
   
     let user = {
-      id: userData.id,
-      name: userData.name,
-      email: userData.email,
-      degree: userData.degree,
-      friendsList:userData.friendsList , 
+      id: activeUser.id,
+      name: activeUser.name,
+      email: activeUser.email,
+      degree: activeUser.degree,
+      friendsList:activeUser.friendsList , 
       courses: selectedCourses,
-      firstLogIn: false,
-      userImg: userData.userImg,
-      recentActivities: userData.recentActivities,
+      userImg: activeUser.userImg,
+      recentActivities: activeUser.recentActivities,
+      points: activeUser.points,
+    userAchievements: activeUser.userAchievements,
+
     };
-    localStorage.setItem("userData", JSON.stringify(user));
+    localStorage.setItem("activeUser", JSON.stringify(user));
+    await setDoc(doc(db, "users", user.id), user);
 
 
   };
-  const handleDelete = (id) => {
+  const handleDelete = async(id) => {
     const updatedCourses = couresUserList.filter((course) => course.id !== id);
-    let user = {
-      id: userData.id,
-      name: userData.name,
-      email: userData.email,
-      degree: userData.degree,
-      courses: updatedCourses,
-      firstLogIn: false,
-      userImg: userData.userImg,
-      recentActivities: userData.recentActivities,
+      let user = {
+      id: activeUser.id,
+      name: activeUser.name,
+      email: activeUser.email,
+      degree: activeUser.degree,
+      friendsList:activeUser.friendsList , 
+      courses: selectedCourses,
+      userImg: activeUser.userImg,
+      recentActivities: activeUser.recentActivities,
+      points: activeUser.points,
+    userAchievements: activeUser.userAchievements,
+    
     };
 
-    localStorage.setItem("userData", JSON.stringify(user));
+    localStorage.setItem("activeUser", JSON.stringify(user));
     setCoursesUserList(updatedCourses);
     setSelectedCourses(updatedCourses);
+    const response= await setDoc(doc(db, "users", user.id), user);
+    console.log(response)
+
   };
 
 

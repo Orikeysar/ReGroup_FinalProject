@@ -17,32 +17,19 @@ import  BottumNavigation  from "../Coponents/BottumNavBar";
 import FriendsListCard from "../Coponents/FriendsListCard"
 import UserAchievemeant from '../Coponents/UserAchievemeant'
 function Profile() {
-  // const [activeUser, setActiveUser] = useState();
+
   const navigate = useNavigate();
  const [componentChoosen, setComponentChoosen] = useState(localStorage.getItem("componentChoosen"));
-  const [userData, setUserData] = useState(() => {
-    const user = JSON.parse(localStorage.getItem("userData"));
+  const [activeUser, setActiveUser] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  // const [loading, setLoading] = useState(true);
-  // const auth = getAuth();
-  // const user = auth.currentUser;
+ 
   
   useEffect(() => {
     setComponentChoosen(localStorage.getItem("componentChoosen"))
-
-  //   fetchUsersData();
-  //       setLoading(false);
-  // }, [user.data, activeUser, user.uid]);
   })
-  const handleFirstQuestions=()=>{
-    if(userData.firstLogIn){
-
-      navigate("/FirstSignUpQuestions");
-      
-    }
-  }
-  handleFirstQuestions();
+  
 
   const onLogout = () => {
     // auth.signOut();
@@ -51,7 +38,7 @@ function Profile() {
 
 
 
-  if (userData == null) {
+  if (activeUser == null) {
     return <Spinner />;
   }
 
@@ -63,13 +50,13 @@ function Profile() {
            <NavBar />
          </div>
       <div className="row userInfo">
-        <div className="col-md-4 animated fadeIn " key={userData.name}>
+        <div className="col-md-4 animated fadeIn " key={activeUser.name}>
           <div className="card ">
             <div className="card-body flex-row">
               <div className="avatar w-2/5 ">
                 <div className="w-28 rounded-full object-fill">
                   <img
-                    src={userData.userImg}
+                    src={activeUser.userImg}
                     className="object-center object-fill"
                     alt=""
                   />
@@ -77,12 +64,12 @@ function Profile() {
               </div>
               <div className="userInfo text-center w-3/5">
                 <p className="card-title block underline  ">
-                  {userData.name}
+                  {activeUser.name}
                 </p>
                 <p className="card-text">
-                  {userData.email}
+                  {activeUser.email}
                   <br />
-                  <span className="degree">{userData.degree}</span>
+                  <span className="degree">{activeUser.degree}</span>
                 </p>
                 <button
                   type="button"

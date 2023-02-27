@@ -8,7 +8,13 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { db } from "../FirebaseSDK";
-import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import {
+  setDoc,
+  doc,
+  serverTimestamp,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { toast } from "react-toastify";
 import GoogleSign from "../Coponents/GoogleSign";
 import SelectCheckBox from "../Coponents/SelectCheckBox";
@@ -24,35 +30,35 @@ function SignUp() {
     userImg: "",
     degree: "",
     friendsList: [],
-    courses:[],
+    courses: [],
     points: 0,
-    userAchievements: [{
-      name: "Assist Friend",
-      numberOfAchievementDoing: 0,
-      activeLevel: 1,
-    },
-    {
-      name: "Open Groups",
-      numberOfAchievementDoing: 0,
-      activeLevel: 1,
-    },
-    {
-      name: "Helped Answered",
-      numberOfAchievementDoing: 0,
-      activeLevel: 1,
-    },
-    {
-      name: "Love From Community",
-      numberOfAchievementDoing: 0,
-      activeLevel: 1,
-    },],
+    userAchievements: [
+      {
+        name: "Assist Friend",
+        numberOfAchievementDoing: 0,
+        activeLevel: 1,
+      },
+      {
+        name: "Open Groups",
+        numberOfAchievementDoing: 0,
+        activeLevel: 1,
+      },
+      {
+        name: "Helped Answered",
+        numberOfAchievementDoing: 0,
+        activeLevel: 1,
+      },
+      {
+        name: "Love From Community",
+        numberOfAchievementDoing: 0,
+        activeLevel: 1,
+      },
+    ],
     recentActivitiesGroups: [],
-    recentActivitiesGeneral: [
-      ],
+    recentActivitiesGeneral: [],
   });
   //INSERT INTO THE EMAIL AND PASSWORD VARIABLES
   const { name, email, password, degree } = formData;
-  
 
   const navigate = useNavigate();
   const onChange = (e) => {
@@ -70,6 +76,30 @@ function SignUp() {
     e.preventDefault();
     try {
       const auth = getAuth();
+      //GETTING ALL COURSES AND INSERT TO LOCAL STORAGE
+      let coursesTempList = [];
+      
+      const querySnapshot = await getDocs(collection(db, "courses"));
+      if (querySnapshot) {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          coursesTempList.push(doc.data());
+        });
+
+        localStorage.setItem("courses", JSON.stringify(coursesTempList));
+      }
+//GETTING ALL ACHIEVEMEANTS AND INSERT TO LOCAL STORAGE
+let achievementsTempList = [];
+const querySnapshotAchie = await getDocs(collection(db, "achievements"));
+if (querySnapshotAchie) {
+  querySnapshotAchie.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    achievementsTempList.push(doc.data());
+  });
+
+  localStorage.setItem("achievements", JSON.stringify(achievementsTempList));
+}
+
 
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -86,6 +116,7 @@ function SignUp() {
       formDataCopy.timeStamp = serverTimestamp();
 
       await setDoc(doc(db, "users", user.uid), formDataCopy);
+
       localStorage.setItem("componentChoosen", "UserAchievemeant");
       localStorage.setItem("activeUser", JSON.stringify(formDataCopy));
       navigate("/");
@@ -180,8 +211,6 @@ function SignUp() {
               />
             </label>
           </div>
-
-         
         </div>
 
         <div className="signUpBar">
