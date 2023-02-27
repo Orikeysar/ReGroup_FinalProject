@@ -7,58 +7,45 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import Profile from "./Pages/Profile";
 import PraivteRoute from "./Coponents/PraivteRoute.jsx";
-<<<<<<< Updated upstream
-=======
 import ForgotPassword from "./Pages/ForgotPassword";
->>>>>>> Stashed changes
+import BottumNavBar from ".//Coponents/BottumNavBar";
 function App() {
   return (
     <>
       <div className="container h-full">
         <Router>
-<<<<<<< Updated upstream
-          <div className="topNavBar w-full ">
-           
-            <NavBar />
-          </div>
-=======
-          
->>>>>>> Stashed changes
           <div className="bodyContent">
             <Routes>
-             
               {/* //to render component inside of component and route you need to route inside route */}
-          <Route path='/' element={<PraivteRoute/>}>
-          <Route path="/" element={<Profile />} />
-          <Route path="/FirstSignUpQuestions" element={<FirstSignUpQuestions />} />
+              <Route path="/" element={<PraivteRoute />}>
+                <Route path="/" element={<Profile />} />
+                <Route
+                  path="/FirstSignUpQuestions"
+                  element={<FirstSignUpQuestions />}
+                />
+              </Route>
 
-          </Route>
-           
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
+              <Route path="/forgotPassword" element={<ForgotPassword />} />
+
             </Routes>
           </div>
+
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+          
         </Router>
-<<<<<<< Updated upstream
-=======
-       
-        
->>>>>>> Stashed changes
-        <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-        <div className="buttomNavBar w-full pb-2 absolute bottom-0">
-          <BottumNavBar/>
-        </div>
       </div>
     </>
   );

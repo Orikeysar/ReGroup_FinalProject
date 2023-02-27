@@ -9,29 +9,74 @@ import { toast } from 'react-toastify'
 import { FaGoogle } from "react-icons/fa";
 function GoogleSign() {
     const navigate = useNavigate()
-  
 
     const onGoogleClick=async()=>{
 try{
 const auth =getAuth()
 const provider = new GoogleAuthProvider()
 const result = await signInWithPopup(auth,provider)
+if (!result) {
+  toast.error("cound not signin to google")
+ }
 const user = result.user
 //Check for user
-const docRef = doc(db,'users','user.uid')
+const docRef = doc(db,'users',user.uid)
 const docSnap = await getDoc(docRef)
 //Check if user exists,if not, create user
 if(!docSnap.exists()){
 
-await setDoc(doc(db,'users',user.uid),{
-
+  await setDoc(doc(db, "users", user.uid), {
     name: user.displayName,
-    email:user.email,
-    timestamp:serverTimestamp()
-})
+    email: user.email,
+    timeStamp: serverTimestamp(),
+    userImg: user.photoURL,
+    degree: "",
+    friendsList: [],
+    courses:[],
+    alerts: [],
+    points: 0,
+    userAchievements: [
+      {
+        name: "Assist Friend",
+        numberOfAchievementDoing: 0,
+        activeLevel: 1,
+      },
+      {
+        name: "Open Groups",
+        numberOfAchievementDoing: 0,
+        activeLevel: 1,
+      },
+      {
+        name: "Helped Answered",
+        numberOfAchievementDoing: 0,
+        activeLevel: 1,
+      },
+      {
+        name: "Love From Community",
+        numberOfAchievementDoing: 0,
+        activeLevel: 1,
+      },
+    ],
+    recentActivitiesGroups: [],
+    recentActivitiesGeneral: [],
+  });
+  toast.success("Build user with facebook success");
 }
-navigate('/')
-toast.success('Authorize with google good job')
+        
+        //Check if user exists,if not, create user
+        if (docSnap.exists()) {
+          const userData = {
+            data: docSnap.data(),
+          };
+
+          localStorage.setItem("componentChoosen", "UserAchievemeant");
+          localStorage.setItem("activeUser", JSON.stringify(userData.data));
+          navigate("/");
+          toast.success("Sign in Complete");
+        } else {
+          toast.error("Could not get data from server");
+        }
+
 }catch(error){
   console.log(error)
 toast.error('Could not Authorize with google')

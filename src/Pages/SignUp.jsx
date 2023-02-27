@@ -22,30 +22,50 @@ function SignUp() {
     email: "",
     password: "",
     userImg: "",
-    Degree: "",
-    firstLogIn: "",
+    degree: "",
     friendsList: [],
+    courses:[],
     points: 0,
-    userAchievements:[],
-    recentActivitiesGroups:[],
-    recentActivitiesGeneral:[],
-
-
+    userAchievements: [{
+      name: "Assist Friend",
+      numberOfAchievementDoing: 0,
+      activeLevel: 1,
+    },
+    {
+      name: "Open Groups",
+      numberOfAchievementDoing: 0,
+      activeLevel: 1,
+    },
+    {
+      name: "Helped Answered",
+      numberOfAchievementDoing: 0,
+      activeLevel: 1,
+    },
+    {
+      name: "Love From Community",
+      numberOfAchievementDoing: 0,
+      activeLevel: 1,
+    },],
+    recentActivitiesGroups: [],
+    recentActivitiesGeneral: [
+      ],
   });
   //INSERT INTO THE EMAIL AND PASSWORD VARIABLES
-  const { name, email, password } = formData;
+  const { name, email, password, degree } = formData;
+  
+
   const navigate = useNavigate();
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      
+
       //CHECK WHAT THE ID IN THE UNPUT THAT CHANGE AND INSERT USER INPUT
       //LIKE THIS YOU CAN MENAGE setText TOGETHER ON MANY TARGETS
       [e.target.id]: e.target.value,
     }));
   };
-//SUBMIT THE FORM WHEN CLICKING ON SIGN UP BUTTON
-//FUNCTION RGISTER USER IN TO DATABASE
+  //SUBMIT THE FORM WHEN CLICKING ON SIGN UP BUTTON
+  //FUNCTION RGISTER USER IN TO DATABASE
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -63,10 +83,11 @@ function SignUp() {
 
       const formDataCopy = { ...formData };
       delete formDataCopy.password;
-      formDataCopy.timestamp = serverTimestamp();
+      formDataCopy.timeStamp = serverTimestamp();
 
       await setDoc(doc(db, "users", user.uid), formDataCopy);
-
+      localStorage.setItem("componentChoosen", "UserAchievemeant");
+      localStorage.setItem("activeUser", JSON.stringify(formDataCopy));
       navigate("/");
     } catch (error) {
       toast.error("Bad Cardictionals details,try again");
@@ -97,7 +118,7 @@ function SignUp() {
             />
           </label>
         </div>
-{/* IMSERT EMAIL */}
+        {/* IMSERT EMAIL */}
         <div>
           <label className="label">
             <span className="label-text">Your Email</span>
@@ -114,12 +135,12 @@ function SignUp() {
             />
           </label>
         </div>
- {/* INPUT PASSWORD */}
+        {/* INPUT PASSWORD */}
         <div className="passwordInputDiv">
           <label className="label">
             <span className="label-text">Your Password</span>
           </label>
-         
+
           <label className="input-group max-w-100px">
             <span>Password</span>
             <div className="">
@@ -141,31 +162,26 @@ function SignUp() {
             </div>
           </label>
 
-           {/* INPUT IMAGES */}
-          <div>
-          <label className="label">
-            <span className="label-text">Insert Profile Image</span>
-          </label>
+          {/* DEGREE INPUT */}
 
-          <SelectCheckBox/>
-         
-          <label className="input-group ">
-           
-            <input
-               id='images'
-              type="file"
-              placeholder="Email"
-              onChange={onChange}
-              value={email}
-              max='1'
-            accept='.jpg,.png,.jpeg'
-            multiple
-            required
-              className="file-input file-input-bordered w-full max-w-xs"
-            />
-          </label>
-       
+          <div>
+            <label className="label">
+              <span className="label-text">Your degree</span>
+            </label>
+            <label className="input-group">
+              <span className="w-24">Degree</span>
+              <input
+                id="degree"
+                type="text"
+                placeholder="Degree"
+                onChange={onChange}
+                value={degree}
+                className="degreeInput input input-bordered"
+              />
+            </label>
           </div>
+
+         
         </div>
 
         <div className="signUpBar">
