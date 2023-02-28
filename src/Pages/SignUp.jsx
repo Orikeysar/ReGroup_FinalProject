@@ -32,30 +32,51 @@ function SignUp() {
     friendsList: [],
     courses: [],
     points: 0,
+    recentActivities: [],
     userAchievements: [
       {
         name: "Assist Friend",
         numberOfAchievementDoing: 0,
         activeLevel: 1,
+        achievementImg:"",
+        TopLevelOne:100,
+        TopLeveTwo:200,
+        TopLevelThree:500,
+        valuePerAction: 5
+
+
       },
       {
         name: "Open Groups",
         numberOfAchievementDoing: 0,
         activeLevel: 1,
+        achievementImg:"",
+        TopLevelOne:40,
+        TopLeveTwo:100,
+        TopLevelThree:200,
+        valuePerAction: 10
       },
       {
         name: "Helped Answered",
         numberOfAchievementDoing: 0,
         activeLevel: 1,
+        achievementImg:"",
+        TopLevelOne:100,
+        TopLeveTwo:200,
+        TopLevelThree:500,
+        valuePerAction: 3
       },
       {
-        name: "Love From Community",
+        name: "Like From Community",
         numberOfAchievementDoing: 0,
         activeLevel: 1,
+        achievementImg:"",
+        TopLevelOne:200,
+        TopLeveTwo:500,
+        TopLevelThree:1000,
+        valuePerAction: 1
       },
     ],
-    recentActivitiesGroups: [],
-    recentActivitiesGeneral: [],
   });
   //INSERT INTO THE EMAIL AND PASSWORD VARIABLES
   const { name, email, password, degree } = formData;
