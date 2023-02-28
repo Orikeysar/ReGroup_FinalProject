@@ -7,23 +7,13 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import Profile from "./Pages/Profile";
 import PraivteRoute from "./Coponents/PraivteRoute.jsx";
-<<<<<<< Updated upstream
-=======
 import ForgotPassword from "./Pages/ForgotPassword";
->>>>>>> Stashed changes
 function App() {
   return (
     <>
       <div className="container h-full">
         <Router>
-<<<<<<< Updated upstream
-          <div className="topNavBar w-full ">
-           
-            <NavBar />
-          </div>
-=======
           
->>>>>>> Stashed changes
           <div className="bodyContent">
             <Routes>
              
@@ -39,11 +29,8 @@ function App() {
             </Routes>
           </div>
         </Router>
-<<<<<<< Updated upstream
-=======
        
         
->>>>>>> Stashed changes
         <ToastContainer
           position="top-center"
           autoClose={5000}
@@ -56,9 +43,7 @@ function App() {
           pauseOnHover
           theme="light"
         />
-        <div className="buttomNavBar w-full pb-2 absolute bottom-0">
-          <BottumNavBar/>
-        </div>
+     
       </div>
     </>
   );

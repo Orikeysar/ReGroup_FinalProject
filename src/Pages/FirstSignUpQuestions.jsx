@@ -1,10 +1,9 @@
 import React from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SelectCheckBox from "../Coponents/SelectCheckBox.jsx"
 //מציג שאלון ראשוני למשתמש
 function FirstSignUpQuestions() {
-<<<<<<< Updated upstream
-  const onSubmit = () => {};
-=======
   // באישור שליחה של המשתמש ניצור אובייקט חדש של יוזר ונעדכן את הלוקל סטורג 
   const onSubmitForm = (event) => {
     event.preventDefault();
@@ -54,7 +53,6 @@ function FirstSignUpQuestions() {
   };
 
 
->>>>>>> Stashed changes
   return (
     <div className="hero sizeForm">
       <div className="hero-content text-center">
@@ -63,7 +61,7 @@ function FirstSignUpQuestions() {
           <p className="py-6  text-gray-600">
             One more step and you're done. Please fill in the following details:
           </p>
-          <form style={{display:"grid"}} onSubmit={onSubmit}>
+          <form style={{display:"grid"}} onSubmit={onSubmitForm}>
             <div style={{margin:15,justifySelf:"center", width:290}} className="form-control">
               <label className="input-group input-group-md">
                 <span>Full Name</span>
@@ -88,9 +86,9 @@ function FirstSignUpQuestions() {
             <div style={{margin:15,justifySelf:"center", width:290,}}>
               <SelectCheckBox></SelectCheckBox>
             </div>
-            
+            <button style={{margin:10}} className="btn btn-primary bg-gray-700">submit</button>
           </form>
-          <button style={{margin:10}} className="btn btn-primary bg-gray-700">submit</button>
+          
         </div>
       </div>
     </div>

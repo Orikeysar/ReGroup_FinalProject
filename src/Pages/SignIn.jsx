@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import GoogleSign from "../Coponents/GoogleSign";
 import Logo from '../asset/ReGroupIcon.png'
 import FacebookSign from "../Coponents/FacebookSign";
+import { userDataTest} from "../asset/UserDataExample"
 function SignIn() {
   //SET ICON SHOW PASSWORD
   const [showPassword, setShowPassword] = useState(false);
@@ -32,26 +33,28 @@ function SignIn() {
   //When SubmitForm SignIn
   const onSubmit = async (e) => {
     try {
-      e.preventDefault();
+      // e.preventDefault();
 
-      const auth = getAuth();
+      // const auth = getAuth();
 
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      // const userCredential = await signInWithEmailAndPassword(
+      //   auth,
+      //   email,
+      //   password
+      // );
 
-      if (userCredential.user) {
+      if (true) {
         navigae("/");
+        const user=userDataTest;
+        localStorage.setItem("userData", JSON.stringify(user));
+        localStorage.setItem("componentChoosen", "UserAchievemeant");
+
         toast.success('Sign in Complete')
       }
     } catch (eror) {
       toast.error('Bad User Cradintial, try again');
     }
   };
-<<<<<<< Updated upstream
-=======
   const [userData, setUserData] = useState(()=>{
     const user=userDataTest;
     localStorage.setItem("userData", JSON.stringify(user));
@@ -59,7 +62,6 @@ function SignIn() {
     return user;
 
   });
->>>>>>> Stashed changes
 
   return (
     <div className="pageContainer">
