@@ -28,7 +28,7 @@ function Profile() {
   
   useEffect(() => {
     setComponentChoosen(localStorage.getItem("componentChoosen"))
-  })
+  }, )
   
 
   const onLogout = () => {

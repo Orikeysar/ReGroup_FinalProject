@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-
 import { Button } from "primereact/button";
 import { DataView } from "primereact/dataview";
 import { OrderList } from 'primereact/orderlist';
-
-import { userDataTest } from "../asset/UserDataExample";
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { AutoComplete } from "primereact/autocomplete";
@@ -15,17 +12,23 @@ function FriendsListCard() {
 //array for search friend
   const [selectedNames, setSelectedNames] = useState(null);
   const [filteredNames, setFilteredNames] = useState(null);
-  
-  const [userData, setUserData] = useState(() => {
-    const user = JSON.parse(localStorage.getItem("userData"));
+
+  const [activeUser, setactiveUser] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
 
 
   useEffect(() => {
-    
-    setFriends(userData.friendsList);
-  }, [userData.friendsList]);
+    let NewFriendList =[]
+      activeUser.friendsList.map((item)=>{
+  let  date = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(item.timeStamp.seconds) 
+  item.timeStamp = date;
+   return NewFriendList.push(item)
+  })
+   setFriends(NewFriendList) 
+   
+  }, [activeUser.friendsList]);
 
   
 //when click on View froend profile
@@ -43,6 +46,7 @@ return <div>
 
     }
     return (
+      
       <div className="col-12 mt-4">
         <div className="grid grid-cols-4 gap-3 text-center ">
           <div className="flex-column">
@@ -55,6 +59,7 @@ return <div>
           </div>
           <div className="flex-column align-items-center gap-3">
             <span className="flex align-items-center gap-2">
+             
               <span className="font-semibold ">{product.timeStamp}</span>
             </span>
           </div>

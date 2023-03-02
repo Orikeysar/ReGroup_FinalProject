@@ -8,9 +8,11 @@ import { FaTrash } from "react-icons/fa";
 import "primeicons/primeicons.css";
 import { doc, setDoc } from "firebase/firestore"; 
 import {db} from "../FirebaseSDK"
-
+import { getAuth } from "firebase/auth";
 
 function CoursesList() {
+  const auth = getAuth();
+  
   const navigate = useNavigate();
   const [activeUser, setActiveUser] = useState(() => {
     // Read the initial value of the user data from localStorage
@@ -26,7 +28,6 @@ function CoursesList() {
     setCoursesUserList(selectedCourses);
   
     let user = {
-      id: activeUser.id,
       name: activeUser.name,
       email: activeUser.email,
       degree: activeUser.degree,
@@ -39,14 +40,13 @@ function CoursesList() {
 
     };
     localStorage.setItem("activeUser", JSON.stringify(user));
-    await setDoc(doc(db, "users", user.id), user);
+    await setDoc(doc(db, "users", auth.currentUser.uid), user);
 
 
   };
   const handleDelete = async(id) => {
     const updatedCourses = couresUserList.filter((course) => course.id !== id);
       let user = {
-      id: activeUser.id,
       name: activeUser.name,
       email: activeUser.email,
       degree: activeUser.degree,
@@ -62,7 +62,7 @@ function CoursesList() {
     localStorage.setItem("activeUser", JSON.stringify(user));
     setCoursesUserList(updatedCourses);
     setSelectedCourses(updatedCourses);
-    const response= await setDoc(doc(db, "users", user.id), user);
+    const response= await setDoc(doc(db, "users", auth.currentUser.uid), user);
     console.log(response)
 
   };

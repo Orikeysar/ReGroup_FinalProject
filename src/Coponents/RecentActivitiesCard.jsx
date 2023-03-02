@@ -6,12 +6,16 @@ import { RxCounterClockwiseClock } from "react-icons/rx";
 import { Avatar } from "@mui/material";
 
 function RecentActivitiesCard() {
+
+  
+  const [date, setDate] =useState(new Date())
   const navigate = useNavigate();
-  const [userData, setUserData] = useState(() => {
+
+  const [activeUser, setActiveUser] = useState(() => {
     // Read the initial value of the user data from localStorage
-    const storedUserData = localStorage.getItem("userData");
+    const storedactiveUser = localStorage.getItem("activeUser");
     // If there is a stored value, parse it and use it as the initial state
-    return JSON.parse(storedUserData);
+    return JSON.parse(storedactiveUser);
   });
   const [activitiesTypeGroups, setActivitiesTypeGroups] = useState([]);
   const [activitiesTypeGeneral, setActivitiesTypeGeneral] = useState([]);
@@ -20,9 +24,12 @@ function RecentActivitiesCard() {
   const [type, setType] = useState("General");
 //בודק אם יש משתמש ואם יש לו פעילויות אחרונות. ויוצר מערכים לקבוצות וכללי
   useEffect(() => {
-    if (userData && userData.recentActivities) {
-      const { groups, general } = userData.recentActivities.reduce(
+    if (activeUser && activeUser.recentActivities) {
+      const { groups, general } = activeUser.recentActivities.reduce(
         (acc, item) => {
+         
+         let  date = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(item.timeStamp.seconds) 
+          item.timeStamp = date;
           if (item.type === "groups") {
             acc.groups.push(item);
           } else {
@@ -35,13 +42,9 @@ function RecentActivitiesCard() {
       setActivitiesTypeGroups(groups);
       setActivitiesTypeGeneral(general);
     }
-  }, [userData.recentActivities]);
-  const handleGeneralClick = () => {
-    setType("General");
-  };
-  const handleGroupsClick = () => {
-    setType("Groups");
-  };
+  }, [activeUser, activeUser.recentActivities]);
+  
+
 //משנה את הצבע בחירה 
   const handleClickGeneral=()=>{
     setBtnColorGroups("btn m-2 text-sm glass text-black");
@@ -54,7 +57,7 @@ function RecentActivitiesCard() {
     setBtnColorGeneral("btn m-2 text-sm glass text-black");
     setType("Groups");
   }
-  if(userData.recentActivities.length === 0){
+  if(activeUser.recentActivities.length === 0){
     return (
         <div>
             <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
@@ -98,9 +101,9 @@ function RecentActivitiesCard() {
             
             {activitiesTypeGeneral.map((item) => (
               <div key={uuidv4()} className="grid grid-cols-6 w-full text-center mt-2 ">
-                <div className="col-span-1 self-center align-middle flex flex-nowrap flex-col-reverse items-center"><Avatar image={item.icon} size="sm" shape="circle" className="justify-center flex-auto"/></div>
+                <div className="col-span-1 self-center align-middle flex flex-nowrap flex-col-reverse items-center"><Avatar image={""} size="sm" shape="circle" className="justify-center flex-auto"/></div>
                 <div className="col-span-3">{item.text}</div>
-                <div className="col-span-2">{item.timeStamp}</div>
+                <div className="col-span-2">{ item.timeStamp}</div>
               </div>
             ))}
           </div>
@@ -142,7 +145,7 @@ function RecentActivitiesCard() {
                       // Append a "|" character if this is not the last item
                       const separator = isLast ? "" : " | ";
                       // Return the subject name with the separator character
-                      return sub.name + separator;
+                      return sub + separator;
                     })
                     .join("")
                     }
