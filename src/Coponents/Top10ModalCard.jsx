@@ -1,11 +1,11 @@
 import React from "react";
 import { useState } from "react";
-import { getDoc, doc, collection, getDocs } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
 import { getAuth } from "firebase/auth";
 import { async } from "@firebase/util";
 import { modifyUser } from "../asset/CloudFunctions";
+import { onSnapshot, doc, collection, getDocs, orderBy,query } from "firebase/firestore";
 
 function Top10ModalCard() {
   const [activeUser, setActiveUser] = useState(() => {
@@ -14,16 +14,22 @@ function Top10ModalCard() {
     // If there is a stored value, parse it and use it as the initial state
     return JSON.parse(storedactiveUser);
   });
+  const [top10list, setTop10list] = useState([]);
 
-  const [top10list, setTop10list] = useState(() => {
-    // Read the initial value of the user data from localStorage
-    const storedTop10List = localStorage.getItem("top10");
-    // If there is a stored value, parse it and use it as the initial state
-    return JSON.parse(storedTop10List);
+  const colRef = collection(db, "top10");
+  const q = query(colRef, orderBy("points","desc"));
+  
+
+  onSnapshot(q, (snapshot) => {
+    let newTop10list = [];
+    snapshot.docs.forEach((doc) => {
+      newTop10list.push({ ...doc.data(), id: doc.id });
+    });
+    if (JSON.stringify(newTop10list) !== JSON.stringify(top10list)) {
+      setTop10list(newTop10list);
+    }
   });
-// const top10list=modifyUser();
-  
-  
+
   return (
     <>
       {top10list.map((item) => (
@@ -33,7 +39,7 @@ function Top10ModalCard() {
               activeUser.email == item.email ? " bg-blue-300" : " bg-white"
             }
           >
-            <label>{item.place}</label>
+            <label>{"#" + item.place}</label>
           </th>
           <td
             className={
@@ -43,25 +49,12 @@ function Top10ModalCard() {
             <div className="flex items-center space-x-3">
               <div className="avatar">
                 <div className="mask mask-squircle w-12 h-12">
-                  <img
-                    src={
-                      activeUser.email == item.email
-                        ? activeUser.userImg
-                        : item.userImg
-                    }
-                    alt="error"
-                  />
+                  <img src={item.userImg} alt="error" />
                 </div>
               </div>
               <div>
-                <div className="font-bold">
-                  {activeUser.email == item.email ? activeUser.name : item.name}
-                </div>
-                <div className="text-sm opacity-50">
-                  {activeUser.email == item.email
-                    ? activeUser.points
-                    : item.points}
-                </div>
+                <div className="font-bold">{item.name}</div>
+                <div className="text-sm opacity-50">{item.points}</div>
               </div>
             </div>
           </td>

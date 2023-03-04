@@ -36,8 +36,7 @@ function CoursesList() {
       userImg: activeUser.userImg,
       recentActivities: activeUser.recentActivities,
       points: activeUser.points,
-    userAchievements: activeUser.userAchievements,
-
+      userAchievements: activeUser.userAchievements
     };
     localStorage.setItem("activeUser", JSON.stringify(user));
     await setDoc(doc(db, "users", auth.currentUser.uid), user);

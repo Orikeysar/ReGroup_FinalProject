@@ -18,7 +18,7 @@ function Top10Modal() {
         <label className="modal-box relative h-full" htmlFor="">
         <div className="overflow-x-auto w-full">
           <label className="justify-center text-center text-xl font-bold">
-        <p>Top 10 students</p>
+        <p className="sticky top-0">Top 10 students</p>
       </label>
   <table className="table w-full mb-3">
     {/* head */}
