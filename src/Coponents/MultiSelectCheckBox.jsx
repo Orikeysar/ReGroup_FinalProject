@@ -1,5 +1,4 @@
 import React, { Component, useState } from "react";
-import { dataSelection } from "../asset/DataSelection";
 import { MultiSelect } from "primereact/multiselect";
 
 //theme

@@ -84,6 +84,17 @@ function SignIn() {
   
     localStorage.setItem("achievements", JSON.stringify(achievementsTempList));
   }
+  //GETTING TOP10 LIST AND INSERT TO LOCAL STORAGE
+  let top10TempList = [];
+  const querySnapshotTop10 = await getDocs(collection(db, "top10"));
+  if (querySnapshotTop10) {
+    querySnapshotTop10.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      top10TempList.push(doc.data());
+    });
+  
+    localStorage.setItem("top10", JSON.stringify(top10TempList));
+  }
         navigate("/");
         toast.success("Sign in Complete");
       }

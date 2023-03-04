@@ -12,6 +12,7 @@ function NavBar() {
     window.location.reload()
 
     }
+    
   
   return (
     <>

@@ -15,10 +15,13 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "async_hooks": "^1.0.0",
     "babel-plugin-macros": "^3.1.0",
     "daisyui": "^2.50.2",
     "firebase": "^9.17.1",
+    "firebase-admin": "^11.5.0",
     "firebase-auth": "^0.1.2",
+    "firebase-functions": "^4.2.1",
     "multiselect-react-dropdown": "^2.0.25",
     "primeicons": "^6.0.1",
     "primereact": "^9.2.0",
@@ -31,6 +34,7 @@
     "react-select": "^5.7.0",
     "react-toastify": "^9.1.1",
     "styled-components": "^5.3.6",
+    "util": "^0.12.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

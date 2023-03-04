@@ -1,5 +1,6 @@
 import React from "react";
 import { GiStarMedal, GiRingingBell } from "react-icons/gi";
+import Top10ModalCard from "./Top10ModalCard";
 function Top10Modal() {
   return (
     <div>
@@ -13,15 +14,20 @@ function Top10Modal() {
       </label>
       {/* Put this part before </body> tag */}
       <input type="checkbox" id="my-modal-4" className="modal-toggle" />
-      <label htmlFor="my-modal-4" className="modal cursor-pointer">
-        <label className="modal-box relative" htmlFor="">
-          <h3 className="text-lg font-bold">
-            Congratulations random Internet user!
-          </h3>
-          <p className="py-4">
-            You've been selected for a chance to get one year of subscription to
-            use Wikipedia for free!
-          </p>
+      <label htmlFor="my-modal-4" className="modal cursor-pointer ">
+        <label className="modal-box relative h-full" htmlFor="">
+        <div className="overflow-x-auto w-full">
+          <label className="justify-center text-center text-xl font-bold">
+        <p className="sticky top-0">Top 10 students</p>
+      </label>
+  <table className="table w-full mb-3">
+    {/* head */}
+    <tbody>
+     <Top10ModalCard/>
+    </tbody>
+   
+  </table>
+</div>
         </label>
       </label>
     </div>
