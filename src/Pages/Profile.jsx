@@ -177,6 +177,7 @@ const editImageIconClicked=()=>{
       </div>
       {/* //LAST ACTIVITIES  */}
       <div className=" mt-4 mb-4">
+        {/* //select between components */}
         <div>
           {componentChoosen === "RecentActivities" ? (
             <RecentActivitiesCard />
