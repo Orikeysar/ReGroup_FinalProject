@@ -140,7 +140,7 @@ function FacebookSign() {
           );
         }
         //SET USER TOP10 
-        await setDoc(doc(db, "top10",uuidv4()), {
+        await setDoc(doc(db, "top10",auth.currentUser.uid), {
           name: user.displayName,
           email: user.email,
           points: 0,
