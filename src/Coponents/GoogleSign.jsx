@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
-
+import { uuidv4 } from "@firebase/util";
 import { FaGoogle } from "react-icons/fa";
 function GoogleSign() {
   const navigate = useNavigate();
@@ -126,6 +126,13 @@ function GoogleSign() {
             JSON.stringify(achievementsTempList)
           );
         }
+         //SET USER TOP10 
+        await setDoc(doc(db, "top10",uuidv4()), {
+          name: user.displayName,
+          email: user.email,
+          points: 0,
+          userImg: user.photoURL,
+        });
         navigate("/");
         toast.success("Sign in Complete");
       } else {

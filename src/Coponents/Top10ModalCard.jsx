@@ -22,8 +22,8 @@ function Top10ModalCard() {
 
   onSnapshot(q, (snapshot) => {
     let newTop10list = [];
-    snapshot.docs.forEach((doc) => {
-      newTop10list.push({ ...doc.data(), id: doc.id });
+    snapshot.docs.forEach((doc,index) => {
+      newTop10list.push({ ...doc.data(), id: doc.id, index });
     });
     if (JSON.stringify(newTop10list) !== JSON.stringify(top10list)) {
       setTop10list(newTop10list);
@@ -39,7 +39,7 @@ function Top10ModalCard() {
               activeUser.email == item.email ? " bg-blue-300" : " bg-white"
             }
           >
-            <label>{"#" + item.place}</label>
+            <label>{"#" + (item.index+1)}</label>
           </th>
           <td
             className={

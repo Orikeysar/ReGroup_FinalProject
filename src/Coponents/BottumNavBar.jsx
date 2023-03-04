@@ -28,6 +28,7 @@ function BottumNavBar() {
 
   const handleGroupsNavButton = () => {
     console.log("Groups list clicked!");
+    navigate("/findGroups");
   };
 
   const handleForumNavButton = () => {

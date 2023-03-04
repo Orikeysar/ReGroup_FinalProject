@@ -18,6 +18,7 @@ import {
 import { toast } from "react-toastify";
 import GoogleSign from "../Coponents/GoogleSign";
 import SelectCheckBox from "../Coponents/SelectCheckBox";
+import { uuidv4 } from "@firebase/util";
 
 function SignUp() {
   //SET ICON SHOW PASSWORD
@@ -137,6 +138,13 @@ if (querySnapshotAchie) {
       formDataCopy.timeStamp = serverTimestamp();
 
       await setDoc(doc(db, "users", user.uid), formDataCopy);
+      //SET USER TOP10 
+      await setDoc(doc(db, "top10",uuidv4()), {
+        name: formDataCopy.name,
+        email: formDataCopy.email,
+        points: formDataCopy.points,
+        userImg: formDataCopy.userImg,
+      });
 
       localStorage.setItem("componentChoosen", "UserAchievemeant");
       localStorage.setItem("activeUser", JSON.stringify(formDataCopy));
