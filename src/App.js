@@ -8,6 +8,7 @@ import "./App.css";
 import Profile from "./Pages/Profile";
 import PraivteRoute from "./Coponents/PraivteRoute.jsx";
 import ForgotPassword from "./Pages/ForgotPassword";
+import FindGroups from "./Pages/FindGroups";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
               {/* //to render component inside of component and route you need to route inside route */}
               <Route path="/" element={<PraivteRoute />}>
                 <Route path="/" element={<Profile />} />
+                <Route path="/findGroups" element={<FindGroups />} />
+
               </Route>
 
               <Route path="/sign-in" element={<SignIn />} />

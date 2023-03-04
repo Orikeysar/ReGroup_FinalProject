@@ -40,6 +40,7 @@ function CoursesList() {
     };
     localStorage.setItem("activeUser", JSON.stringify(user));
     await setDoc(doc(db, "users", auth.currentUser.uid), user);
+    
 
 
   };

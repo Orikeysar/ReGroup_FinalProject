@@ -1,6 +1,6 @@
 import React from "react";
 import { FaFacebookF } from "react-icons/fa";
-
+import { uuidv4 } from "@firebase/util";
 import { useNavigate } from "react-router-dom";
 import { getAuth, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
 import {
@@ -139,6 +139,13 @@ function FacebookSign() {
             JSON.stringify(achievementsTempList)
           );
         }
+        //SET USER TOP10 
+        await setDoc(doc(db, "top10",uuidv4()), {
+          name: user.displayName,
+          email: user.email,
+          points: 0,
+          userImg: user.photoURL,
+        });
 
         navigate("/");
         toast.success("Sign in Complete");
