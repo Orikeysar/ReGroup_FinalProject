@@ -72,6 +72,12 @@ function Profile() {
           name,
           degree
         });
+
+        const top10Ref = doc(db, "top10", auth.currentUser.uid);
+        await updateDoc(top10Ref, {
+          name,
+    
+        });
         const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
           const user={
