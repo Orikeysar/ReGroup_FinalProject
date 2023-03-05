@@ -23,6 +23,9 @@ import BottumNavigation from "../Coponents/BottumNavBar";
 import FriendsListCard from "../Coponents/FriendsListCard";
 import UserAchievemeant from "../Coponents/UserAchievemeant";
 import { FiEdit } from "react-icons/fi";
+import { AiOutlineMail } from "react-icons/ai";
+import { BsFilePerson } from "react-icons/bs";
+import { FaUniversity } from "react-icons/fa";
 import ProfileImgEdit from "../Coponents/ProfileImgEdit";
 function Profile() {
   const auth = getAuth();
@@ -102,7 +105,7 @@ function Profile() {
 const editImageIconClicked=()=>{
  
   localStorage.setItem("componentChoosen", "EditImage");
-  navigate("")
+  navigate("/")
 }
 
   return (
@@ -142,13 +145,13 @@ const editImageIconClicked=()=>{
                 </FiEdit></button>
                 
                 </div>
-                <div className="text-xl  bg-transparent">
-                  
+                <div className="text-xl text-center bg-transparent flex flex-row">
+                  <BsFilePerson className="self-center"/>
                     <input
                       type="text"
                       id="name"
                       className={
-                        !changeDetails ? "underline w-5/6  bg-transparent" : "profileName w-5/6"
+                        !changeDetails ? "underline w-5/6  bg-transparent ml-4" : "profileName ml-4 w-5/6 "
                       }
                       disabled={!changeDetails}
                       value={name}
@@ -156,26 +159,29 @@ const editImageIconClicked=()=>{
                     />
                   
                 </div>
-                <div>
-                  <p className="card-text">{activeUser.email}</p>
+                <div className="flex flex-row ">
+                <AiOutlineMail className="self-center"/>
+                  <p  className="card-text ml-4 ">{activeUser.email}</p>
                 </div>
-                <div>
+                <div className=" flex flex-row">
+                  <FaUniversity className="self-center"/>
                   <input
                     type="text"
                     id="degree"
-                    className=""
+                    className="ml-4 "
                     disabled={!changeDetails}
                     value={degree}
                     onChange={onEdit}
                   />
                 </div>
+                <div className="text-center">
                 <button
                   type="button"
-                  className="logOut btn-xs border-gray-500 bg-gray-600 text-white rounded-md mt-2 "
+                  className="logOut btn-xs border-gray-500 bg-gray-600 text-white rounded-md mt-2 justify-center "
                   onClick={onLogout}
                 >
                   Logout
-                </button>
+                </button></div>
               </div>
             </div>
           </div>
