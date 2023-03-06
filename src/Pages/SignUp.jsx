@@ -139,7 +139,7 @@ if (querySnapshotAchie) {
 
       await setDoc(doc(db, "users", user.uid), formDataCopy);
       //SET USER TOP10 
-      await setDoc(doc(db, "top10",uuidv4()), {
+      await setDoc(doc(db, "top10",auth.currentUser.uid), {
         name: formDataCopy.name,
         email: formDataCopy.email,
         points: formDataCopy.points,

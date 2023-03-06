@@ -13,7 +13,7 @@ import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
 import FriendsListCard from "../Coponents/FriendsListCard";
 import UserAchievemeant from "../Coponents/UserAchievemeant";
-import { TreeSelect } from "primereact/treeselect";
+import Map from "../Coponents/Map";
 function FindGroups() {
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
@@ -37,16 +37,14 @@ function FindGroups() {
         <RiGroup2Fill size={30} className=" mr-2 w-max " />
         <p className=" font-bold text-xl">Find Groups</p>
       </div>
-      <div className="card grid justify-center ">
-        <TreeSelect
-          value={selectedCourses}
-          onChange={(e) => setSelectedCourses(e.value)}
-          options={courses}
-          filter
-          className="md:w-20rem"
-          placeholder="Select Item"
-        ></TreeSelect>
+      <div className=" flex justify-center mb-2">
+        <label className=" text-lg">here you can find groups or </label>&nbsp;
+        <label onClick={()=>console.log("create group")} className=" font-bold text-lg hover:drop-shadow-xl">Create new+</label>
       </div>
+      <div className=" p-1 drop-shadow-xl">
+         <Map/>
+      </div>
+     
       <div className="buttomNavBar w-full  absolute bottom-0 pb-4">
         <BottumNavigation />
       </div>

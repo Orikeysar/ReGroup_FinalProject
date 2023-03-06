@@ -27,7 +27,7 @@ function UserAchievemeant() {
   };
   const valueTemplate = (value) => {
     return (
-      <div className="text-white self-center text-center relative left-full  ">
+      <div className="text-white self-center text-center relative  ">
         <React.Fragment>{value + "%"}</React.Fragment>
       </div>
     );

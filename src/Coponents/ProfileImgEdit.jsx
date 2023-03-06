@@ -63,13 +63,17 @@ function ProfileImgEdit() {
               setProfileImageUrl(downloadURL);
 
               const userRef = doc(db, "users", auth.currentUser.uid);
-
+              const top10Ref = doc(db, "top10", auth.currentUser.uid);
+              //update user image in data
               await updateDoc(userRef, {
                 userImg: downloadURL,
           
               });
-
-              
+//update top 10 image in data
+              await updateDoc(top10Ref, {
+                userImg: downloadURL,
+          
+              });
               const docSnap = await getDoc(userRef);
         //Check if user exists,if not, create user
             if (docSnap.exists()) {
