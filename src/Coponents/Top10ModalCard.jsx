@@ -4,7 +4,6 @@ import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
 import { getAuth } from "firebase/auth";
 import { async } from "@firebase/util";
-import { modifyUser } from "../asset/CloudFunctions";
 import { onSnapshot, doc, collection, getDocs, orderBy,query } from "firebase/firestore";
 
 function Top10ModalCard() {
