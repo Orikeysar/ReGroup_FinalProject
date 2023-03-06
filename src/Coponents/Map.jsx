@@ -11,7 +11,7 @@ export default function SetMap() {
   return <Map />;
 }
 
-function Map() {
+function Map(props) {
  //החזרת המפה כשהמרכז שלה ( ברירת מחדל ) היא רופין ובתוכה של הסימניות שנרנדר דינמי
   return (
     <>
@@ -20,7 +20,7 @@ function Map() {
         center={{ lat: 32.342884, lng: 34.912755 }}
         mapContainerClassName=" map-container"
       >
-        <Marker position={{ lat: 32.342884, lng: 34.912755 }} />
+       {props.isMarkerShown && <Marker position={{ lat: 32.342884, lng: 34.912755 }} /> } 
       </GoogleMap>
     </>
   );
