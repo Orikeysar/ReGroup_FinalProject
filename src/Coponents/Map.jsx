@@ -1,52 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import Spinner from "./Spinner";
+import { db } from "../FirebaseSDK";
+import {
+  onSnapshot,
+  doc,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 
-function Map() {
-  const { isLoaded, loadError } = useLoadScript({
+export default function Map() {
+  // החזרת המפה כשהמרכז שלה ( ברירת מחדל ) היא רופין ובתוכה של הסימניות שנרנדר דינמי מהדאטה
+  const [activeGroups, setActiveGroups] = useState([]);
+  const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyCt1tGfbI6o0A6dcCFTstFsPlAUEQYaYS4",
   });
+  
+  if (!isLoaded) return <Spinner />;
 
-  const [currentCoordinates, setCurrentCoordinates] = useState([
-    32.342884, 34.912755,
-  ]);
-  const [allGroups, setAllGroups] = useState([{lat: 32.342884, lng: 34.912755 },{lat: 32.142884, lng: 34.712755 },{lat: 32.942884, lng: 34.112755 }]);
-  //פונקצייה להזזת המרקר ממקום למקום
-  function ArrayAllGroups({ allGroups,position }) {
-    useEffect(() => {
-      allGroups.map((marker) => {
-        return (
-          <Marker
-            position={{
-              lat: marker.lat,
-              lng: marker.lng,
-            }}
+  const colRef = collection(db, "activeGroups");
+  const q = query(colRef);
 
-            // {...rest}
-          />
-        );
-      });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-  }
+  onSnapshot(q, (snapshot) => {
+    let newActiveGroups = [];
+    snapshot.docs.forEach((doc, index) => {
+      newActiveGroups.push({ ...doc.data(), id: doc.id, index });
+    });
+    if (JSON.stringify(newActiveGroups) !== JSON.stringify(activeGroups)) {
+      setActiveGroups(newActiveGroups);
+    }
+  });
+  
 
-  //החזרת המפה כשהמרכז שלה ( ברירת מחדל ) היא רופין ובתוכה של הסימניות שנרנדר דינמי
   return (
     <>
-      {/* //מגדיר את האישור שלנו לגוגל מאפס בעזרת האייפיאי */}
-      {loadError && <p>{loadError}</p>}
-      {!isLoaded && <p>Loading .. </p>}
-      {isLoaded && (
-        <GoogleMap
-          zoom={16}
-          center={{ lat: 32.342884, lng: 34.912755 }}
-          mapContainerClassName=" map-container"
-        >
-          <ArrayAllGroups arrayallgroups={ArrayAllGroups}  />
-        </GoogleMap>
-      )}
+       <GoogleMap
+        zoom={16}
+        center={{ lat: 32.342884, lng: 34.912755 }}
+        mapContainerClassName=" map-container"
+      >
+        {activeGroups.map((item) => (
+          <Marker
+            key={item.index}
+            title={item.groupTittle}
+            position={{
+              lat: item.location.latitude,
+              lng: item.location.longitude,
+            }}            
+          />
+        ))}
+      </GoogleMap> 
+      
     </>
   );
 }
-
-export default Map;

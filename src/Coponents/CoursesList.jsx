@@ -51,7 +51,7 @@ function CoursesList() {
       email: activeUser.email,
       degree: activeUser.degree,
       friendsList:activeUser.friendsList , 
-      courses: selectedCourses,
+      courses: updatedCourses,
       userImg: activeUser.userImg,
       recentActivities: activeUser.recentActivities,
       points: activeUser.points,

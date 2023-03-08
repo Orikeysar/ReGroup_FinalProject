@@ -14,7 +14,10 @@ import BottumNavigation from "../Coponents/BottumNavBar";
 import FriendsListCard from "../Coponents/FriendsListCard";
 import UserAchievemeant from "../Coponents/UserAchievemeant";
 import Map from "../Coponents/Map";
+
 function FindGroups() {
+  const navigate = useNavigate();
+
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
@@ -39,7 +42,7 @@ function FindGroups() {
       </div>
       <div className=" flex justify-center mb-2">
         <label className=" text-lg">here you can find groups or </label>&nbsp;
-        <label onClick={()=>console.log("create group")} className=" font-bold text-lg hover:drop-shadow-xl">Create new+</label>
+        <label onClick={()=>navigate("/createGroups")}  className=" font-bold text-lg hover:drop-shadow-xl underline">Create new+</label>
       </div>
       <div className=" p-1 drop-shadow-xl">
         <Map/>
