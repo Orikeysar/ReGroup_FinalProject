@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import useMoveMarker from "../Hooks/useMoveMarker";
 import { GrLocationPin} from "react-icons/gr";

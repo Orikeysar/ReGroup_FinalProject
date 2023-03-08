@@ -15,6 +15,7 @@ import BottumNavigation from "../Coponents/BottumNavBar";
 import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
 
 function AddGroup() {
+  const navigate=useNavigate()
     const [activeUser, setActiveUser] = useState(() => {
         const user = JSON.parse(localStorage.getItem("activeUser"));
         return user;
@@ -54,10 +55,10 @@ time:'10:00',
 
      const onSubmitForm=()=>{
 
-let [coordinates, setDestination] = useMoveMarker([
-          position.lat,
-          position.lng,
-        ]);
+// let [coordinates, setDestination] = useMoveMarker([
+//           position.lat,
+//           position.lng,
+//         ]);
         
       }
       return (
@@ -73,7 +74,7 @@ let [coordinates, setDestination] = useMoveMarker([
           </div>
           <div className=" flex justify-center mb-2">
             <label className=" text-lg">here you can go back to find groups</label>&nbsp;
-            <label onClick={()=>console.log("Find group")} className=" font-bold text-lg hover:drop-shadow-xl underline">Find Group</label>
+            <label onClick={()=>navigate("/findGroups")} className=" font-bold text-lg hover:drop-shadow-xl underline">Find Group</label>
           </div>
 {/* //creat form div */}
 <div className="form text-center">
