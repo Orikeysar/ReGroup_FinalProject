@@ -7,7 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Spinner from "../Coponents/Spinner";
+import useMoveMarker from "../Hooks/useMoveMarker";
 
 import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
@@ -23,8 +23,42 @@ function AddGroup() {
         JSON.parse(localStorage.getItem("courses"))
       );
       const [selectedCourses, setSelectedCourses] = useState(null);
-      if (activeUser == null) {
-        return <Spinner />;
+      const [cordinateMarker, setCordinateMarker] = useState([]);
+      const [newGroup,setNewGroup] = useState({
+        course: "",
+        subject: "",
+        participants: "",
+        manager:"",
+discription: "",
+time:'10:00',
+
+      })
+      const [time, setTime] = useState('10:00');
+      const {course,subject,manager,participants,discription} = newGroup
+
+      const handleChange = (newValue) => {  
+        setTime(newValue);  
+      };  
+      const onChange = (e) => {
+        setNewGroup((prevState) => ({
+          ...prevState,
+    
+          //CHECK WHAT THE ID IN THE UNPUT THAT CHANGE AND INSERT USER INPUT
+          //LIKE THIS YOU CAN MENAGE setText TOGETHER ON MANY TARGETS
+          [e.target.id]: e.target.value,
+         
+        })); 
+        console.log(`name: ${e.target.id}+ value :${e.target.value}`)
+      };
+
+
+     const onSubmitForm=()=>{
+
+let [coordinates, setDestination] = useMoveMarker([
+          position.lat,
+          position.lng,
+        ]);
+        
       }
       return (
         <div className="container">
@@ -41,8 +75,25 @@ function AddGroup() {
             <label className=" text-lg">here you can go back to find groups</label>&nbsp;
             <label onClick={()=>console.log("Find group")} className=" font-bold text-lg hover:drop-shadow-xl underline">Find Group</label>
           </div>
-          <div className=" p-1 drop-shadow-xl">
-             <MyAddGroupMapComponent isMarkerShown/>
+{/* //creat form div */}
+<div className="form text-center">
+  {/* //time picker */}
+  <div className="flex row-auto mt-2 ">  
+        <p className="mr-2">Time of Arival:</p>
+        <input type={"time"} id="time" onChange={onChange} className="border rounded-lg"></input> 
+      </div>  
+{/* //description */}
+<textarea id="discription" className="textarea textarea-primary textarea-bordered w-5/6 items-center mt-2"onChange={onChange} placeholder="Write your group discription"></textarea>
+</div>
+{/* //submit button */}
+<div>
+<button onSubmit={onSubmitForm} className="btn">Submit</button>
+
+</div>
+
+
+          <div className="map p-1 drop-shadow-xl">
+             <MyAddGroupMapComponent isMarkerShown />
           </div>
          
           <div className="buttomNavBar w-full  absolute bottom-0 pb-4">

@@ -42,7 +42,7 @@ function FindGroups() {
         <label onClick={()=>console.log("create group")} className=" font-bold text-lg hover:drop-shadow-xl">Create new+</label>
       </div>
       <div className=" p-1 drop-shadow-xl">
-        
+        <Map/>
       </div>
      
       <div className="buttomNavBar w-full  absolute bottom-0 pb-4">
