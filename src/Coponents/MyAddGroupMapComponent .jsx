@@ -17,9 +17,7 @@ function MapAdd(setCordinateMarker) {
     googleMapsApiKey: "AIzaSyCt1tGfbI6o0A6dcCFTstFsPlAUEQYaYS4",
   });
 
-  const onMouseOver = (e) => {
-    console.log("maouse in marker");
-  };
+
 
   //פונקצייה להזזת המרקר ממקום למקום
   function TravellingMarker({ position, ...rest }) {
@@ -35,7 +33,7 @@ function MapAdd(setCordinateMarker) {
 
     return (
       <Marker
-        onMouseOver={onMouseOver}
+       
         position={{
           lat: coordinates[0],
           lng: coordinates[1],

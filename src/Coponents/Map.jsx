@@ -84,7 +84,7 @@ export default function Map() {
                   title: { selectedMarker.groupTittle}
                </h2>
                 <div>subjects: {selectedMarker.groupTags.forEach((tag)=>{
-                     <p>#{tag}</p>
+                     <p key={tag}>#{tag}</p>
                 })}</div>
                 <p>discription: {selectedMarker.description}</p>
                 {/* <p>time: {selectedMarker.time.nanoseconds}</p> */}
