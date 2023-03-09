@@ -61,64 +61,65 @@ function FindGroups() {
   });
   //המשתנה הזה מכיל את כל הנושאים השייכים לקורס שהמשתמש בחר
   const [subjectsOfCourses, setSubjectsOfCourses] = useState(null);
-//איתחול ראשוני של החירות בפועל
+  //איתחול ראשוני של החירות בפועל
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState(null);
   const [selectedNumber, setSelectedNumber] = useState(null);
   const handleCourseChange = (event, value) => {
     setSelectedCourse(value);
-   
+
     if (value) {
       courses.forEach((element) => {
         if (element.id === value) {
           setSubjectsOfCourses(element.subjects);
         }
-
       });
     } else {
       setSubjectsOfCourses(null);
-    } 
+    }
   };
-console.log(selectedCourse)
+
   const handleSubjectsChange = (event, value) => {
     setSelectedSubjects(value);
   };
   const handleNumberChange = (event, value) => {
     setSelectedNumber(value);
-    
   };
-  useEffect(()=>{
-    if(selectedCourse!==null || selectedSubjects!==null || selectedNumber!==null){
+  useEffect(() => {
+    const filterMarkers = () => {
+      let newFilter = activeGroups;
+      console.log(newFilter);
+      if (selectedCourse) {
+        newFilter = newFilter.filter(
+          (group) => group.groupTittle === selectedCourse
+        );
+      }
+      if (selectedSubjects && selectedSubjects.length > 0) {
+        newFilter = newFilter.filter((group) =>
+          selectedSubjects.some((item) => group.groupTags.includes(item))
+        );
+      }
+      if (selectedNumber) {
+        newFilter = newFilter.filter(
+          (group) => group.groupSize <= parseInt(selectedNumber)
+        );
+      } 
+
+      console.log(newFilter);
+      setFilteredGroups(newFilter);
+    };
+
+    if (
+      selectedCourse !== null ||
+      selectedSubjects !== null ||
+      selectedNumber !== null
+    ) {
       filterMarkers();
-
-    }
-  },[])
+    }else {
+        setFilteredGroups(activeGroups);
+      }
+  }, [activeGroups, selectedCourse, selectedNumber, selectedSubjects]);
   //סינון הצגת הקבוצות לפי בחירת המשתמש
-  const filterMarkers = () => {
-    let newFilter=activeGroups;
-    if (selectedCourse) {
-      newFilter = newFilter.filter(
-        (group) => group.groupTittle === selectedCourse
-      );
-    }
-    if (selectedSubjects && selectedSubjects.length > 0) {
-      newFilter = newFilter.filter((group) =>
-      selectedSubjects.includes(group.subject)
-      );
-    }
-    if (selectedNumber) {
-      newFilter = newFilter.filter(
-        (group) => group.groupSize === selectedNumber
-      );
-    }
-    setFilteredGroups(newFilter);
-  };
-
-  if (activeUser == null) {
-    return <Spinner />;
-  }
-  
-
 
   return (
     <div className="container">
@@ -179,7 +180,7 @@ console.log(selectedCourse)
         />
       </div>
       <div className=" p-1 drop-shadow-xl">
-        <Map filteredGroups={filteredGroups} />
+        <Map filteredGroups={filteredGroups} isMarkerShown />
       </div>
 
       <div className="buttomNavBar w-full  absolute bottom-0 pb-4">
