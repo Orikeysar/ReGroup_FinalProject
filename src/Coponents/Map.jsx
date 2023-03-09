@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { GoogleMap, useLoadScript, Marker, InfoWindow, } from "@react-google-maps/api";
-import { RiGroup2Fill } from "react-icons/ri";
+import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import Spinner from "./Spinner";
 import { db } from "../FirebaseSDK";
 import {
@@ -11,90 +10,64 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import { formatRelative } from "date-fns";
 
-
-export default function Map() {
+export default function Map({ filteredGroups }) {
   // החזרת המפה כשהמרכז שלה ( ברירת מחדל ) היא רופין ובתוכה של הסימניות שנרנדר דינמי מהדאטה
-  const [activeGroups, setActiveGroups] = useState([]);
+  // const [activeGroups, setActiveGroups] = useState([]);
+  // const [filteredGroups, setFilteredGroups] = useState(activeGroups);
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyCt1tGfbI6o0A6dcCFTstFsPlAUEQYaYS4",
   });
 
-  //map props
-  const [markers, setMarkers] = React.useState([]);
-  const [selectedMarker, setSelectedMarker] = React.useState(null);
-  const onMapClick = React.useCallback((e) => {
-    setMarkers((current) => [
-      ...current,
-      {
-        lat: e.latLng.lat(),
-        lng: e.latLng.lng(),
-        time: new Date(),
-      },
-    ]);
-  }, []);
-
   if (!isLoaded) return <Spinner />;
 
-  const colRef = collection(db, "activeGroups");
-  const q = query(colRef);
+  // const colRef = collection(db, "activeGroups");
+  // const q = query(colRef);
 
-  onSnapshot(q, (snapshot) => {
-    let newActiveGroups = [];
-    snapshot.docs.forEach((doc, index) => {
-      newActiveGroups.push({ ...doc.data(), id: doc.id, index });
-    });
-    if (JSON.stringify(newActiveGroups) !== JSON.stringify(activeGroups)) {
-      setActiveGroups(newActiveGroups);
-    }
-  });
+  // onSnapshot(q, (snapshot) => {
+  //   let newActiveGroups = [];
+  //   snapshot.docs.forEach((doc, index) => {
+  //     newActiveGroups.push({ ...doc.data(), id: doc.id, index });
+  //   });
+  //   if (JSON.stringify(newActiveGroups) !== JSON.stringify(activeGroups)) {
+  //     setActiveGroups(newActiveGroups);
+  //   }
+  // });
+
+  // const filterMarkers =()=> {
+  //   setFilteredGroups(activeGroups);
+  //   if (filtters.course) {
+  //     filteredGroups = filteredGroups.filter((group) => group.groupTittle === filtters.course);
+  //   }
+  //   if (filtters.subjects && filtters.subjects.length > 0) {
+  //     filteredGroups = filteredGroups.filter((group) => filtters.subjects.includes(group.subject));
+  //   }
+  //   if (filtters.number) {
+  //     filteredGroups = filteredGroups.filter((group) => group.groupSize === filtters.number);
+  //   }
+  //   setFilteredGroups(filteredGroups);
+  // }
+    
   
-
   return (
     <>
-       <GoogleMap
+      <GoogleMap
         zoom={16}
         center={{ lat: 32.342884, lng: 34.912755 }}
         mapContainerClassName=" map-container"
       >
-        {activeGroups.map((item) => (
+        {filteredGroups.map((item) => (
           <Marker
             key={item.index}
             title={item.groupTittle}
             position={{
               lat: item.location.latitude,
               lng: item.location.longitude,
-            }} 
-            onClick={() => {
-              setSelectedMarker(item);
             }}
           />
         ))}
-        {selectedMarker ? (
-          <InfoWindow
-            position={{ lat: selectedMarker.location.latitude, lng: selectedMarker.location.longitude }}
-            onCloseClick={() => {
-              setSelectedMarker(null);
-            }}
-          >
-            <div className="m-2">
-              <h2>
-               
-                  title: { selectedMarker.groupTittle}
-               </h2>
-                <div>subjects: {selectedMarker.groupTags.forEach((tag)=>{
-                     <p key={tag}>#{tag}</p>
-                })}</div>
-                <p>discription: {selectedMarker.description}</p>
-                {/* <p>time: {selectedMarker.time.nanoseconds}</p> */}
-              
-              {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */ }
-            </div>
-          </InfoWindow>
-        ) : null}
-      </GoogleMap> 
-      
+      </GoogleMap>
     </>
   );
 }
