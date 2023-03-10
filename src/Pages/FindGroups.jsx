@@ -183,7 +183,7 @@ function FindGroups() {
         <Map filteredGroups={filteredGroups} isMarkerShown />
       </div>
 
-      <div className="buttomNavBar w-full  absolute bottom-0 pb-4">
+      <div className="buttomNavBar w-full  sticky bottom-0 pb-4 ">
         <BottumNavigation />
       </div>
     </div>
