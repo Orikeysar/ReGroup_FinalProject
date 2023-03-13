@@ -119,8 +119,7 @@ function FindGroups() {
         setFilteredGroups(activeGroups);
       }
   }, [activeGroups, selectedCourse, selectedNumber, selectedSubjects]);
-  //סינון הצגת הקבוצות לפי בחירת המשתמש
-
+  
   return (
     <div className="container">
       {/* //TOP NAVBAR */}
@@ -183,7 +182,7 @@ function FindGroups() {
         <Map filteredGroups={filteredGroups} isMarkerShown />
       </div>
 
-      <div className="buttomNavBar w-full  sticky bottom-0 pb-4 ">
+      <div className="buttomNavBar w-full sticky bottom-0 pb-4">
         <BottumNavigation />
       </div>
     </div>
