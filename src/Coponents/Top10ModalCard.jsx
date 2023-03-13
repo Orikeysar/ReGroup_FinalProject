@@ -35,14 +35,14 @@ function Top10ModalCard() {
         <tr key={item.email}>
           <th
             className={
-              activeUser.email == item.email ? " bg-blue-300" : " bg-white"
+              activeUser.email === item.email ? " bg-blue-300" : " bg-white"
             }
           >
             <label>{"#" + (item.index+1)}</label>
           </th>
           <td
             className={
-              activeUser.email == item.email ? " bg-blue-300" : " bg-white"
+              activeUser.email === item.email ? " bg-blue-300" : " bg-white"
             }
           >
             <div className="flex items-center space-x-3">

@@ -2,6 +2,7 @@
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
+
   ],
   theme: {
     
@@ -9,6 +10,7 @@ module.exports = {
   },
  
   plugins: [require("daisyui")],
+
   daisyui: {
     styled: true,
     themes: true,
@@ -18,6 +20,7 @@ module.exports = {
     rtl: false,
     prefix: "",
     darkTheme: "light",
-  },
 
+  },
+ 
 }
