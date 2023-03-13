@@ -21,6 +21,7 @@ import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
 import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
 import { Description } from "@mui/icons-material";
+import FriendsListCard from "../Coponents/FriendsListCard";
 
 function AddGroup() {
   const navigate=useNavigate()
@@ -260,11 +261,16 @@ return(
         <input type={"time"} id="time" onChange={onChange} className="border rounded-lg"></input> 
       </div>  
 {/* //description */}
-<textarea id="discription" className="textarea textarea-primary textarea-bordered w-5/6 items-center mt-2"onChange={onChange} placeholder="Write your group discription"></textarea>
-{/* //submit button */}
-<div></div>
-<button onClick={onSubmitForm} className="btn">Submit</button>
+<textarea id="description" className="textarea textarea-primary textarea-bordered w-5/6 items-center mt-2"onChange={onChange} placeholder="Write your group discription"></textarea>
+<div>
 
+</div>
+
+
+{/* //submit button */}
+<div className="mb-2 mt-2">
+<button onClick={onSubmitForm} className="btn">Submit</button>
+</div>
 </div>
 
 

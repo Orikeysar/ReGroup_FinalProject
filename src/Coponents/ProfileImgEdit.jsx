@@ -9,7 +9,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { updateDoc, doc ,getDoc} from "firebase/firestore";
+import { updateDoc, doc, getDoc } from "firebase/firestore";
 
 function ProfileImgEdit() {
   const auth = getAuth();
@@ -20,13 +20,11 @@ function ProfileImgEdit() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    
-
     // Store image in firebase
     const storeImage = async (image) => {
       return new Promise((resolve, reject) => {
         const storage = getStorage();
-        const fileName = auth.currentUser.uid
+        const fileName = auth.currentUser.uid;
 
         const storageRef = ref(storage, "images/" + fileName);
         const metadata = {
@@ -58,44 +56,36 @@ function ProfileImgEdit() {
           },
           () => {
             // Upload completed successfully, now we can get the download URL
-            getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-              console.log('File available at', downloadURL);
-              setProfileImageUrl(downloadURL);
+            getDownloadURL(uploadTask.snapshot.ref).then(
+              async (downloadURL) => {
+                console.log("File available at", downloadURL);
+                setProfileImageUrl(downloadURL);
 
-              const userRef = doc(db, "users", auth.currentUser.uid);
-              const top10Ref = doc(db, "top10", auth.currentUser.uid);
-              //update user image in data
-              await updateDoc(userRef, {
-                userImg: downloadURL,
-          
-              });
-//update top 10 image in data
-              await updateDoc(top10Ref, {
-                userImg: downloadURL,
-          
-              });
-              const docSnap = await getDoc(userRef);
-        //Check if user exists,if not, create user
-            if (docSnap.exists()) {
-           const user={
-            data:docSnap.data()
-           } 
-          localStorage.setItem("componentChoosen", "UserAchievemeant");
-          localStorage.setItem("activeUser",JSON.stringify(user.data))
-          toast.success("image saved and upload to your profile");
+                const userRef = doc(db, "users", auth.currentUser.uid);
+                const top10Ref = doc(db, "top10", auth.currentUser.uid);
+                //update user image in data
+                await updateDoc(userRef, {
+                  userImg: downloadURL,
+                });
+                //update top 10 image in data
+                await updateDoc(top10Ref, {
+                  userImg: downloadURL,
+                });
+                const docSnap = await getDoc(userRef);
+                //Check if user exists,if not, create user
+                if (docSnap.exists()) {
+                  const user = {
+                    data: docSnap.data(),
+                  };
+                  localStorage.setItem("componentChoosen", "UserAchievemeant");
+                  localStorage.setItem("activeUser", JSON.stringify(user.data));
+                  toast.success("image saved and upload to your profile");
 
-              window.location.reload();
-        } 
-
-
-
-             
-              
-
-
-            });
+                  window.location.reload();
+                }
+              }
+            );
           }
-          
         );
       });
     };
@@ -103,13 +93,12 @@ function ProfileImgEdit() {
     storeImage(profileImage);
 
     // Update user Image
-   
   };
 
   const onMutate = (e) => {
     // Files
     if (e.target.files) {
-      setProfileImage( e.target.files[0]);
+      setProfileImage(e.target.files[0]);
     }
   };
 
