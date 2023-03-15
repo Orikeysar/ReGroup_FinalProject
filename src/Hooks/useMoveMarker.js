@@ -37,7 +37,7 @@ function useMarkerMove(initialValue, { delta = 100, delay = 20 } = {}) {
   );
 
   function setPosition(coordinates) {
-    console.log("coordinates", coordinates);
+    // console.log("coordinates", coordinates);
     const [latitude, longitude] = coordinates;
     setCurrentDelta(0);
     setCurrentDeltaPosition([

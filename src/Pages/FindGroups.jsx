@@ -1,12 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
-import { getAuth } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Spinner from "../Coponents/Spinner";
 import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
 import Map from "../Coponents/Map";
@@ -16,8 +13,6 @@ import Chip from "@mui/material/Chip";
 import {
   onSnapshot,
   collection,
-  getDocs,
-  orderBy,
   query,
 } from "firebase/firestore";
 

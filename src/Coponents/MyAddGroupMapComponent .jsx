@@ -4,7 +4,7 @@ import useMoveMarker from "../Hooks/useMoveMarker";
 import { GrLocationPin} from "react-icons/gr";
 
 //פונקציית המפה  עצמה
-function MapAdd(setCordinateMarker) {
+function MapAdd({setCordinates}) {
   const [currentCoordinates, setCurrentCoordinates] = useState([
     32.342884, 34.912755,
   ]);
@@ -30,6 +30,7 @@ function MapAdd(setCordinateMarker) {
 
     useEffect(() => {
       setDestination([position.lat, position.lng]);
+     
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -51,7 +52,7 @@ function MapAdd(setCordinateMarker) {
       {loadError && <p>{loadError}</p>}
       {!isLoaded && <p>Loading .. </p>}
       {isLoaded && (
-        <div>
+        <div className="w-full">
           <div className="createGroupMapHeader">
             <button
               onClick={() => {
@@ -60,6 +61,10 @@ function MapAdd(setCordinateMarker) {
                   lng: 34.91201501449191,
                 });
                 setCurrentCoordinates([32.34219292102018, 34.91201501449191]);
+                setCordinates({
+                  lat: 32.34219292102018,
+                  lng: 34.91201501449191,
+                })
               }}
               className="btn btn-sm m-2  bg-slate-200 text-black "
             >
@@ -73,6 +78,10 @@ function MapAdd(setCordinateMarker) {
                   lng: 34.91350448033373,
                 });
                 setCurrentCoordinates([32.34358598195018, 34.91350448033373]);
+                setCordinates({
+                  lat: 32.34358598195018,
+                  lng: 34.91350448033373,
+                })
               }}
               className="btn btn-sm m-2 bg-slate-200 text-black"
             >
@@ -86,6 +95,10 @@ function MapAdd(setCordinateMarker) {
                   lng: 34.91045634687421,
                 });
                 setCurrentCoordinates([32.34186000228468, 34.91045634687421]);
+                setCordinates({
+                  lat: 32.34186000228468,
+                  lng: 34.91045634687421,
+                })
               }}
               className="btn btn-sm m-2 bg-slate-200 text-black"
             >
@@ -99,7 +112,8 @@ function MapAdd(setCordinateMarker) {
             center={{ lat: 32.342884, lng: 34.912755 }}
             mapContainerClassName=" map-container"
             onClick={(e) => {
-              setCurrentCoordinates([e.latLng.lat(), e.latLng.lng()]);
+              setCurrentCoordinates([e.latLng.lat(), e.latLng.lng()]); 
+              setCordinates({lat:e.latLng.lat(), lng:e.latLng.lng()})
             }}
           >
             <TravellingMarker
