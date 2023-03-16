@@ -15,7 +15,9 @@ function FillterGroups({handleFillterGroups}) {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  //משיכה של הדאטה בזמן אמת
+  //סהכ כמה קבוצות יש 
+  const [totalGroupsCount, setTotalGroupsCount] = useState(0);
+  //משיכת הקבוצות הפעילות מהדאטה בזמן אמת והכנסה לערך
   const [activeGroups, setActiveGroups] = useState([]);
   const colRef = collection(db, "activeGroups");
   const q = query(colRef);
@@ -29,13 +31,14 @@ function FillterGroups({handleFillterGroups}) {
     if (JSON.stringify(newActiveGroups) !== JSON.stringify(activeGroups)) {
       setActiveGroups(newActiveGroups);
       handleFillterGroups(newActiveGroups);
+      setTotalGroupsCount(newActiveGroups.length)
     }
   });
-
+//משיכת הקורסים שיש מהלוקאל
   const [courses, setCourses] = useState(
     JSON.parse(localStorage.getItem("courses"))
   );
-
+//יצירת מערך של הנושאים בכל הקורסים
   const [subjects, setSubjects] = useState(() => {
     let newListSubjects = [];
     courses.map((item) => {
@@ -45,11 +48,13 @@ function FillterGroups({handleFillterGroups}) {
     });
     return newListSubjects;
   });
+
+  //איתחול ראשוני של בחירות בפועל
   const [subjectsOfCourses, setSubjectsOfCourses] = useState(null);
-  //איתחול ראשוני של החירות בפועל
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState(null);
   const [selectedNumber, setSelectedNumber] = useState(null);
+  //בעת בחירת קורס - הכנסתו לבחירה ויצירת מערך שיראה רק את הנושאים הקשורים לאותו הקורס
   const handleCourseChange = (event, value) => {
     setSelectedCourse(value);
 
@@ -63,13 +68,15 @@ function FillterGroups({handleFillterGroups}) {
       setSubjectsOfCourses(null);
     }
   };
-
+//בחירת הנושאים
   const handleSubjectsChange = (event, value) => {
     setSelectedSubjects(value);
   };
+  //בחירת גודל הקבוצה
   const handleNumberChange = (event, value) => {
     setSelectedNumber(value);
   };
+  //יצירת המערך המעודכן של הקבוצות המסוננות לשליחה למפה ליצירת מארקרים
   useEffect(() => {
     const filterMarkers = () => {
       let newFilter = activeGroups;
@@ -92,6 +99,7 @@ function FillterGroups({handleFillterGroups}) {
 
       console.log(newFilter);
       handleFillterGroups(newFilter);
+      setTotalGroupsCount(newFilter.length)
     };
 
     if (
@@ -102,6 +110,8 @@ function FillterGroups({handleFillterGroups}) {
       filterMarkers();
     }else {
       handleFillterGroups(activeGroups);
+      setTotalGroupsCount(activeGroups.length)
+
       }
   }, [activeGroups, selectedCourse, selectedNumber, selectedSubjects]);
   
@@ -111,7 +121,7 @@ function FillterGroups({handleFillterGroups}) {
           onChange={handleCourseChange}
           id="free-solo-demo"
           freeSolo
-          sx={{ width: 250 }}
+          sx={{ width: 250, marginTop:5 }}
           options={courses.map((option) => option.id)}
           renderInput={(params) => <TextField {...params} label="Course" />}
         />
@@ -119,6 +129,7 @@ function FillterGroups({handleFillterGroups}) {
           className=" my-5"
           onChange={handleSubjectsChange}
           multiple
+          sx={{ width: 250, marginTop:5 }}
           id="tags-filled"
           options={subjectsOfCourses ? subjectsOfCourses : subjects}
           freeSolo
@@ -139,10 +150,13 @@ function FillterGroups({handleFillterGroups}) {
           onChange={handleNumberChange}
           id="free-solo-demo"
           freeSolo
-          sx={{ width: 250 }}
+          sx={{ width: 250, marginTop:2 }}
           options={["2", "3", "4", "5"]}
           renderInput={(params) => <TextField {...params} label="Group size" />}
         />
+        <div className="  my-5">
+          <label className=" text-xl font-bold">Total number of active groups: {totalGroupsCount} </label>
+        </div>
       </div>
   )
 }

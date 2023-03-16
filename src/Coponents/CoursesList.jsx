@@ -20,6 +20,7 @@ function CoursesList() {
     // If there is a stored value, parse it and use it as the initial state
     return JSON.parse(storedactiveUser);
   });
+  //
   const [couresUserList, setCoursesUserList] = useState(activeUser.courses);
   const [selectedCourses, setSelectedCourses] = useState(activeUser.courses);
   

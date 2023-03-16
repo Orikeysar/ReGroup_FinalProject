@@ -75,8 +75,9 @@ const [fillteredGroupShow,setFillteredGroupShow] = useState(false)
     //במידה ויש קבוצה דומה המשתמש יקבל התראה לפני פתיחת הקבוצה
     if (filteredGroups.length > 0) {
 
-      if (window.confirm("you want to see another active groups with same parameters!") == true) {
+      if (window.confirm("We found "+filteredGroups.length+" active groups with same parameters. Do you want to look at the groups before create yours?") == true) {
        setFillteredGroupShow(true)
+       alert("You can see the groups on the map as blue markers")
       } else {
         setFillteredGroupShow(false)
       }
