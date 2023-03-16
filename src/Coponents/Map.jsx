@@ -20,8 +20,7 @@ export default function Map({ filteredGroups }) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyCt1tGfbI6o0A6dcCFTstFsPlAUEQYaYS4",
   });
-  //יצירת אובייקט מסוג תאריך
-  const date = new Date();
+
   //מרכז ברירת המחדל של המפה הוא רופין
   const [center, setCenter] = useState({ lat: 32.342884, lng: 34.912755 });
   //ישמש להצגת המרחק מהמארקר שנלחץ למיקום שלנו
@@ -32,7 +31,7 @@ export default function Map({ filteredGroups }) {
   //הצגת משתתפים של קבוצה ויצירת הפונקציה שתסגור את הדרופדאון בלחיצה החוצה ותתאים את גודל הכרטיס בהתאם
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-  
+
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -100,17 +99,12 @@ export default function Map({ filteredGroups }) {
   };
   //מטפל בהצגת השעה של פתיחת הקבוצה - בנתיים לא מציג נכון
   const handleGroupTime = (timeStamp) => {
-    let hours = date.getHours(new Date(timeStamp / 1000000));
-    let minutes = date.getMinutes(new Date(timeStamp / 1000000));
-    console.log(hours);
-    console.log(minutes);
-    if (hours > date.getHours()) {
-      return "<Circle/>";
-    }
-    if (hours === date.getHours() && minutes > date.getMinutes()) {
-      return "<Circle/>";
-    }
-    return hours + ":" + minutes;
+    let time = timeStamp.toDate();
+    let hours = time.getHours();
+    let minutes = time.getMinutes();
+    time = hours + ":" + minutes;
+    console.log(time)
+    return time;
   };
   //יצירת הדרופדאון של המשתתפים
   const handleGroupParticipants = (participants) => {
@@ -196,7 +190,7 @@ export default function Map({ filteredGroups }) {
           >
             <div className=" w-auto h-46 m-2">
               <p className=" flex mt-1 justify-end ">
-                start at {handleGroupTime(selectedMarker.timeStamp.nanoseconds)}
+                start at {handleGroupTime(selectedMarker.timeStamp)}
               </p>
               <div className=" flex flex-row">
                 <div className=" ml-2">
