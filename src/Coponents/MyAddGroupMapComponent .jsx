@@ -1,13 +1,26 @@
-import  { useEffect, useState } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import React from "react";
+import { useEffect, useState, useRef } from "react";
+import {
+  GoogleMap,
+  useLoadScript,
+  Marker,
+  InfoWindow,
+} from "@react-google-maps/api";
 import useMoveMarker from "../Hooks/useMoveMarker";
-import { GrLocationPin} from "react-icons/gr";
-
+import { GrLocationPin } from "react-icons/gr";
+import { Avatar } from "primereact/avatar";
+import { uuidv4 } from "@firebase/util";
 //פונקציית המפה  עצמה
-function MapAdd({setCordinates}) {
+function MapAdd({ setCordinates, filteredGroups,fillteredGroupShow }) {
+  const [distance, setDistance] = useState(null);
+  const [selectedMarker, setSelectedMarker] = React.useState(null);
+  const date = new Date();
   const [currentCoordinates, setCurrentCoordinates] = useState([
     32.342884, 34.912755,
   ]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
   const [mapCenter, setMapCenter] = useState({
     lat: 32.342884,
     lng: 34.912755,
@@ -30,9 +43,21 @@ function MapAdd({setCordinates}) {
 
     useEffect(() => {
       setDestination([position.lat, position.lng]);
-     
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+      const handleOutsideClick = (event) => {
+        if (
+          dropdownRef.current &&
+          !dropdownRef.current.contains(event.target)
+        ) {
+          setShowDropdown(false);
+        }
+      };
+
+      document.addEventListener("mousedown", handleOutsideClick);
+
+      return () => {
+        document.removeEventListener("mousedown", handleOutsideClick);
+      };
+    }, [dropdownRef]);
 
     return (
       <Marker
@@ -45,7 +70,86 @@ function MapAdd({setCordinates}) {
       />
     );
   }
+  //check the distance between you to the marker
+  const handleDistance = (markerLocation) => {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      var myLat = position.coords.latitude;
+      var myLng = position.coords.longitude;
+      // Get the latitude and longitude of the marker
+      var markerLat = markerLocation.latitude;
+      var markerLng = markerLocation.longitude;
 
+      // Calculate the distance using the Haversine formula
+      var R = 6371; // Earth's radius in kilometers
+      var dLat = ((markerLat - myLat) * Math.PI) / 180;
+      var dLng = ((markerLng - myLng) * Math.PI) / 180;
+      var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((myLat * Math.PI) / 180) *
+          Math.cos((markerLat * Math.PI) / 180) *
+          Math.sin(dLng / 2) *
+          Math.sin(dLng / 2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      var d = R * c; // Distance in kilometers
+      setDistance(d.toFixed(2) + " km");
+    });
+  };
+  const handleGroupTime = (timeStamp) => {
+    let hours = date.getHours(new Date(timeStamp / 1000000));
+    let minutes = date.getMinutes(new Date(timeStamp / 1000000));
+    console.log(hours);
+    console.log(minutes);
+    if (hours > date.getHours()) {
+      return "<Circle/>";
+    }
+    if (hours === date.getHours() && minutes > date.getMinutes()) {
+      return "<Circle/>";
+    }
+    return hours + ":" + minutes;
+  };
+  const handleDropdownClick = () => {
+    setShowDropdown(!showDropdown);
+  };
+  const handleGroupParticipants = (participants) => {
+    return (
+      <div className="dropdown">
+        <label
+          onClick={handleDropdownClick}
+          tabIndex={0}
+          className="btn btn-xs m-1"
+        >
+          participants
+        </label>
+        {showDropdown && (
+          <ul
+            ref={dropdownRef}
+            tabIndex={0}
+            className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            {participants.map((user) => {
+              return (
+                <li
+                  key={uuidv4()}
+                  className="flex flex-row"
+                  onClick={() => console.log("user click")}
+                >
+                  <Avatar image={user.userImg} size="large" shape="circle" />
+                  <label className=" text-md font-bold">{user.name}</label>
+                </li>
+              );
+            })}
+            ,
+          </ul>
+        )}
+      </div>
+    );
+  };
+
+//פונקציה אשר מראה קבוצות פעילות במידה והמשתמש בוחר
+const handleGroupShow=()=>{
+
+  
+}
   //החזרת המפה כשהמרכז שלה ( ברירת מחדל ) היא רופין ובתוכה של הסימניות שנרנדר דינמי
   return (
     <>
@@ -64,11 +168,11 @@ function MapAdd({setCordinates}) {
                 setCordinates({
                   lat: 32.34219292102018,
                   lng: 34.91201501449191,
-                })
+                });
               }}
               className="btn btn-sm m-2  bg-slate-200 text-black "
             >
-              <GrLocationPin className="fill-white"/>
+              <GrLocationPin className="fill-white" />
               Libary
             </button>
             <button
@@ -81,11 +185,11 @@ function MapAdd({setCordinates}) {
                 setCordinates({
                   lat: 32.34358598195018,
                   lng: 34.91350448033373,
-                })
+                });
               }}
               className="btn btn-sm m-2 bg-slate-200 text-black"
             >
-              <GrLocationPin className="fill-white"/>
+              <GrLocationPin className="fill-white" />
               building 5
             </button>
             <button
@@ -98,11 +202,11 @@ function MapAdd({setCordinates}) {
                 setCordinates({
                   lat: 32.34186000228468,
                   lng: 34.91045634687421,
-                })
+                });
               }}
               className="btn btn-sm m-2 bg-slate-200 text-black"
             >
-               <GrLocationPin className="fill-white"/>
+              <GrLocationPin className="fill-white" />
               building 20
             </button>
           </div>
@@ -112,8 +216,8 @@ function MapAdd({setCordinates}) {
             center={{ lat: 32.342884, lng: 34.912755 }}
             mapContainerClassName=" map-container"
             onClick={(e) => {
-              setCurrentCoordinates([e.latLng.lat(), e.latLng.lng()]); 
-              setCordinates({lat:e.latLng.lat(), lng:e.latLng.lng()})
+              setCurrentCoordinates([e.latLng.lat(), e.latLng.lng()]);
+              setCordinates({ lat: e.latLng.lat(), lng: e.latLng.lng() });
             }}
           >
             <TravellingMarker
@@ -122,6 +226,90 @@ function MapAdd({setCordinates}) {
                 lng: currentCoordinates[1],
               }}
             />
+
+           {fillteredGroupShow? filteredGroups.map((item) => (
+              <Marker
+                icon={{
+                  url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                  scaledSize: new window.google.maps.Size(50, 50),
+                }}
+                key={item.index}
+                title={item.groupTittle}
+                position={{
+                  lat: item.location.latitude,
+                  lng: item.location.longitude,
+                }}
+                onClick={() => {
+                  setSelectedMarker(item);
+                  handleDistance(item.location);
+                }}
+              />
+            )) :  null   }
+            
+            {selectedMarker ? (
+              <InfoWindow
+                position={{
+                  lat: selectedMarker.location.latitude,
+                  lng: selectedMarker.location.longitude,
+                }}
+                onCloseClick={() => {
+                  setSelectedMarker(null);
+                  setDistance(null);
+                }}
+              >
+                <div className=" w-auto h-46 m-2">
+                  <p className=" flex mt-1 justify-end ">
+                    start at{" "}
+                    {handleGroupTime(selectedMarker.timeStamp.nanoseconds)}
+                  </p>
+                  <div className=" flex flex-row">
+                    <div className=" ml-2">
+                      <Avatar
+                        image={selectedMarker.groupImg}
+                        size="xlarge"
+                        shape="circle"
+                      />
+                    </div>
+                    <div>
+                      <p className="ml-3 mt-1 justify-center font-bold text-xl">
+                        {selectedMarker.groupTittle}{" "}
+                      </p>
+                      <p className="ml-3 mt-1 justify-center  text-lg">
+                        {selectedMarker.groupTags
+                          .map((sub, index) => {
+                            // Check if this is the last item in the array
+                            const isLast =
+                              index === selectedMarker.groupTags.length - 1;
+                            // Append a "|" character if this is not the last item
+                            const separator = isLast ? "" : " | ";
+                            // Return the subject name with the separator character
+                            return sub + separator;
+                          })
+                          .join("")}{" "}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className=" ml-3 mt-3 text-lg">
+                    <p>{selectedMarker.description}</p>
+                    {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
+                  </div>
+                  <div className="flex flex-row ml-3 mt-3">
+                    <div>
+                      {handleGroupParticipants(selectedMarker.participants)}
+                    </div>
+                    <div className=" ml-auto justify-end">
+                      <button
+                        onClick={() => console.log("joined")}
+                        className="btn btn-xs  ml-auto mt-1"
+                      >
+                        Join
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </InfoWindow>
+            ) : null}
           </GoogleMap>
         </div>
       )}
