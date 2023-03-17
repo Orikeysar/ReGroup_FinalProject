@@ -16,25 +16,19 @@ import { uuidv4 } from "@firebase/util";
 export default function Map({ filteredGroups }) {
   // החזרת המפה כשהמרכז שלה ( ברירת מחדל ) היא רופין ובתוכה של הסימניות שנרנדר דינמי מהדאטה
   const [activeGroups, setActiveGroups] = useState([]);
+  //אישור מגוגל
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyCt1tGfbI6o0A6dcCFTstFsPlAUEQYaYS4",
   });
-  const date = new Date();
+
+  //מרכז ברירת המחדל של המפה הוא רופין
   const [center, setCenter] = useState({ lat: 32.342884, lng: 34.912755 });
+  //ישמש להצגת המרחק מהמארקר שנלחץ למיקום שלנו
   const [distance, setDistance] = useState(null);
-  //map props
-  const [markers, setMarkers] = React.useState([]);
-  const [selectedMarker, setSelectedMarker] = React.useState(null);
-  // const onMapClick = React.useCallback((e) => {
-  //   setMarkers((current) => [
-  //     ...current,
-  //     {
-  //       lat: e.latLng.lat(),
-  //       lng: e.latLng.lng(),
-  //       time: new Date(),
-  //     },
-  //   ]);
-  // }, []);
+  //מארקרים של המפה
+  const [markers, setMarkers] = useState([]);
+  const [selectedMarker, setSelectedMarker] = useState(null);
+  //הצגת משתתפים של קבוצה ויצירת הפונקציה שתסגור את הדרופדאון בלחיצה החוצה ותתאים את גודל הכרטיס בהתאם
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -55,7 +49,7 @@ export default function Map({ filteredGroups }) {
   const handleDropdownClick = () => {
     setShowDropdown(!showDropdown);
   };
-
+  //פונקציה המקבלת את מיקום המארקר שנלחץ, מוצאת את המיקום הנוכחי שלי ומחשבת את המרחק בנינו
   const handleDistance = (markerLocation) => {
     navigator.geolocation.getCurrentPosition(function (position) {
       var myLat = position.coords.latitude;
@@ -79,6 +73,7 @@ export default function Map({ filteredGroups }) {
       setDistance(d.toFixed(2) + " km");
     });
   };
+  //ריכוז המפה למיקום הנוכחי שלי
   const handleMyLocation = () => {
     navigator.geolocation.getCurrentPosition(function (position) {
       var myLat = position.coords.latitude;
@@ -94,24 +89,24 @@ export default function Map({ filteredGroups }) {
         index: filteredGroups.length + 1,
         icon: {
           url: "https://cdn-icons-png.flaticon.com/512/75/75768.png",
-          scaledSize: new window.google.maps.Size(45, 45),
+          scaledSize: new window.google.maps.Size(42, 42),
         },
       });
     });
   };
-  const handleGroupTime = (timeStamp) => {
-    let hours = date.getHours(new Date(timeStamp / 1000000));
-    let minutes = date.getMinutes(new Date(timeStamp / 1000000));
-    console.log(hours);
-    console.log(minutes);
-    if (hours > date.getHours()) {
-      return "<Circle/>";
-    }
-    if (hours === date.getHours() && minutes > date.getMinutes()) {
-      return "<Circle/>";
-    }
-    return hours + ":" + minutes;
+  const handleRuppinLocation = () => {
+    setCenter({ lat: 32.342884, lng: 34.912755 });
   };
+  //מטפל בהצגת השעה של פתיחת הקבוצה - בנתיים לא מציג נכון
+  const handleGroupTime = (timeStamp) => {
+    let time = timeStamp.toDate();
+    let hours = time.getHours();
+    let minutes = time.getMinutes();
+    time = hours + ":" + minutes;
+    console.log(time)
+    return time;
+  };
+  //יצירת הדרופדאון של המשתתפים
   const handleGroupParticipants = (participants) => {
     return (
       <div className="dropdown">
@@ -157,7 +152,10 @@ export default function Map({ filteredGroups }) {
         </label>
       ) : null}
       <button onClick={handleMyLocation} className="btn btn-xs mb-2">
-        my location
+        My location
+      </button>
+      <button onClick={handleRuppinLocation} className="btn btn-xs mb-2">
+        Ruppin center
       </button>
       <GoogleMap
         zoom={16}
@@ -192,7 +190,7 @@ export default function Map({ filteredGroups }) {
           >
             <div className=" w-auto h-46 m-2">
               <p className=" flex mt-1 justify-end ">
-                start at {handleGroupTime(selectedMarker.timeStamp.nanoseconds)}
+                start at {handleGroupTime(selectedMarker.timeStamp)}
               </p>
               <div className=" flex flex-row">
                 <div className=" ml-2">
