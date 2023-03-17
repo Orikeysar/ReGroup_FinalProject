@@ -98,7 +98,7 @@ function FillterGroups({handleFillterGroups}) {
       } 
 
       console.log(newFilter);
-      handleFillterGroups(newFilter);
+      handleFillterGroups(newFilter,selectedCourse,selectedSubjects,selectedNumber);
       setTotalGroupsCount(newFilter.length)
     };
 
@@ -109,7 +109,7 @@ function FillterGroups({handleFillterGroups}) {
     ) {
       filterMarkers();
     }else {
-      handleFillterGroups(activeGroups);
+      handleFillterGroups(activeGroups,selectedCourse,selectedSubjects,selectedNumber);
       setTotalGroupsCount(activeGroups.length)
 
       }
