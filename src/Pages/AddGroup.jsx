@@ -17,23 +17,29 @@ import { uuidv4 } from "@firebase/util";
 import JoinGroupCard from "../Coponents/JoinGroupCard";
 import FillterGroups from "../Coponents/FillterGroups";
 function AddGroup() {
-
   const navigate = useNavigate();
   const auth = getAuth();
 
+//if canot aothorize/recognize the active user
+if(auth.currentUser.uid == null ||auth.currentUser.uid == undefined){
+
+  navigate('/sign-in')
+
+}
+const groupId = auth.currentUser.uid
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
   const [cordinates, setCordinates] = useState(null);
-const [fillteredGroupShow,setFillteredGroupShow] = useState(false)
+  const [fillteredGroupShow, setFillteredGroupShow] = useState(false);
   const [newGroup, setNewGroup] = useState({
     address: "",
     groupTittle: "",
     groupImg: activeUser.userImg,
     groupTags: [],
     groupSize: 0,
-    id: "",
+    id: groupId,
     location: { lat: 0, lng: 0 },
     description: "",
     participants: [],
@@ -43,9 +49,19 @@ const [fillteredGroupShow,setFillteredGroupShow] = useState(false)
 
   // const [activeGroups, setActiveGroups] = useState([]);
   const [filteredGroups, setFilteredGroups] = useState([]);
-
-  const handleFillterGroups = (filteredGroups) => {
+  const [selectedCourse, setSelectedCourse] = useState([]);
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [selectedNumber, setSelectedNumber] = useState([]);
+  const handleFillterGroups = (
+    filteredGroups,
+    selectedCourse,
+    selectedSubjects,
+    selectedNumber
+  ) => {
     setFilteredGroups(filteredGroups);
+    setSelectedCourse(selectedCourse);
+    setSelectedSubjects(selectedSubjects);
+    setSelectedNumber(selectedNumber);
   };
 
   //הפונקציה תופסת שינויים בשהמשתמש מכניס למשתנים
@@ -74,27 +90,38 @@ const [fillteredGroupShow,setFillteredGroupShow] = useState(false)
   const onSubmitForm = (e) => {
     //במידה ויש קבוצה דומה המשתמש יקבל התראה לפני פתיחת הקבוצה
     if (filteredGroups.length > 0) {
-
-      if (window.confirm("We found "+filteredGroups.length+" active groups with same parameters. Do you want to look at the groups before create yours?") == true) {
-       setFillteredGroupShow(true)
-       alert("You can see the groups on the map as blue markers")
+      if (
+        window.confirm(
+          "you want to see another active groups with same parameters!"
+        ) == true
+      ) {
+        setFillteredGroupShow(true);
       } else {
-        setFillteredGroupShow(false)
+        setFillteredGroupShow(false);
+
+        
+        // MAKE HERE THE FUNCTION THAT CREATE THE REAL GROUP
       }
+    }else{
+
+setNewGroup({
+          ...newGroup,
+
+          groupTittle: selectedCourse,
+          groupTags: selectedSubjects,
+          groupSize: selectedNumber,
+          location: cordinates,
+          isActive: true,
+        });
+
+    console.log(newGroup);
+
+
+
+
+
+
     }
-
-    
-    // setNewGroup({
-    //   ...newGroup,
-
-    //   groupTittle: selectedCourse,
-    //   groupTags: selectedSubjects,
-    //   groupSize: selectedNumber,
-    //   location: cordinates,
-    //   isActive: true,
-    // });
-    // console.log(newGroup);
-    //MAKE HERE THE FUNCTION THAT CREATE THE REAL GROUP
   };
 
   return (
@@ -189,7 +216,12 @@ const [fillteredGroupShow,setFillteredGroupShow] = useState(false)
       </div>
 
       <div className="map  drop-shadow-xl w-full">
-        <MyAddGroupMapComponent isMarkerShown setCordinates={setCordinates} filteredGroups={filteredGroups} fillteredGroupShow={fillteredGroupShow} />
+        <MyAddGroupMapComponent
+          isMarkerShown
+          setCordinates={setCordinates}
+          filteredGroups={filteredGroups}
+          fillteredGroupShow={fillteredGroupShow}
+        />
       </div>
 
       <div className="buttomNavBar w-full  sticky bottom-0 pb-4 ">

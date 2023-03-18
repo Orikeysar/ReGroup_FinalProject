@@ -36,6 +36,7 @@ function GoogleSign() {
           timeStamp: serverTimestamp(),
           userImg: user.photoURL,
           degree: "",
+          userRef:user.uid,
           friendsList: [],
           courses: [],
           alerts: [],

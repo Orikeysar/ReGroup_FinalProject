@@ -145,11 +145,7 @@ function MapAdd({ setCordinates, filteredGroups,fillteredGroupShow }) {
     );
   };
 
-//פונקציה אשר מראה קבוצות פעילות במידה והמשתמש בוחר
-const handleGroupShow=()=>{
 
-  
-}
   //החזרת המפה כשהמרכז שלה ( ברירת מחדל ) היא רופין ובתוכה של הסימניות שנרנדר דינמי
   return (
     <>
