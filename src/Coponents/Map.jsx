@@ -9,11 +9,26 @@ import { RiGroup2Fill } from "react-icons/ri";
 import Spinner from "./Spinner";
 import { formatRelative } from "date-fns";
 import { Avatar } from "primereact/avatar";
-import CircleIcon from "@mui/icons-material/Circle";
 import Circle from "@mui/icons-material/Circle";
 import { uuidv4 } from "@firebase/util";
+import { db } from "../FirebaseSDK";
+import {
+  getDoc,
+  doc,
+  updateDoc,
+  collection,
+  where,
+  getDocs,
+  query
+} from "firebase/firestore";
+import { toast } from "react-toastify";
 
 export default function Map({ filteredGroups }) {
+  //פרטי המשתמש המחובר
+  const [activeUser, setActiveUser] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("activeUser"));
+    return user;
+  });
   // החזרת המפה כשהמרכז שלה ( ברירת מחדל ) היא רופין ובתוכה של הסימניות שנרנדר דינמי מהדאטה
   const [activeGroups, setActiveGroups] = useState([]);
   //אישור מגוגל
@@ -103,7 +118,6 @@ export default function Map({ filteredGroups }) {
     let hours = time.getHours();
     let minutes = time.getMinutes();
     time = hours + ":" + minutes;
-    console.log(time)
     return time;
   };
   //יצירת הדרופדאון של המשתתפים
@@ -141,6 +155,27 @@ export default function Map({ filteredGroups }) {
       </div>
     );
   };
+  //הצטרפות לקבוצה - רעיון לתת מעבר לעמוד הקבוצה
+  const handleJoinGroup = async (group) => {
+    console.log(group);
+    let user = {
+      name: activeUser.name,
+      userImg: activeUser.userImg,
+      userRef: activeUser.userRef,
+    };
+    group.participants.push(user);
+    console.log(group);
+    let activeGroupsRef = collection(db, "activeGroups");
+    let q = query(activeGroupsRef, where("managerRef", "==", group.managerRef));
+    await updateDoc(q, {
+      participants: group.participants,
+    }).then(() => {
+        toast.success("Join successfully!");
+      }).catch((error) => {
+        toast.error("An error occurred. Please try again.");
+      });
+      //אם הצליח לתת הודעה
+  }
 
   if (!isLoaded) return <Spinner />;
 
@@ -162,21 +197,23 @@ export default function Map({ filteredGroups }) {
         center={center}
         mapContainerClassName=" map-container"
       >
-        {filteredGroups.map((item) => (
-          <Marker
-            key={item.index}
-            title={item.groupTittle}
-            position={{
-              lat: item.location.latitude,
-              lng: item.location.longitude,
-            }}
-            onClick={() => {
-              setSelectedMarker(item);
-              handleDistance(item.location);
-            }}
-            icon={item.groupTittle === "my location" ? item.icon : null}
-          />
-        ))}
+        {filteredGroups.map((item) =>
+          item.groupSize > item.participants.length ? (
+            <Marker
+              key={item.index}
+              title={item.groupTittle}
+              position={{
+                lat: item.location.latitude,
+                lng: item.location.longitude,
+              }}
+              onClick={() => {
+                setSelectedMarker(item);
+                handleDistance(item.location);
+              }}
+              icon={item.groupTittle === "my location" ? item.icon : null}
+            />
+          ) : null
+        )}
         {selectedMarker ? (
           <InfoWindow
             position={{
@@ -230,7 +267,9 @@ export default function Map({ filteredGroups }) {
                 </div>
                 <div className=" ml-auto justify-end">
                   <button
-                    onClick={() => console.log("joined")}
+                    onClick={() => {
+                      handleJoinGroup(selectedMarker);
+                    }}
                     className="btn btn-xs  ml-auto mt-1"
                   >
                     Join

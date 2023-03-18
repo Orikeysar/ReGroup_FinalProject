@@ -39,43 +39,41 @@ function SignUp() {
         name: "Assist Friend",
         numberOfAchievementDoing: 0,
         activeLevel: 1,
-        achievementImg:"",
-        TopLevelOne:100,
-        TopLeveTwo:200,
-        TopLevelThree:500,
-        valuePerAction: 5
-
-
+        achievementImg: "",
+        TopLevelOne: 100,
+        TopLeveTwo: 200,
+        TopLevelThree: 500,
+        valuePerAction: 5,
       },
       {
         name: "Open Groups",
         numberOfAchievementDoing: 0,
         activeLevel: 1,
-        achievementImg:"",
-        TopLevelOne:40,
-        TopLeveTwo:100,
-        TopLevelThree:200,
-        valuePerAction: 10
+        achievementImg: "",
+        TopLevelOne: 40,
+        TopLeveTwo: 100,
+        TopLevelThree: 200,
+        valuePerAction: 10,
       },
       {
         name: "Helped Answered",
         numberOfAchievementDoing: 0,
         activeLevel: 1,
-        achievementImg:"",
-        TopLevelOne:100,
-        TopLeveTwo:200,
-        TopLevelThree:500,
-        valuePerAction: 3
+        achievementImg: "",
+        TopLevelOne: 100,
+        TopLeveTwo: 200,
+        TopLevelThree: 500,
+        valuePerAction: 3,
       },
       {
         name: "Like From Community",
         numberOfAchievementDoing: 0,
         activeLevel: 1,
-        achievementImg:"",
-        TopLevelOne:200,
-        TopLeveTwo:500,
-        TopLevelThree:1000,
-        valuePerAction: 1
+        achievementImg: "",
+        TopLevelOne: 200,
+        TopLeveTwo: 500,
+        TopLevelThree: 1000,
+        valuePerAction: 1,
       },
     ],
   });
@@ -100,7 +98,7 @@ function SignUp() {
       const auth = getAuth();
       //GETTING ALL COURSES AND INSERT TO LOCAL STORAGE
       let coursesTempList = [];
-      
+
       const querySnapshot = await getDocs(collection(db, "courses"));
       if (querySnapshot) {
         querySnapshot.forEach((doc) => {
@@ -110,18 +108,20 @@ function SignUp() {
 
         localStorage.setItem("courses", JSON.stringify(coursesTempList));
       }
-//GETTING ALL ACHIEVEMEANTS AND INSERT TO LOCAL STORAGE
-let achievementsTempList = [];
-const querySnapshotAchie = await getDocs(collection(db, "achievements"));
-if (querySnapshotAchie) {
-  querySnapshotAchie.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    achievementsTempList.push(doc.data());
-  });
+      //GETTING ALL ACHIEVEMEANTS AND INSERT TO LOCAL STORAGE
+      let achievementsTempList = [];
+      const querySnapshotAchie = await getDocs(collection(db, "achievements"));
+      if (querySnapshotAchie) {
+        querySnapshotAchie.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          achievementsTempList.push(doc.data());
+        });
 
-  localStorage.setItem("achievements", JSON.stringify(achievementsTempList));
-}
-
+        localStorage.setItem(
+          "achievements",
+          JSON.stringify(achievementsTempList)
+        );
+      }
 
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -136,10 +136,11 @@ if (querySnapshotAchie) {
       const formDataCopy = { ...formData };
       delete formDataCopy.password;
       formDataCopy.timeStamp = serverTimestamp();
+      formDataCopy.userRef=user.uid;
 
       await setDoc(doc(db, "users", user.uid), formDataCopy);
-      //SET USER TOP10 
-      await setDoc(doc(db, "top10",auth.currentUser.uid), {
+      //SET USER TOP10
+      await setDoc(doc(db, "top10", auth.currentUser.uid), {
         name: formDataCopy.name,
         email: formDataCopy.email,
         points: formDataCopy.points,
