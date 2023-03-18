@@ -1,12 +1,12 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
 import Map from "../Coponents/Map";
 import FillterGroups from "../Coponents/FillterGroups";
-//מציאת קבוצה 
+//מציאת קבוצה
 function FindGroups() {
   const navigate = useNavigate();
 

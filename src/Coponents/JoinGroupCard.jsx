@@ -1,28 +1,47 @@
 import React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
-function JoinGroupCard(group) {
+import { RiGroup2Fill } from "react-icons/ri";
+import Spinner from "./Spinner";
+import { formatRelative } from "date-fns";
+import Circle from "@mui/icons-material/Circle";
+import { db } from "../FirebaseSDK";
+import {
+  getDoc,
+  doc,
+  updateDoc,
+  collection,
+  where,
+  getDocs,
+  query
+} from "firebase/firestore";
+import { toast } from "react-toastify";
+function JoinGroupCard({group}) {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-  const date = new Date();
 
-  const handleGroupTime = (timeStamp) => {
-    let hours = date.getHours(new Date(timeStamp / 1000000));
-    let minutes = date.getMinutes(new Date(timeStamp / 1000000));
-    console.log(hours);
-    console.log(minutes);
-    if (hours > date.getHours()) {
-      return "<Circle/>";
-    }
-    if (hours === date.getHours() && minutes > date.getMinutes()) {
-      return "<Circle/>";
-    }
-    return hours + ":" + minutes;
-  };
+  //פרטי המשתמש המחובר
+  const [activeUser, setActiveUser] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("activeUser"));
+    return user;
+  });
   const handleDropdownClick = () => {
     setShowDropdown(!showDropdown);
   };
+  const handleGroupTime = (timeStamp) => {
+    if(timeStamp != null || timeStamp != undefined){
+
+let time = timeStamp.toDate();
+    let hours = time.getHours();
+    let minutes = time.getMinutes();
+    time = hours + ":" + minutes;
+    return time;
+
+    }
+    
+  };
+  //יצירת הדרופדאון של המשתתפים
   const handleGroupParticipants = (participants) => {
     return (
       <div className="dropdown">
@@ -58,54 +77,80 @@ function JoinGroupCard(group) {
     );
   };
 
-  const HandleJoinGroupOnToast = (group) => {
-    console.log("join:" + group);
-  };
-
+  //הצטרפות לקבוצה - רעיון לתת מעבר לעמוד הקבוצה
+  const handleJoinGroup = async (group) => {
+    console.log(group);
+    let user = {
+      name: activeUser.name,
+      userImg: activeUser.userImg,
+      userRef: activeUser.userRef,
+    };
+    group.participants.push(user);
+    console.log(group);
+    let activeGroupsRef = collection(db, "activeGroups");
+    let q = query(activeGroupsRef, where("managerRef", "==", group.managerRef));
+    await updateDoc(q, {
+      participants: group.participants,
+    }).then(() => {
+        toast.success("Join successfully!");
+      }).catch((error) => {
+        toast.error("An error occurred. Please try again.");
+      });
+      //אם הצליח לתת הודעה
+  }
   return (
-    <div className=" w-auto h-46 m-2" key={group.id}>
-      <p className=" flex mt-1 justify-end ">
-        start at {handleGroupTime(group.timeStamp)}
-      </p>
-      <div className=" flex flex-row">
-        <div className=" ml-2">
-          <Avatar image={group.groupImg} size="xlarge" shape="circle" />
-        </div>
-        <div>
-          <p className="ml-3 mt-1 justify-center font-bold text-xl">
-            {group.groupTittle}{" "}
-          </p>
-          <p className="ml-3 mt-1 justify-center  text-lg">
-            {group.groupTags
-              .map((sub, index) => {
-                // Check if this is the last item in the array
-                const isLast = index === group.groupTags.length - 1;
-                // Append a "|" character if this is not the last item
-                const separator = isLast ? "" : " | ";
-                // Return the subject name with the separator character
-                return sub + separator;
-              })
-              .join("")}{" "}
-          </p>
-        </div>
+    <div className=" w-auto h-46 m-2">
+    <p className=" flex mt-1 justify-end ">
+      start at {handleGroupTime(group.timeStamp)}
+    </p>
+    <div className=" flex flex-row">
+      <div className=" ml-2">
+        <Avatar
+          image={group.groupImg}
+          size="xlarge"
+          shape="circle"
+        />
       </div>
-
-      <div className=" ml-3 mt-3 text-lg">
-        <p>{group.description}</p>
-        {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
-      </div>
-      <div className="flex flex-row ml-3 mt-3">
-        <div>{handleGroupParticipants(group.participants)}</div>
-        <div className=" ml-auto justify-end">
-          <button
-            onClick={HandleJoinGroupOnToast(group)}
-            className="btn btn-xs  ml-auto mt-1"
-          >
-            Join
-          </button>
-        </div>
+      <div>
+        <p className="ml-3 mt-1 justify-center font-bold text-xl">
+          {group.groupTittle}{" "}
+        </p>
+        <p className="ml-3 mt-1 justify-center  text-lg">
+          {group.groupTags
+            .map((sub, index) => {
+              // Check if this is the last item in the array
+              const isLast =
+                index === group.groupTags.length - 1;
+              // Append a "|" character if this is not the last item
+              const separator = isLast ? "" : " | ";
+              // Return the subject name with the separator character
+              return sub + separator;
+            })
+            .join("")}{" "}
+        </p>
       </div>
     </div>
+
+    <div className=" ml-3 mt-3 text-lg">
+      <p>{group.description}</p>
+      {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
+    </div>
+    <div className="flex flex-row ml-3 mt-3">
+      <div>
+        {handleGroupParticipants(group.participants)}
+      </div>
+      <div className=" ml-auto justify-end">
+        <button
+          onClick={() => {
+            handleJoinGroup(group);
+          }}
+          className="btn btn-xs  ml-auto mt-1"
+        >
+          Join
+        </button>
+      </div>
+    </div>
+  </div>
   );
 }
 
