@@ -8,7 +8,7 @@ import Chip from "@mui/material/Chip";
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, GeoPoint, Timestamp } from "firebase/firestore";
 import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
 import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
@@ -16,6 +16,7 @@ import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
 import { uuidv4 } from "@firebase/util";
 
 import FillterGroups from "../Coponents/FillterGroups";
+
 function AddGroup() {
   const navigate = useNavigate();
 
@@ -25,6 +26,7 @@ function AddGroup() {
     return user;
   });
   const [cordinates, setCordinates] = useState(null);
+
   const [fillteredGroupShow, setFillteredGroupShow] = useState(false);
   const [newGroup, setNewGroup] = useState({
     address: "",
@@ -37,7 +39,7 @@ function AddGroup() {
     description: "",
     participants: [],
     isActive: false,
-    timeStamp: "00:00",
+    timeStamp: "00:00:00",
   });
 
   // const [activeGroups, setActiveGroups] = useState([]);
@@ -56,6 +58,20 @@ function AddGroup() {
     setSelectedSubjects(selectedSubjects);
     setSelectedNumber(selectedNumber);
   };
+  const useEffect =
+    (() => {
+      setNewGroup({
+        ...newGroup,
+        groupTittle: selectedCourse,
+        groupTags: selectedSubjects,
+        groupSize: selectedNumber,
+        location: cordinates,
+        isActive: true,
+        groupImg: activeUser.userImg,
+        id: activeUser.userRef,
+      });
+    },
+    [newGroup]);
 
   //הפונקציה תופסת שינויים בשהמשתמש מכניס למשתנים
   const onChange = (e) => {
@@ -72,28 +88,73 @@ function AddGroup() {
   const handleInviteFriendChange = (event, value) => {
     setNewGroup({
       ...newGroup,
-      participants: [...value],
+      participants: [...value,],
     });
+
+
   };
-
+//הפונקציה מכניסה את הקבוצה לדאטה בייס
   const CreateNewGroup = async () => {
-    setNewGroup({
-      ...newGroup,
-      groupTittle: selectedCourse,
-      groupTags: selectedSubjects,
-      groupSize: selectedNumber,
-      location: cordinates,
-      isActive: true,
-    });
+ 
+    if (cordinates == null ) {
+      return toast.error("choose group location on the map");
+    } else if (newGroup.timeStamp === "00:00:00") {
+      return toast.error("choose group arival time!");
+    } else if (
+      selectedCourse == null ||
+      selectedSubjects == null ||
+      selectedNumber == null
+    ) {
+     return toast.error("choose fillters for the group you create");
+    } else if(newGroup.address === "" ||newGroup.description === ""){
 
-    console.log(newGroup);
-    try {
+      return toast.error("fill adress and discription for the group you create");
+
+    }else {
+    
+
+      newGroup.participants.push( {
+            name: activeUser.name,
+            userImg: activeUser.userImg,
+            userRef: activeUser.userRef,
+          })
+      
+      
+
+
+      const now = new Date();
+      const [hours, minutes] = newGroup.timeStamp.split(":");
+      now.setHours(hours, minutes, 0, 0);
+      const geoPoint = new GeoPoint(cordinates.lat, cordinates.lng);
       //SET USER TOP10
-      await setDoc(doc(db, "activeGroups", uuidv4), newGroup);
-
-    }catch(error) {
-      toast.error("Bad Cardictionals details,try again");
-      console.log(error)
+      await setDoc(doc(db, "activeGroups", uuidv4()), {
+        groupTittle: selectedCourse,
+        groupTags: selectedSubjects,
+        groupSize: parseInt(selectedNumber),
+        location: geoPoint,
+        isActive: true,
+        groupImg: activeUser.userImg,
+        id: activeUser.userRef,
+        address: newGroup.address,
+        description: newGroup.description,
+        participants: newGroup.participants,
+        timeStamp: Timestamp.fromDate(
+          new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            now.getHours(),
+            now.getMinutes()
+          )
+        ),
+      })
+        .then(() => {
+          toast.success("create success");
+        })
+        .catch((error) => {
+          toast.error("Bad Cardictionals details,try again");
+          console.log(error);
+        });
     }
   };
 
@@ -104,16 +165,15 @@ function AddGroup() {
         window.confirm(
           "you want to see another active groups with same parameters!"
         ) === true
-      ){
+      ) {
         setFillteredGroupShow(true);
       } else {
-        setFillteredGroupShow(false)
-        CreateNewGroup()
-       
-      }}else{
-        CreateNewGroup()
+        setFillteredGroupShow(false);
+        CreateNewGroup();
       }
-    
+    } else {
+      CreateNewGroup();
+    }
   };
 
   return (
