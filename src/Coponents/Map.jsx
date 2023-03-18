@@ -22,6 +22,7 @@ import {
   query
 } from "firebase/firestore";
 import { toast } from "react-toastify";
+import JoinGroupCard from "./JoinGroupCard";
 
 export default function Map({ filteredGroups }) {
   //פרטי המשתמש המחובר
@@ -112,71 +113,8 @@ export default function Map({ filteredGroups }) {
   const handleRuppinLocation = () => {
     setCenter({ lat: 32.342884, lng: 34.912755 });
   };
-  //מטפל בהצגת השעה של פתיחת הקבוצה - בנתיים לא מציג נכון
-  const handleGroupTime = (timeStamp) => {
-    let time = timeStamp.toDate();
-    let hours = time.getHours();
-    let minutes = time.getMinutes();
-    time = hours + ":" + minutes;
-    return time;
-  };
-  //יצירת הדרופדאון של המשתתפים
-  const handleGroupParticipants = (participants) => {
-    return (
-      <div className="dropdown">
-        <label
-          onClick={handleDropdownClick}
-          tabIndex={0}
-          className="btn btn-xs m-1"
-        >
-          participants
-        </label>
-        {showDropdown && (
-          <ul
-            ref={dropdownRef}
-            tabIndex={0}
-            className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            {participants.map((user) => {
-              return (
-                <li
-                  key={uuidv4()}
-                  className="flex flex-row"
-                  onClick={() => console.log("user click")}
-                >
-                  <Avatar image={user.userImg} size="large" shape="circle" />
-                  <label className=" text-md font-bold">{user.name}</label>
-                </li>
-              );
-            })}
-            ,
-          </ul>
-        )}
-      </div>
-    );
-  };
-  //הצטרפות לקבוצה - רעיון לתת מעבר לעמוד הקבוצה
-  const handleJoinGroup = async (group) => {
-    console.log(group);
-    let user = {
-      name: activeUser.name,
-      userImg: activeUser.userImg,
-      userRef: activeUser.userRef,
-    };
-    group.participants.push(user);
-    console.log(group);
-    let activeGroupsRef = collection(db, "activeGroups");
-    let q = query(activeGroupsRef, where("managerRef", "==", group.managerRef));
-    await updateDoc(q, {
-      participants: group.participants,
-    }).then(() => {
-        toast.success("Join successfully!");
-      }).catch((error) => {
-        toast.error("An error occurred. Please try again.");
-      });
-      //אם הצליח לתת הודעה
-  }
-
+  
+  
   if (!isLoaded) return <Spinner />;
 
   return (
@@ -225,58 +163,7 @@ export default function Map({ filteredGroups }) {
               setDistance(null);
             }}
           >
-            <div className=" w-auto h-46 m-2">
-              <p className=" flex mt-1 justify-end ">
-                start at {handleGroupTime(selectedMarker.timeStamp)}
-              </p>
-              <div className=" flex flex-row">
-                <div className=" ml-2">
-                  <Avatar
-                    image={selectedMarker.groupImg}
-                    size="xlarge"
-                    shape="circle"
-                  />
-                </div>
-                <div>
-                  <p className="ml-3 mt-1 justify-center font-bold text-xl">
-                    {selectedMarker.groupTittle}{" "}
-                  </p>
-                  <p className="ml-3 mt-1 justify-center  text-lg">
-                    {selectedMarker.groupTags
-                      .map((sub, index) => {
-                        // Check if this is the last item in the array
-                        const isLast =
-                          index === selectedMarker.groupTags.length - 1;
-                        // Append a "|" character if this is not the last item
-                        const separator = isLast ? "" : " | ";
-                        // Return the subject name with the separator character
-                        return sub + separator;
-                      })
-                      .join("")}{" "}
-                  </p>
-                </div>
-              </div>
-
-              <div className=" ml-3 mt-3 text-lg">
-                <p>{selectedMarker.description}</p>
-                {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
-              </div>
-              <div className="flex flex-row ml-3 mt-3">
-                <div>
-                  {handleGroupParticipants(selectedMarker.participants)}
-                </div>
-                <div className=" ml-auto justify-end">
-                  <button
-                    onClick={() => {
-                      handleJoinGroup(selectedMarker);
-                    }}
-                    className="btn btn-xs  ml-auto mt-1"
-                  >
-                    Join
-                  </button>
-                </div>
-              </div>
-            </div>
+           <JoinGroupCard  group={selectedMarker}/>
           </InfoWindow>
         ) : null}
       </GoogleMap>

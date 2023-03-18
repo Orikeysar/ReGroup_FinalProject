@@ -17,6 +17,12 @@ function FillterGroups({handleFillterGroups}) {
   });
   //סהכ כמה קבוצות יש 
   const [totalGroupsCount, setTotalGroupsCount] = useState(0);
+  //כמה קבוצות ללא מקום פנוי
+  const [availableGroups, setAvailableGroups] = useState([]);
+const handleAvailableGroups=(groups)=>{
+  let available = groups.filter(group => group.participants.length != group.groupSize);
+  setAvailableGroups(available.length)
+}
   //משיכת הקבוצות הפעילות מהדאטה בזמן אמת והכנסה לערך
   const [activeGroups, setActiveGroups] = useState([]);
   const colRef = collection(db, "activeGroups");
@@ -32,6 +38,8 @@ function FillterGroups({handleFillterGroups}) {
       setActiveGroups(newActiveGroups);
       handleFillterGroups(newActiveGroups);
       setTotalGroupsCount(newActiveGroups.length)
+      handleAvailableGroups(newActiveGroups)
+
     }
   });
 //משיכת הקורסים שיש מהלוקאל
@@ -100,6 +108,7 @@ function FillterGroups({handleFillterGroups}) {
       console.log(newFilter);
       handleFillterGroups(newFilter,selectedCourse,selectedSubjects,selectedNumber);
       setTotalGroupsCount(newFilter.length)
+      handleAvailableGroups(newFilter)
     };
 
     if (
@@ -111,6 +120,8 @@ function FillterGroups({handleFillterGroups}) {
     }else {
       handleFillterGroups(activeGroups,selectedCourse,selectedSubjects,selectedNumber);
       setTotalGroupsCount(activeGroups.length)
+      handleAvailableGroups(activeGroups)
+
 
       }
   }, [activeGroups, selectedCourse, selectedNumber, selectedSubjects]);
@@ -155,7 +166,12 @@ function FillterGroups({handleFillterGroups}) {
           renderInput={(params) => <TextField {...params} label="Group size" />}
         />
         <div className="  my-5">
-          <label className=" text-xl font-bold">Total number of active groups: {totalGroupsCount} </label>
+          <label className=" text-lg ">Total active groups: </label>
+          <label className=" text-xl font-bold"> {totalGroupsCount} </label>
+          <label className=" text-lg ">| Available to join: </label>
+          <label className=" text-xl font-bold"> {availableGroups} </label>
+
+
         </div>
       </div>
   )

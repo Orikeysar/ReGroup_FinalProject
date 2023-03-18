@@ -1,32 +1,25 @@
 import React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
-import { getAuth } from "firebase/auth";
+
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { onSnapshot, collection, query } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
 import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
-import { Avatar } from "primereact/avatar";
+
 import { uuidv4 } from "@firebase/util";
-import JoinGroupCard from "../Coponents/JoinGroupCard";
+
 import FillterGroups from "../Coponents/FillterGroups";
 function AddGroup() {
   const navigate = useNavigate();
-  const auth = getAuth();
 
-//if canot aothorize/recognize the active user
-if(auth.currentUser.uid == null ||auth.currentUser.uid == undefined){
-
-  navigate('/sign-in')
-
-}
-const groupId = auth.currentUser.uid
+  //puul active user from local storage
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
@@ -39,7 +32,7 @@ const groupId = auth.currentUser.uid
     groupImg: activeUser.userImg,
     groupTags: [],
     groupSize: 0,
-    id: groupId,
+    id: activeUser.userRef,
     location: { lat: 0, lng: 0 },
     description: "",
     participants: [],
@@ -75,10 +68,6 @@ const groupId = auth.currentUser.uid
     }));
   };
 
-  //handle if user chose to join axiesting group.
-  const HandleJoinGroupOnToast = (group) => {
-    console.log("join:" + group);
-  };
   //handle added
   const handleInviteFriendChange = (event, value) => {
     setNewGroup({
@@ -87,41 +76,44 @@ const groupId = auth.currentUser.uid
     });
   };
 
-  const onSubmitForm = (e) => {
+  const CreateNewGroup = async () => {
+    setNewGroup({
+      ...newGroup,
+      groupTittle: selectedCourse,
+      groupTags: selectedSubjects,
+      groupSize: selectedNumber,
+      location: cordinates,
+      isActive: true,
+    });
+
+    console.log(newGroup);
+    try {
+      //SET USER TOP10
+      await setDoc(doc(db, "activeGroups", uuidv4), newGroup);
+
+    }catch(error) {
+      toast.error("Bad Cardictionals details,try again");
+      console.log(error)
+    }
+  };
+
+  const onSubmitForm = async (e) => {
     //במידה ויש קבוצה דומה המשתמש יקבל התראה לפני פתיחת הקבוצה
     if (filteredGroups.length > 0) {
       if (
         window.confirm(
           "you want to see another active groups with same parameters!"
-        ) == true
-      ) {
+        ) === true
+      ){
         setFillteredGroupShow(true);
       } else {
-        setFillteredGroupShow(false);
-
-        
-        // MAKE HERE THE FUNCTION THAT CREATE THE REAL GROUP
+        setFillteredGroupShow(false)
+        CreateNewGroup()
+       
+      }}else{
+        CreateNewGroup()
       }
-    }else{
-
-setNewGroup({
-          ...newGroup,
-
-          groupTittle: selectedCourse,
-          groupTags: selectedSubjects,
-          groupSize: selectedNumber,
-          location: cordinates,
-          isActive: true,
-        });
-
-    console.log(newGroup);
-
-
-
-
-
-
-    }
+    
   };
 
   return (
