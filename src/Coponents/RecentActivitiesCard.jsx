@@ -21,18 +21,22 @@ function RecentActivitiesCard() {
     "btn m-2 text-sm  text-black glass"
   );
   const [type, setType] = useState("General");
+  const handleDateTime = (timeStamp) => {
+    let date = new Date(
+      timeStamp.seconds * 1000 + timeStamp.nanoseconds / 1000000
+    );
+    let mm = date.getMonth();
+    let dd = date.getDate();
+    let yyyy = date.getFullYear();
+
+    date = mm + "/" + dd + "/" + yyyy;
+    return date;
+  };
   //בודק אם יש משתמש ואם יש לו פעילויות אחרונות. ויוצר מערכים לקבוצות וכללי
   useEffect(() => {
     if (activeUser && activeUser.recentActivities) {
       const { groups, general } = activeUser.recentActivities.reduce(
         (acc, item) => {
-          let date = item.timeStamp.toDate();
-          let mm = date.getMonth();
-          let dd = date.getDate();
-          let yyyy = date.getFullYear();
-
-          date = mm + "/" + dd + "/" + yyyy;
-          item.timeStamp = date;
           if (item.type === "groups") {
             acc.groups.push(item);
           } else {
@@ -124,7 +128,9 @@ function RecentActivitiesCard() {
                     />
                   </div>
                   <div className="col-span-3">{item.text}</div>
-                  <div className="col-span-2">{item.timeStamp}</div>
+                  <div className="col-span-2">
+                    {handleDateTime(item.timeStamp)}
+                  </div>
                 </div>
               ))}
             </div>
@@ -149,20 +155,22 @@ function RecentActivitiesCard() {
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>course</th>
-                <th>subjects</th>
-                <th>Description</th>
-                <th>Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {activitiesTypeGroups.map((item) => (
-                <tr key={uuidv4()}>
-                  <td>{item.course}</td>
-                  <td>
+          <div className=" w-full">
+            <div>
+              <div className="grid grid-cols-6 w-full text-center font-bold ">
+                <div className="col-span-2"></div>
+                <div className="col-span-2">Detail</div>
+                <div className="col-span-2">Time</div>
+              </div>
+            </div>
+            {activitiesTypeGroups.map((item) => (
+              <div
+                key={uuidv4()}
+                className="grid grid-cols-6 w-full text-center mt-2 "
+              >
+                <div className="col-span-2 self-center ">
+                  <div className=" font-extrabold">{item.course}</div>
+                  <div>
                     {item.subjects
                       .map((sub, index) => {
                         // Check if this is the last item in the array
@@ -173,13 +181,13 @@ function RecentActivitiesCard() {
                         return sub + separator;
                       })
                       .join("")}
-                  </td>
-                  <td>{item.text}</td>
-                  <td>{item.timeStamp}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+                <div className="col-span-2">{item.text}</div>
+                <div className="col-span-2">{handleDateTime(item.timeStamp)}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

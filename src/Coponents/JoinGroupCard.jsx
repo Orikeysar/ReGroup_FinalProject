@@ -8,13 +8,8 @@ import { formatRelative } from "date-fns";
 import Circle from "@mui/icons-material/Circle";
 import { db } from "../FirebaseSDK";
 import {
-  getDoc,
   doc,
-  updateDoc,
-  collection,
-  where,
-  getDocs,
-  query
+  setDoc,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 function JoinGroupCard({group}) {
@@ -87,10 +82,18 @@ let time = timeStamp.toDate();
     };
     group.participants.push(user);
     console.log(group);
-    let activeGroupsRef = collection(db, "activeGroups");
-    let q = query(activeGroupsRef, where("managerRef", "==", group.managerRef));
-    await updateDoc(q, {
-      participants: group.participants,
+    await setDoc(doc(db, "activeGroups", group.id), {
+      description:group.description,
+      groupImg:group.groupImg,
+      groupTags:group.groupTags,
+      groupTittle:group.groupTittle,
+      groupSize:group.groupSize,
+      isActive:group.isActive,
+      location:group.location,
+      managerRef:group.managerRef,
+      participants:group.participants,
+      timeStamp:group.timeStamp
+
     }).then(() => {
         toast.success("Join successfully!");
       }).catch((error) => {

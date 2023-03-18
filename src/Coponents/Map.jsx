@@ -113,9 +113,7 @@ export default function Map({ filteredGroups }) {
   const handleRuppinLocation = () => {
     setCenter({ lat: 32.342884, lng: 34.912755 });
   };
-  //מטפל בהצגת השעה של פתיחת הקבוצה - בנתיים לא מציג נכון
- 
-  //הצטרפות לקבוצה - רעיון לתת מעבר לעמוד הקבוצה
+  
   
   if (!isLoaded) return <Spinner />;
 

@@ -28,6 +28,7 @@ function BottumNavBar() {
 
   const handleGroupsNavButton = () => {
     console.log("Groups list clicked!");
+    localStorage.setItem("componentChoosen", "groups");
     navigate("/findGroups");
   };
 
