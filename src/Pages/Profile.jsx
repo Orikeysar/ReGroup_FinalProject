@@ -59,7 +59,7 @@ function Profile() {
       [e.target.id]: e.target.value,
     }));
   };
-
+//הפונקציה מעלה תמונה לסטורג ושולחת קישור לדאטה בייס
   const onSubmitEdit = async () => {
     try {
       if (activeUser.name !== name || activeUser.degree !== degree) {

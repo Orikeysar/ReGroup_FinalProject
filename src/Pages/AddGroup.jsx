@@ -1,7 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
-
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
@@ -134,7 +133,7 @@ function AddGroup() {
         location: geoPoint,
         isActive: true,
         groupImg: activeUser.userImg,
-        id: activeUser.userRef,
+        managerRef: activeUser.userRef,
         address: newGroup.address,
         description: newGroup.description,
         participants: newGroup.participants,

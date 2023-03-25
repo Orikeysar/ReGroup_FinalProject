@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { db } from "../FirebaseSDK";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import { uuidv4 } from "@firebase/util";
 import Chip from "@mui/material/Chip";
 import {
   onSnapshot,
@@ -147,9 +148,10 @@ const handleAvailableGroups=(groups)=>{
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
               <Chip
+              key={uuidv4()}
                 variant="outlined"
                 label={option}
-                {...getTagProps({ index })}
+                {...getTagProps(index )}
               />
             ))
           }
