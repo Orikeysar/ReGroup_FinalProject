@@ -27,7 +27,7 @@ function NavBar() {
         <div className="navbar-center"></div>
         <div className="navbar-end">
           <Top10Modal />
-          <button className="btn btn-ghost btn-circle  bg-white h-5  ">
+          <button onClick={()=>{alert("Yo!")}} className="btn btn-ghost btn-circle  bg-white h-5  ">
             <NotficationBell className="max-h-fit" />
           </button>
         </div>

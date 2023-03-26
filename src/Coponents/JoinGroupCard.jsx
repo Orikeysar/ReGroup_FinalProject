@@ -2,17 +2,13 @@ import React from "react";
 import { useState, useRef } from "react";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
-import { RiGroup2Fill } from "react-icons/ri";
-import Spinner from "./Spinner";
-import { formatRelative } from "date-fns";
-import Circle from "@mui/icons-material/Circle";
 import { db } from "../FirebaseSDK";
-import {
-  doc,
-  setDoc,
-} from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
-function JoinGroupCard({group}) {
+import UserProfileModal from "./UserProfileModal";
+import { Dialog } from "primereact/dialog";
+
+function JoinGroupCard({ group }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -25,16 +21,21 @@ function JoinGroupCard({group}) {
     setShowDropdown(!showDropdown);
   };
   const handleGroupTime = (timeStamp) => {
-    if(timeStamp != null || timeStamp != undefined){
-
-let time = timeStamp.toDate();
-    let hours = time.getHours();
-    let minutes = time.getMinutes();
-    time = hours + ":" + minutes;
-    return time;
-
+    if (timeStamp != null || timeStamp != undefined) {
+      let time = timeStamp.toDate();
+      let hours = time.getHours();
+      let minutes = time.getMinutes();
+      time = hours + ":" + minutes;
+      return time;
     }
-    
+  };
+  //אחראי על המודל של המשתמש לאחר לחיצה
+  const [visible, setVisible] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
+  const handleUserClick = (id) => {
+    setSelectedUserId(id);
+    setVisible(true);
   };
   //יצירת הדרופדאון של המשתתפים
   const handleGroupParticipants = (participants) => {
@@ -58,7 +59,7 @@ let time = timeStamp.toDate();
                 <li
                   key={uuidv4()}
                   className="flex flex-row"
-                  onClick={() => console.log("user click")}
+                  onClick={() => handleUserClick(user.userRef)}
                 >
                   <Avatar image={user.userImg} size="large" shape="circle" />
                   <label className=" text-md font-bold">{user.name}</label>
@@ -67,6 +68,25 @@ let time = timeStamp.toDate();
             })}
             ,
           </ul>
+        )}
+        {visible && (
+          <div>
+            {/* המודל של המשתמש שנבחר */}
+            <div className="card flex justify-content-center">
+              <Dialog
+                header="User profile"
+                visible={visible}
+                onHide={() => setVisible(false)}
+                style={{ width: "50vw" }}
+                breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+              >
+                <div className="m-0">
+                  {/* הפרטים של המשתמש */}
+                  <UserProfileModal id={selectedUserId} />
+                </div>
+              </Dialog>
+            </div>
+          </div>
         )}
       </div>
     );
@@ -83,77 +103,71 @@ let time = timeStamp.toDate();
     group.participants.push(user);
     console.log(group);
     await setDoc(doc(db, "activeGroups", group.id), {
-      description:group.description,
-      groupImg:group.groupImg,
-      groupTags:group.groupTags,
-      groupTittle:group.groupTittle,
-      groupSize:group.groupSize,
-      isActive:group.isActive,
-      location:group.location,
-      managerRef:group.managerRef,
-      participants:group.participants,
-      timeStamp:group.timeStamp
-
-    }).then(() => {
+      description: group.description,
+      groupImg: group.groupImg,
+      groupTags: group.groupTags,
+      groupTittle: group.groupTittle,
+      groupSize: group.groupSize,
+      isActive: group.isActive,
+      location: group.location,
+      managerRef: group.managerRef,
+      participants: group.participants,
+      timeStamp: group.timeStamp,
+    })
+      .then(() => {
         toast.success("Join successfully!");
-      }).catch((error) => {
+      })
+      .catch((error) => {
         toast.error("An error occurred. Please try again.");
       });
-      //אם הצליח לתת הודעה
-  }
+    //אם הצליח לתת הודעה
+  };
   return (
     <div className=" w-auto h-46 m-2">
-    <p className=" flex mt-1 justify-end ">
-      start at {handleGroupTime(group.timeStamp)}
-    </p>
-    <div className=" flex flex-row">
-      <div className=" ml-2">
-        <Avatar
-          image={group.groupImg}
-          size="xlarge"
-          shape="circle"
-        />
+      <p className=" flex mt-1 justify-end ">
+        start at {handleGroupTime(group.timeStamp)}
+      </p>
+      <div className=" flex flex-row">
+        <div className=" ml-2">
+          <Avatar image={group.groupImg} size="xlarge" shape="circle" />
+        </div>
+        <div>
+          <p className="ml-3 mt-1 justify-center font-bold text-xl">
+            {group.groupTittle}{" "}
+          </p>
+          <p className="ml-3 mt-1 justify-center  text-lg">
+            {group.groupTags
+              .map((sub, index) => {
+                // Check if this is the last item in the array
+                const isLast = index === group.groupTags.length - 1;
+                // Append a "|" character if this is not the last item
+                const separator = isLast ? "" : " | ";
+                // Return the subject name with the separator character
+                return sub + separator;
+              })
+              .join("")}{" "}
+          </p>
+        </div>
       </div>
-      <div>
-        <p className="ml-3 mt-1 justify-center font-bold text-xl">
-          {group.groupTittle}{" "}
-        </p>
-        <p className="ml-3 mt-1 justify-center  text-lg">
-          {group.groupTags
-            .map((sub, index) => {
-              // Check if this is the last item in the array
-              const isLast =
-                index === group.groupTags.length - 1;
-              // Append a "|" character if this is not the last item
-              const separator = isLast ? "" : " | ";
-              // Return the subject name with the separator character
-              return sub + separator;
-            })
-            .join("")}{" "}
-        </p>
-      </div>
-    </div>
 
-    <div className=" ml-3 mt-3 text-lg">
-      <p>{group.description}</p>
-      {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
-    </div>
-    <div className="flex flex-row ml-3 mt-3">
-      <div>
-        {handleGroupParticipants(group.participants)}
+      <div className=" ml-3 mt-3 text-lg">
+        <p>{group.description}</p>
+        {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
       </div>
-      <div className=" ml-auto justify-end">
-        <button
-          onClick={() => {
-            handleJoinGroup(group);
-          }}
-          className="btn btn-xs  ml-auto mt-1"
-        >
-          Join
-        </button>
+      <div className="flex flex-row ml-3 mt-3">
+        <div>{handleGroupParticipants(group.participants)}</div>
+        <div className=" ml-auto justify-end">
+          <button
+            onClick={() => {
+              handleJoinGroup(group);
+            }}
+            className="btn btn-xs  ml-auto mt-1"
+          >
+            Join
+          </button>
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 

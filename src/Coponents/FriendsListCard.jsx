@@ -5,6 +5,8 @@ import { OrderList } from "primereact/orderlist";
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { AutoComplete } from "primereact/autocomplete";
+import { Dialog } from "primereact/dialog";
+import UserProfileModal from "./UserProfileModal";
 
 function FriendsListCard() {
   //array for frinds
@@ -32,9 +34,13 @@ function FriendsListCard() {
     setFriends(NewFriendList);
   }, [activeUser.friendsList]);
 
-  //when click on View froend profile
-  const ClickViewProfile = (e) => {
-    console.log(e.target.value);
+  //אחראי על המודל של המשתמש לאחר לחיצה
+  const [visible, setVisible] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
+  const handleUserClick = (id) => {
+    setSelectedUserId(id);
+    setVisible(true);
   };
 
   //render card of friend
@@ -67,12 +73,31 @@ function FriendsListCard() {
             <Button
               className=" btn-xs border-gray-500 bg-gray-600 text-white  rounded-md mb-2"
               value={product.name}
-              onClick={ClickViewProfile}
+              onClick={()=>handleUserClick(product.id)}
             >
               View
             </Button>
           </div>
         </div>
+        {visible && (
+          <div>
+            {/* המודל של המשתמש שנבחר */}
+            <div className="card flex justify-content-center">
+              <Dialog
+                header="User profile"
+                visible={visible}
+                onHide={() => setVisible(false)}
+                style={{ width: "50vw" }}
+                breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+              >
+                <div className="m-0">
+                  {/* הפרטים של המשתמש */}
+                  <UserProfileModal id={selectedUserId} />
+                </div>
+              </Dialog>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
