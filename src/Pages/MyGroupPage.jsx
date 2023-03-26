@@ -176,8 +176,9 @@ function MyGroupPage() {
                                       key={uuidv4()}
                                       avatar={
                                         <Avatar
-                                          alt="paticipant.name"
-                                          src={paticipant.userImg}
+                                        size="small"
+                                        shape="circle"
+                                        image={participant.userImg}
                                         />
                                       }
                                       color="success"
