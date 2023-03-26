@@ -8,7 +8,9 @@ import { ProgressBar } from "primereact/progressbar";
 //render card of friend
 
 function UserAchievemeant() {
-  
+  const [componentChoosen, setComponentChoosen] = useState(
+    localStorage.setItem("componentChoosen","/")
+  );
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;

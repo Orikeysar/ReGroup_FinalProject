@@ -5,7 +5,7 @@ function Top10Modal() {
   return (
     <div>
       {/* The button to open modal */}
-
+ 
       <label
         htmlFor="my-modal-4"
         className="showTop10 btn btn-ghost btn-circle bg-white h-5  "

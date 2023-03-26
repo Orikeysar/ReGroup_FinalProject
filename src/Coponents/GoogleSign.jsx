@@ -48,9 +48,9 @@ function GoogleSign() {
               numberOfAchievementDoing: 0,
               activeLevel: 1,
               achievementImg:"",
-              TopLevelOne:100,
-              TopLeveTwo:200,
-              TopLevelThree:500,
+              topLevelOne:100,
+              topLeveTwo:200,
+              topLevelThree:500,
               valuePerAction: 5
 
 
@@ -60,9 +60,9 @@ function GoogleSign() {
               numberOfAchievementDoing: 0,
               activeLevel: 1,
               achievementImg:"",
-              TopLevelOne:40,
-              TopLeveTwo:100,
-              TopLevelThree:200,
+              topLevelOne:40,
+              topLeveTwo:100,
+              topLevelThree:200,
               valuePerAction: 10
             },
             {
@@ -70,9 +70,9 @@ function GoogleSign() {
               numberOfAchievementDoing: 0,
               activeLevel: 1,
               achievementImg:"",
-              TopLevelOne:100,
-              TopLeveTwo:200,
-              TopLevelThree:500,
+              topLevelOne:100,
+              topLeveTwo:200,
+              topLevelThree:500,
               valuePerAction: 3
             },
             {
@@ -80,9 +80,9 @@ function GoogleSign() {
               numberOfAchievementDoing: 0,
               activeLevel: 1,
               achievementImg:"",
-              TopLevelOne:200,
-              TopLeveTwo:500,
-              TopLevelThree:1000,
+              topLevelOne:200,
+              topLeveTwo:500,
+              topLevelThree:1000,
               valuePerAction: 1
             },
           ],
