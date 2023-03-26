@@ -1,7 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
-
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";

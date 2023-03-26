@@ -10,6 +10,7 @@ import PraivteRoute from "./Coponents/PraivteRoute.jsx";
 import ForgotPassword from "./Pages/ForgotPassword";
 import FindGroups from "./Pages/FindGroups";
 import AddGroup from "./Pages/AddGroup";
+import MyGroupPage from "./Pages/MyGroupPage";
 function App() {
   return (
     <>
@@ -31,6 +32,7 @@ function App() {
               <Route path="/forgotPassword" element={<ForgotPassword />} />
               <Route path="/findGroups" element={<FindGroups />} />
               <Route path="/createGroups" element={<AddGroup />} />
+              <Route path="/myGroup" element={<MyGroupPage />} />
             </Routes>
           </div>
 
