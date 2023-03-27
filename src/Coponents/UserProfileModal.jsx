@@ -3,9 +3,9 @@ import { doc, updateDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { Avatar } from "primereact/avatar";
 import { toast } from "react-toastify";
-import { async } from "@firebase/util";
 import { uuidv4 } from "@firebase/util";
 import Rating from '@mui/material/Rating';
+import UpdateRecentActivities from "./UpdateRecentActivities";
 
 function UserProfileModal({ id }) {
   const [activeUser, setActiveUser] = useState(
@@ -71,6 +71,7 @@ function UserProfileModal({ id }) {
         toast.success(
           "congrats ! you and " + newFriend.name + " are new friends"
         );
+        UpdateRecentActivities(newFriend,"friend",activeUser);
         localStorage.setItem("activeUser", JSON.stringify(activeUser));
       })
       .catch((error) => {
@@ -130,6 +131,7 @@ function UserProfileModal({ id }) {
           <button
             onClick={handleAddFriend}
             className="btn btn-sm  ml-auto mt-3"
+            disabled={id===activeUser.userRef?true:false}
           >
             Add friend
           </button>

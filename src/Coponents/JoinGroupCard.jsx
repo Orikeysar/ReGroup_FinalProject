@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import UserProfileModal from "./UserProfileModal";
 import { Dialog } from "primereact/dialog";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
+import UpdateRecentActivities from "./UpdateRecentActivities";
 function JoinGroupCard({ group }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -120,6 +121,7 @@ function JoinGroupCard({ group }) {
       timeStamp: group.timeStamp,
     })
       .then(() => {
+        UpdateRecentActivities(group,"JoinedGroup",activeUser)
         toast.success("Join successfully!");
       })
       .catch((error) => {

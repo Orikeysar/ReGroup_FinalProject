@@ -6,7 +6,8 @@ import { db } from "../FirebaseSDK";
 import NavBar from "../Coponents/NavBar";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
-import {  setDoc,
+import {
+  setDoc,
   doc,
   GeoPoint,
   Timestamp,
@@ -14,7 +15,8 @@ import {  setDoc,
   query,
   where,
   getDocs,
-  deleteDoc } from "firebase/firestore";
+  deleteDoc,
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { BsFilePerson } from "react-icons/bs";
@@ -23,6 +25,7 @@ import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import FillterGroups from "../Coponents/FillterGroups";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
+import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 
 function MyGroupPage() {
   const navigate = useNavigate();
@@ -47,7 +50,7 @@ function MyGroupPage() {
   };
   //get all the filters from FiltterGroup component
   const [filteredGroups, setFilteredGroups] = useState([]);
- 
+
   const handleFillterGroups = (filteredGroups) => {
     setFilteredGroups(filteredGroups);
   };
@@ -278,14 +281,10 @@ function MyGroupPage() {
     );
   };
   //תפס את הלחיצה על מחיקת קבוצה בה הוא מנהל
-  const handleDeleteManagerGroup = async() => {
-let groupId = null
-    if (
-      window.confirm(
-        "you sure you want to delete this group?"
-      ) === true
-    ) {
-         //אם אישר למחוק את הקבוצה
+  const handleDeleteManagerGroup = async () => {
+    let groupId = null;
+    if (window.confirm("you sure you want to delete this group?") === true) {
+      //אם אישר למחוק את הקבוצה
 
       const q = query(
         collection(db, "activeGroups"),
@@ -294,27 +293,23 @@ let groupId = null
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        groupId=doc.id
+        groupId = doc.id;
         console.log(doc.id, " => ", doc.data());
       });
-  // Remove the 'group' field from the document
-       await deleteDoc(doc(db, "activeGroups", doc.id));
-toast.success("delete success")
-
+      const groupData=querySnapshot.data();
+      // Remove the 'group' field from the document
+      await deleteDoc(doc(db, "activeGroups", doc.id));
+      toast.success("delete success");
+      UpdateRecentActivities(groupData,"CreatedGroup",activeUser)
     } else {
-      toast.success("group wont delete")
+      toast.success("group wont delete");
     }
-
   };
 
   //תופס את לחיצת הכפתור עריכה על כרטיס הקבוצה
   const handleEditManagerGroup = (group) => {
- 
-  navigate("/createGroups")
-   
-    
+    navigate("/createGroups");
   };
- 
 
   return (
     <div className="container">
@@ -323,11 +318,10 @@ toast.success("delete success")
         <NavBar />
       </div>
       <div className="row userInfo">
-        
-            <div className="hidden">
-              <FillterGroups handleFillterGroups={handleFillterGroups} />
-            </div>
-      
+        <div className="hidden">
+          <FillterGroups handleFillterGroups={handleFillterGroups} />
+        </div>
+
         {/* //הצגת הקבוצות שנמצאו */}
         <div className="col-md-4 animated fadeIn ">
           <p className="font-bold text-center text-lg">
