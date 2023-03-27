@@ -20,11 +20,11 @@ function UserAchievemeant() {
   );
   const currentTopUseForItem = (userAchive) => {
     if (userAchive.activeLevel === 3) {
-      return userAchive.TopLevelThree;
+      return userAchive.topLevelThree;
     } else if (userAchive.activeLevel === 2) {
-      return userAchive.TopLevelTwo;
+      return userAchive.topLevelTwo;
     } else {
-      return userAchive.TopLevelOne;
+      return userAchive.topLevelOne;
     }
   };
   const valueTemplate = (value) => {

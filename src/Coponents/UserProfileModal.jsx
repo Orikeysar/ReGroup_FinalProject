@@ -4,6 +4,8 @@ import { db } from "../FirebaseSDK";
 import { Avatar } from "primereact/avatar";
 import { toast } from "react-toastify";
 import { async } from "@firebase/util";
+import { uuidv4 } from "@firebase/util";
+import Rating from '@mui/material/Rating';
 
 function UserProfileModal({ id }) {
   const [activeUser, setActiveUser] = useState(
@@ -41,7 +43,6 @@ function UserProfileModal({ id }) {
     return null;
   }
 
-
   //בשביל התאריך בהרשמה כחבר
   const now = new Date();
   //הוספת המשתמש לרשימה בדאטה
@@ -67,83 +68,92 @@ function UserProfileModal({ id }) {
       friendsList: activeUser.friendsList,
     })
       .then(() => {
-        toast.success("congrats ! you and "+newFriend.name+" are new friends");
-        localStorage.setItem("activeUser",JSON.stringify(activeUser))
+        toast.success(
+          "congrats ! you and " + newFriend.name + " are new friends"
+        );
+        localStorage.setItem("activeUser", JSON.stringify(activeUser));
       })
       .catch((error) => {
         toast.error("Bad Cardictionals details,try again");
         console.log(error);
       });
   };
-//מחיקת המשתמש מהרשימה
-  const handleRemoveFriend=async()=>{
+  //מחיקת המשתמש מהרשימה
+  const handleRemoveFriend = async () => {
     if (
       window.confirm(
-        "Are you sure you want to remove "+user.name+" from the friends list?"
+        "Are you sure you want to remove " +
+          user.name +
+          " from the friends list?"
       ) === true
     ) {
-      let newFriendsList = activeUser.friendsList.filter((item) => id !== item.id);
-      activeUser.friendsList=newFriendsList;
+      let newFriendsList = activeUser.friendsList.filter(
+        (item) => id !== item.id
+      );
+      activeUser.friendsList = newFriendsList;
       await updateDoc(activeUserRef, {
-        friendsList: newFriendsList
+        friendsList: newFriendsList,
       })
-      .then(() => {
-        toast.success("Done successfully");
-        localStorage.setItem("activeUser",JSON.stringify(activeUser))
-
-      })
-      .catch((error) => {
-        toast.error("Bad Cardictionals details,try again");
-        console.log(error);
-      });
-    } 
-    
-    
-
-  }
+        .then(() => {
+          toast.success("Done successfully");
+          localStorage.setItem("activeUser", JSON.stringify(activeUser));
+        })
+        .catch((error) => {
+          toast.error("Bad Cardictionals details,try again");
+          console.log(error);
+        });
+    }
+  };
 
   return (
-    <div className="grid grid-cols-6">
-      <Avatar
-        image={user.userImg}
-        size="xlarge"
-        shape="circle"
-        className="justify-center flex-auto col-span-1"
+    <div>
+    <div className="grid grid-cols-5 pt-3 ">
+      <img
+      style={{width:90+"%", height:80+"%", borderRadius: 25}}
+        src={user.userImg}
+        className="justify-center flex-auto col-span-1 mt-3"
       />
-      <div className="col-span-3">
+      <div className="col-span-3 mt-1">
         <div className="text-xl font-bold">{user.name}</div>
         <div className="text-lg font-semibold">{user.email}</div>
         <div className="text-lg font-semibold">{user.degree}</div>
       </div>
-
-      <div className="col-span-2">
-        <div className="py-2">
-          {user.userAchievements.map((item) => {
-            <div>
+      <div className=" ml-auto justify-end col-span-1 mt-4">
+        {btnStatus ? (
+          <button
+            onClick={handleRemoveFriend}
+            className="btn btn-sm  bg-red-600  ml-auto mt-3"
+          >
+            Remove friend
+          </button>
+        ) : (
+          <button
+            onClick={handleAddFriend}
+            className="btn btn-sm  ml-auto mt-3"
+          >
+            Add friend
+          </button>
+        )}
+      </div>
+      </div>
+      <div className=" mt-1">
+        <div className="flex flex-wrap">
+          {user.userAchievements.map((item) => (
+            <div className="grid grid-cols-8 mt-1 p-2 rounded-lg shadow-md" key={uuidv4()}>
               <Avatar
                 image={item.achievementImg}
                 size="md"
                 shape="circle"
-                className="justify-center flex-auto "
+                className="flex-auto col-span-1"
               />
-              <label>{item.name}</label>
-              <label>Rank: {item.activeLevel}</label>
-            </div>;
-          })}
+              <label className="font-bold col-span-5 pt-1 pl-1">{item.name}</label>{" "}
+              <label className="col-span-2 ml-5 pt-1"> <Rating readOnly  defaultValue={item.activeLevel} max={3} /></label>
+            </div>
+          ))}
         </div>
       </div>
-      <div className=" ml-auto justify-end">
-        {btnStatus?
-        <button onClick={handleRemoveFriend} className="btn btn-sm  bg-red-600  ml-auto mt-3">
-          Remove friend
-        </button> 
-        :
-        <button onClick={handleAddFriend} className="btn btn-sm  ml-auto mt-3">
-          Add friend
-        </button>
-        }
-        
-      </div>
+      
+    
     </div>
   );
 }
