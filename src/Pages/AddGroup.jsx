@@ -133,7 +133,7 @@ function AddGroup() {
         location: geoPoint,
         isActive: true,
         groupImg: activeUser.userImg,
-        id: activeUser.userRef,
+        managerRef: activeUser.userRef,
         address: newGroup.address,
         description: newGroup.description,
         participants: newGroup.participants,
