@@ -7,26 +7,40 @@ import Chip from "@mui/material/Chip";
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { setDoc, doc, GeoPoint, Timestamp } from "firebase/firestore";
+import {
+  setDoc,
+  doc,
+  GeoPoint,
+  Timestamp,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
 import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
-
+import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
-
 import FillterGroups from "../Coponents/FillterGroups";
 
 function AddGroup() {
   const navigate = useNavigate();
-
+  //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
+  let { managerGroup, participantGroup } = useFindMyGroups();
   //puul active user from local storage
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  const [cordinates, setCordinates] = useState(null);
-
+  //איתחול משתני עריכת/יצירת קבוצה
+  const [editGroupState, setEditGroupState] = useState("Create New Group");
+  if (managerGroup != null && editGroupState === "Create New Group") {
+    setEditGroupState("Edit Your Group");
+  }
+  const [managerGroupId, setManagerGroupId] = useState("");
   const [fillteredGroupShow, setFillteredGroupShow] = useState(false);
+  const [cordinates, setCordinates] = useState(null);
   const [newGroup, setNewGroup] = useState({
     address: "",
     groupTittle: "",
@@ -59,6 +73,9 @@ function AddGroup() {
   };
   const useEffect =
     (() => {
+      if (managerGroup != null && editGroupState === "Create New Group") {
+        setEditGroupState("Edit Your Group");
+      }
       setNewGroup({
         ...newGroup,
         groupTittle: selectedCourse,
@@ -87,15 +104,16 @@ function AddGroup() {
   const handleInviteFriendChange = (event, value) => {
     setNewGroup({
       ...newGroup,
-      participants: [...value,],
+      participants: [...value],
     });
-
-
   };
-//הפונקציה מכניסה את הקבוצה לדאטה בייס
+  //הפונקציה מכניסה את הקבוצה לדאטה בייס
   const CreateNewGroup = async () => {
- 
-    if (cordinates == null ) {
+    // //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
+    // let { managerGroup, participantGroup } = useFindMyGroups();
+    let groupId = null;
+    
+    if (cordinates == null) {
       return toast.error("choose group location on the map");
     } else if (newGroup.timeStamp === "00:00:00") {
       return toast.error("choose group arival time!");
@@ -104,59 +122,117 @@ function AddGroup() {
       selectedSubjects == null ||
       selectedNumber == null
     ) {
-     return toast.error("choose fillters for the group you create");
-    } else if(newGroup.address === "" ||newGroup.description === ""){
+      return toast.error("choose fillters for the group you create");
+    } else if (newGroup.address === "" || newGroup.description === "") {
+      return toast.error(
+        "fill adress and discription for the group you create"
+      );
+    } else {
+      newGroup.participants.push({
+        name: activeUser.name,
+        userImg: activeUser.userImg,
+        userRef: activeUser.userRef,
+      });
 
-      return toast.error("fill adress and discription for the group you create");
-
-    }else {
-    
-
-      newGroup.participants.push( {
-            name: activeUser.name,
-            userImg: activeUser.userImg,
-            userRef: activeUser.userRef,
-          })
-      
-      
-
-
-      const now = new Date();
-      const [hours, minutes] = newGroup.timeStamp.split(":");
-      now.setHours(hours, minutes, 0, 0);
-      const geoPoint = new GeoPoint(cordinates.lat, cordinates.lng);
-      //SET USER TOP10
-      await setDoc(doc(db, "activeGroups", uuidv4()), {
-        groupTittle: selectedCourse,
-        groupTags: selectedSubjects,
-        groupSize: parseInt(selectedNumber),
-        location: geoPoint,
-        isActive: true,
-        groupImg: activeUser.userImg,
-        managerRef: activeUser.userRef,
-        address: newGroup.address,
-        description: newGroup.description,
-        participants: newGroup.participants,
-        timeStamp: Timestamp.fromDate(
-          new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate(),
-            now.getHours(),
-            now.getMinutes()
-          )
-        ),
-      })
-        .then(() => {
-          toast.success("create success");
-        })
-        .catch((error) => {
-          toast.error("Bad Cardictionals details,try again");
-          console.log(error);
+      if (managerGroup != null) {
+        // idבדיקה בדאטה האם למשתמש קיים קבוצה שיצר במידה וכן יחזיר id
+        const q = query(
+          collection(db, "activeGroups"),
+          where("managerRef", "==", activeUser.userRef)
+        );
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          setManagerGroupId(doc.id);
+          groupId = doc.id;
+          console.log(doc.id, " => ", doc.data());
         });
+
+        if (
+          window.confirm(
+            "you already have group you manage, notice that you will edit that group!"
+          ) === true
+        ) {
+          UploadEditedGroup(groupId);
+        } else {
+          navigate("/myGroups");
+        }
+      } else {
+        CreateNewEditedGroup();
+      }
     }
   };
 
+  const UploadEditedGroup = async (groupId) => {
+    const now = new Date();
+    const [hours, minutes] = newGroup.timeStamp.split(":");
+    now.setHours(hours, minutes, 0, 0);
+    const geoPoint = new GeoPoint(cordinates.lat, cordinates.lng);
+    //SET USER new group
+    await setDoc(doc(db, "activeGroups", groupId), {
+      groupTittle: selectedCourse,
+      groupTags: selectedSubjects,
+      groupSize: parseInt(selectedNumber),
+      location: geoPoint,
+      isActive: true,
+      groupImg: activeUser.userImg,
+      managerRef: activeUser.userRef,
+      address: newGroup.address,
+      description: newGroup.description,
+      participants: newGroup.participants,
+      timeStamp: Timestamp.fromDate(
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          now.getHours(),
+          now.getMinutes()
+        )
+      ),
+    })
+      .then(() => {
+        toast.success("edit success");
+      })
+      .catch((error) => {
+        toast.error("Bad Cardictionals details,try again");
+        console.log(error);
+      });
+  };
+  const CreateNewEditedGroup = async () => {
+    const now = new Date();
+    const [hours, minutes] = newGroup.timeStamp.split(":");
+    now.setHours(hours, minutes, 0, 0);
+    const geoPoint = new GeoPoint(cordinates.lat, cordinates.lng);
+    //SET USER new group
+    await setDoc(doc(db, "activeGroups", uuidv4()), {
+      groupTittle: selectedCourse,
+      groupTags: selectedSubjects,
+      groupSize: parseInt(selectedNumber),
+      location: geoPoint,
+      isActive: true,
+      groupImg: activeUser.userImg,
+      managerRef: activeUser.userRef,
+      address: newGroup.address,
+      description: newGroup.description,
+      participants: newGroup.participants,
+      timeStamp: Timestamp.fromDate(
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          now.getHours(),
+          now.getMinutes()
+        )
+      ),
+    })
+      .then(() => {
+        toast.success("create success");
+      })
+      .catch((error) => {
+        toast.error("Bad Cardictionals details,try again");
+        console.log(error);
+      });
+  };
   const onSubmitForm = async (e) => {
     //במידה ויש קבוצה דומה המשתמש יקבל התראה לפני פתיחת הקבוצה
     if (filteredGroups.length > 0) {
@@ -259,8 +335,12 @@ function AddGroup() {
           </div>
           {/* //submit button */}
           <div className="mb-2 mt-4 ">
-            <button onClick={onSubmitForm} className="btn">
-              Submit
+            <button
+              placeholder={editGroupState}
+              onClick={onSubmitForm}
+              className="btn"
+            >
+              {editGroupState}
             </button>
           </div>
         </div>

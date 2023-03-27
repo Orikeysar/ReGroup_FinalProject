@@ -5,7 +5,8 @@ import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import { RxCounterClockwiseClock } from "react-icons/rx";
 import { RiGroup2Fill } from "react-icons/ri";
 import { TbFriends } from "react-icons/tb";
-import { GiBookmarklet, GiConversation } from "react-icons/gi";
+import { BsPostcard,BsCardHeading } from "react-icons/bs";
+import {  GiConversation } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 
 function BottumNavBar() {
@@ -37,9 +38,9 @@ function BottumNavBar() {
   };
 
   const handleCoursesNavButton = () => {
-    localStorage.setItem("componentChoosen", "CoursesList");
+    localStorage.setItem("componentChoosen", "MyGroupsPage");
     console.log("courses list clicked!");
-    navigate("/");
+    navigate("/myGroups");
   };
 
   const handleRecentNavButton = () => {
@@ -61,9 +62,9 @@ function BottumNavBar() {
           onClick={handleRecentNavButton}
         />
         <BottomNavigationAction
-          label="CoursesList"
-          value="CoursesList"
-          icon={<GiBookmarklet />}
+          label="MyGroupsPage"
+          value="MyGroupsPage"
+          icon={<BsCardHeading />}
           onClick={handleCoursesNavButton}
         />
         <BottomNavigationAction
