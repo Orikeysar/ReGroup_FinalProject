@@ -6,7 +6,15 @@ import { db } from "../FirebaseSDK";
 import NavBar from "../Coponents/NavBar";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import {  setDoc,
+  doc,
+  GeoPoint,
+  Timestamp,
+  collection,
+  query,
+  where,
+  getDocs,
+  deleteDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { BsFilePerson } from "react-icons/bs";
@@ -18,31 +26,15 @@ import useFindMyGroups from "../Hooks/useFindMyGroups";
 
 function MyGroupPage() {
   const navigate = useNavigate();
-  //
+  //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
   //מושך מהלוקל את פרטי המשתמש המחובר
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  // //אתחול משתמנים לגישה לדאטה
-  // const [activeGroups, setActiveGroups] = useState([]);
-  // const colRef = collection(db, "activeGroups");
-  // const q = query(colRef);
 
-  // //מאזין שמושך את הקבוצות הקיימות מהדאטה
-  // onSnapshot(q, (snapshot) => {
-  //   let newActiveGroups = [];
-  //   snapshot.docs.forEach((doc, index) => {
-  //     newActiveGroups.push({ ...doc.data(), id: doc.id, index });
-  //   });
-
-  //   if (JSON.stringify(newActiveGroups) !== JSON.stringify(activeGroups)) {
-  //     setActiveGroups(newActiveGroups);
-
-  //   }
-  // });
-
+  const [managerGroupId, setManagerGroupId] = useState(null);
   //פונקציה שמסדרת את זמן הקבוצה
   const handleGroupTime = (timeStamp) => {
     if (timeStamp != null || timeStamp != undefined) {
@@ -55,20 +47,11 @@ function MyGroupPage() {
   };
   //get all the filters from FiltterGroup component
   const [filteredGroups, setFilteredGroups] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState([]);
-  const [selectedSubjects, setSelectedSubjects] = useState([]);
-  const [selectedNumber, setSelectedNumber] = useState([]);
-  const handleFillterGroups = (
-    filteredGroups,
-    selectedCourse,
-    selectedSubjects,
-    selectedNumber
-  ) => {
+ 
+  const handleFillterGroups = (filteredGroups) => {
     setFilteredGroups(filteredGroups);
-    setSelectedCourse(selectedCourse);
-    setSelectedSubjects(selectedSubjects);
-    setSelectedNumber(selectedNumber);
   };
+  //הצגת הקבוצה בה המשתמש מנהל כרגע
   const ShowMangerGroup = () => {
     let { managerGroup, participantGroup } = useFindMyGroups();
     if (managerGroup == null) {
@@ -159,36 +142,33 @@ function MyGroupPage() {
                 {managerGroup.description}
               </p>
 
-             
-                <div className="text-center grid grid-cols-1">
-                  <button
-                    key={uuidv4()}
-                    className="editButton btn btn-xs text-sm mt-2"
-                    onClick={() => {
-                      handleEditManagerGroup(managerGroup);
-                    }}
-                  >
-                    Edit Group
-                  </button>
-                  <button
-                    key={uuidv4()}
-                    className="editButton btn btn-xs text-sm mt-2 "
-                    onClick={() => {
-                      handleDeleteManagerGroup(managerGroup);
-                    }}
-                  >
-                    Delete Group
-                  </button>
-                </div>
-            
+              <div className="text-center grid grid-cols-1">
+                <button
+                  key={uuidv4()}
+                  className="editButton btn btn-xs text-sm mt-2"
+                  onClick={() => {
+                    handleEditManagerGroup(managerGroup);
+                  }}
+                >
+                  Edit Group
+                </button>
+                <button
+                  key={uuidv4()}
+                  className="editButton btn btn-xs text-sm mt-2 "
+                  onClick={() => {
+                    handleDeleteManagerGroup();
+                  }}
+                >
+                  Delete Group
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     );
   };
-
-
+  //הצגת הקבוצה בה המשתמש חבר כרגע
   const ShowPaticipantGroup = () => {
     let { managerGroup, participantGroup } = useFindMyGroups();
     if (participantGroup == null) {
@@ -251,7 +231,8 @@ function MyGroupPage() {
               </p>
               <p className="flex flex-row ml-3 mt-2">
                 <BsFilePerson className="mr-1" />
-                {participantGroup.participants.length} / {participantGroup.groupSize}
+                {participantGroup.participants.length} /{" "}
+                {participantGroup.groupSize}
                 {/* //see FREINDS */}
               </p>
               <p className="flex flex-row ml-3">
@@ -279,30 +260,61 @@ function MyGroupPage() {
                 {managerGroup.description}
               </p>
 
-             
-                 
-                <div className="text-center grid grid-cols-1">
-                  <button
-                    key={uuidv4()}
-                    className="editButton btn btn-xs text-sm mt-2 "
-                    onClick={() => {
-                      handleDeleteManagerGroup(participantGroup);
-                    }}
-                  >
-                    Leave Group
-                  </button>
-                </div>
-              
+              <div className="text-center grid grid-cols-1">
+                <button
+                  key={uuidv4()}
+                  className="editButton btn btn-xs text-sm mt-2 "
+                  onClick={() => {
+                    handleDeleteManagerGroup(participantGroup);
+                  }}
+                >
+                  Leave Group
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     );
   };
-  const handleDeleteManagerGroup = (group) => {};
+  //תפס את הלחיצה על מחיקת קבוצה בה הוא מנהל
+  const handleDeleteManagerGroup = async() => {
+let groupId = null
+    if (
+      window.confirm(
+        "you sure you want to delete this group?"
+      ) === true
+    ) {
+         //אם אישר למחוק את הקבוצה
+
+      const q = query(
+        collection(db, "activeGroups"),
+        where("managerRef", "==", activeUser.userRef)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        groupId=doc.id
+        console.log(doc.id, " => ", doc.data());
+      });
+  // Remove the 'group' field from the document
+       await deleteDoc(doc(db, "activeGroups", doc.id));
+toast.success("delete success")
+
+    } else {
+      toast.success("group wont delete")
+    }
+
+  };
 
   //תופס את לחיצת הכפתור עריכה על כרטיס הקבוצה
-  const handleEditManagerGroup = (group) => {};
+  const handleEditManagerGroup = (group) => {
+ 
+  navigate("/createGroups")
+   
+    
+  };
+ 
 
   return (
     <div className="container">
@@ -311,13 +323,22 @@ function MyGroupPage() {
         <NavBar />
       </div>
       <div className="row userInfo">
-        <div className="">
-          <FillterGroups handleFillterGroups={handleFillterGroups} />
-        </div>
+        
+            <div className="hidden">
+              <FillterGroups handleFillterGroups={handleFillterGroups} />
+            </div>
+      
+        {/* //הצגת הקבוצות שנמצאו */}
         <div className="col-md-4 animated fadeIn ">
-          <p> manager group:</p>
+          <p className="font-bold text-center text-lg">
+            {" "}
+            Group You Manager In:
+          </p>
           {ShowMangerGroup()}
-          <p> Group you participant in::</p>
+          <p className="font-bold text-center text-lg">
+            {" "}
+            Group you participant in:
+          </p>
           {ShowPaticipantGroup()}
         </div>
       </div>

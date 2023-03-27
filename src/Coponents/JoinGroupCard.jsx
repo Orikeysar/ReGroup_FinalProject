@@ -7,11 +7,13 @@ import { doc, setDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import UserProfileModal from "./UserProfileModal";
 import { Dialog } from "primereact/dialog";
-
+import useFindMyGroups from "../Hooks/useFindMyGroups";
 function JoinGroupCard({ group }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
+    //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
+    let { managerGroup, participantGroup } = useFindMyGroups();
   //פרטי המשתמש המחובר
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
@@ -94,6 +96,9 @@ function JoinGroupCard({ group }) {
 
   //הצטרפות לקבוצה - רעיון לתת מעבר לעמוד הקבוצה
   const handleJoinGroup = async (group) => {
+    if(participantGroup !=null){
+      return toast.info("you already participant in group!,evry user can join only one group at time!");
+    }
     console.log(group);
     let user = {
       name: activeUser.name,

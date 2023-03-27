@@ -128,7 +128,7 @@ const handleAvailableGroups=(groups)=>{
   }, [activeGroups, selectedCourse, selectedNumber, selectedSubjects]);
   
   return (
-    <div className=" grid justify-center my-4">
+    <div className=" grid justify-center my-4 ">
         <Autocomplete
           onChange={handleCourseChange}
           id="free-solo-demo"
@@ -138,7 +138,7 @@ const handleAvailableGroups=(groups)=>{
           renderInput={(params) => <TextField {...params} label="Course" />}
         />
         <Autocomplete
-          className=" my-5"
+          className=" my-5 "
           onChange={handleSubjectsChange}
           multiple
           sx={{ width: 250, marginTop:5 }}
@@ -160,6 +160,7 @@ const handleAvailableGroups=(groups)=>{
           )}
         />
         <Autocomplete
+
           onChange={handleNumberChange}
           id="free-solo-demo"
           freeSolo
@@ -167,7 +168,7 @@ const handleAvailableGroups=(groups)=>{
           options={["2", "3", "4", "5"]}
           renderInput={(params) => <TextField {...params} label="Group size" />}
         />
-        <div className="  my-5">
+        <div className="  my-5 p-2 rounded-lg shadow-md">
           <label className=" text-lg ">Total active groups: </label>
           <label className=" text-xl font-bold"> {totalGroupsCount} </label>
           <label className=" text-lg ">| Available to join: </label>

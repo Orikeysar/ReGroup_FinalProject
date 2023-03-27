@@ -120,7 +120,7 @@ export default function Map({ filteredGroups }) {
   return (
     <>
       {distance ? (
-        <label className="grid justify-center font-bold text-md mb-3">
+        <label className="grid justify-center font-bold text-md mb-3 p-2 rounded-lg shadow-md ">
           Distance from my location :{distance}{" "}
         </label>
       ) : null}

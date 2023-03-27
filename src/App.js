@@ -32,7 +32,7 @@ function App() {
               <Route path="/forgotPassword" element={<ForgotPassword />} />
               <Route path="/findGroups" element={<FindGroups />} />
               <Route path="/createGroups" element={<AddGroup />} />
-              <Route path="/myGroup" element={<MyGroupPage />} />
+              <Route path="/myGroups" element={<MyGroupPage />} />
             </Routes>
           </div>
 
