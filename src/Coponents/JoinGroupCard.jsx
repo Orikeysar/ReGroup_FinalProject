@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import UserProfileModal from "./UserProfileModal";
 import { Dialog } from "primereact/dialog";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
+import Chip from "@mui/material/Chip";
+import randomColor from "randomcolor";
 function JoinGroupCard({ group }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -134,24 +136,47 @@ function JoinGroupCard({ group }) {
       </p>
       <div className=" flex flex-row">
         <div className=" ml-2">
+          <div>
           <Avatar image={group.groupImg} size="xlarge" shape="circle" />
         </div>
         <div>
           <p className="ml-3 mt-1 justify-center font-bold text-xl">
             {group.groupTittle}{" "}
-          </p>
-          <p className="ml-3 mt-1 justify-center  text-lg">
-            {group.groupTags
-              .map((sub, index) => {
-                // Check if this is the last item in the array
-                const isLast = index === group.groupTags.length - 1;
-                // Append a "|" character if this is not the last item
-                const separator = isLast ? "" : " | ";
-                // Return the subject name with the separator character
-                return sub + separator;
-              })
-              .join("")}{" "}
-          </p>
+          </p></div>
+          <p className="ml-3 mt-2 justify-center text-sm ">
+                {group.groupTags.map((sub, index) => {
+                  // Check if it's the last element in the array
+                  let color = randomColor({
+                    luminosity: "light",
+                    hue: "random",
+                  });
+                  if (index === group.groupTags.length - 1) {
+                    return (
+                      <Chip
+                        style={{
+                          backgroundColor: color,
+                        }}
+                        key={uuidv4()}
+                        className="mr-2 mt-2 font-bold"
+                        variant="outlined"
+                        label={sub}
+                      />
+                    );
+                  } else {
+                    return (
+                      <Chip
+                        style={{
+                          backgroundColor: color,
+                        }}
+                        key={uuidv4()}
+                        className="mr-2 mt-2 font-bold"
+                        variant="outlined"
+                        label={sub}
+                      />
+                    );
+                  }
+                })}
+              </p>
         </div>
       </div>
 
@@ -160,8 +185,28 @@ function JoinGroupCard({ group }) {
         {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
       </div>
       <div className="flex flex-row ml-3 mt-3">
-        <div>{handleGroupParticipants(group.participants)}</div>
-        <div className=" ml-auto justify-end">
+        <p className="flex flex-row ml-3">
+                {group.participants.map((paticipant) => {
+                  return (
+                    <Chip
+                      key={uuidv4()}
+                      avatar={
+                        <Avatar
+                          size="small"
+                          shape="circle"
+                          image={paticipant.userImg}
+                        />
+                      }
+                      color="success"
+                      className="mr-2 mt-2"
+                      variant="outlined"
+                      label={paticipant.name}
+                    />
+                  );
+                })}
+              </p>
+              </div>
+        <div className=" ml-auto grid grid-cols-1 text-center">
           <button
             onClick={() => {
               handleJoinGroup(group);
@@ -171,7 +216,7 @@ function JoinGroupCard({ group }) {
             Join
           </button>
         </div>
-      </div>
+      
     </div>
   );
 }
