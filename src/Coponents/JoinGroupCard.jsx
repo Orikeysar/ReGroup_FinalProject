@@ -3,13 +3,24 @@ import { useState, useRef } from "react";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
 import { db } from "../FirebaseSDK";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc,updateDoc ,
+ 
+  GeoPoint,
+  Timestamp,
+  collection,
+  query,
+  where,
+  getDocs, } from "firebase/firestore";
 import { toast } from "react-toastify";
 import UserProfileModal from "./UserProfileModal";
 import { Dialog } from "primereact/dialog";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import UpdateRecentActivities from "./UpdateRecentActivities";
+import Chip from "@mui/material/Chip";
+import randomColor from "randomcolor";
+import { useNavigate } from "react-router-dom";
 function JoinGroupCard({ group }) {
+  const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -40,60 +51,60 @@ function JoinGroupCard({ group }) {
     setSelectedUserId(id);
     setVisible(true);
   };
-  //יצירת הדרופדאון של המשתתפים
-  const handleGroupParticipants = (participants) => {
-    return (
-      <div className="dropdown">
-        <label
-          onClick={handleDropdownClick}
-          tabIndex={0}
-          className="btn btn-xs m-1"
-        >
-          participants
-        </label>
-        {showDropdown && (
-          <ul
-            ref={dropdownRef}
-            tabIndex={0}
-            className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            {participants.map((user) => {
-              return (
-                <li
-                  key={uuidv4()}
-                  className="flex flex-row"
-                  onClick={() => handleUserClick(user.userRef)}
-                >
-                  <Avatar image={user.userImg} size="large" shape="circle" />
-                  <label className=" text-md font-bold">{user.name}</label>
-                </li>
-              );
-            })}
-            ,
-          </ul>
-        )}
-        {visible && (
-          <div>
-            {/* המודל של המשתמש שנבחר */}
-            <div className="card flex justify-content-center">
-              <Dialog
-                header="User profile"
-                visible={visible}
-                onHide={() => setVisible(false)}
-                style={{ width: "50vw" }}
-                breakpoints={{ "960px": "75vw", "641px": "100vw" }}
-              >
-                <div className="m-0">
-                  {/* הפרטים של המשתמש */}
-                  <UserProfileModal id={selectedUserId} />
-                </div>
-              </Dialog>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
+  // //יצירת הדרופדאון של המשתתפים
+  // const handleGroupParticipants = (participants) => {
+  //   return (
+  //     <div className="dropdown">
+  //       <label
+  //         onClick={handleDropdownClick}
+  //         tabIndex={0}
+  //         className="btn btn-xs m-1"
+  //       >
+  //         participants
+  //       </label>
+  //       {showDropdown && (
+  //         <ul
+  //           ref={dropdownRef}
+  //           tabIndex={0}
+  //           className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+  //         >
+  //           {participants.map((user) => {
+  //             return (
+  //               <li
+  //                 key={uuidv4()}
+  //                 className="flex flex-row"
+  //                 onClick={() => handleUserClick(user.userRef)}
+  //               >
+  //                 <Avatar image={user.userImg} size="large" shape="circle" />
+  //                 <label className=" text-md font-bold">{user.name}</label>
+  //               </li>
+  //             );
+  //           })}
+  //           ,
+  //         </ul>
+  //       )}
+  //       {visible && (
+  //         <div>
+  //           {/* המודל של המשתמש שנבחר */}
+  //           <div className="card flex justify-content-center">
+  //             <Dialog
+  //               header="User profile"
+  //               visible={visible}
+  //               onHide={() => setVisible(false)}
+  //               style={{ width: "50vw" }}
+  //               breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+  //             >
+  //               <div className="m-0">
+  //                 {/* הפרטים של המשתמש */}
+  //                 <UserProfileModal id={selectedUserId} />
+  //               </div>
+  //             </Dialog>
+  //           </div>
+  //         </div>
+  //       )}
+  //     </div>
+  //   );
+  // };
 
   //הצטרפות לקבוצה - רעיון לתת מעבר לעמוד הקבוצה
   const handleJoinGroup = async (group) => {
@@ -129,6 +140,40 @@ function JoinGroupCard({ group }) {
       });
     //אם הצליח לתת הודעה
   };
+  const handleLeveGroup= async (group) =>{
+    let groupId = null
+    let newParticipantsList =[]
+group.participants.map((participant)=>{
+
+  if(participant.userRef != activeUser.userRef ){
+
+    newParticipantsList.push(participant)
+  }
+})
+
+
+    //בדיקה מה המספר סידורי של הקבוצה בה הוא משתתף
+    const q = query(
+      collection(db, "activeGroups"),
+      where("managerRef", "==", group.managerRef)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+    
+      groupId = doc.id;
+      console.log(doc.id, " => ", doc.data());
+    });
+//מעדכן את המשתתפים בקבוצה
+    const docRef = doc(db, "activeGroups",groupId );
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(docRef, {
+      participants: newParticipantsList
+    });
+navigate("/myGroups")
+
+  }
+  let userIsParticipant = false
   return (
     <div className=" w-auto h-46 m-2">
       <p className=" flex mt-1 justify-end ">
@@ -136,24 +181,47 @@ function JoinGroupCard({ group }) {
       </p>
       <div className=" flex flex-row">
         <div className=" ml-2">
+          <div>
           <Avatar image={group.groupImg} size="xlarge" shape="circle" />
         </div>
         <div>
           <p className="ml-3 mt-1 justify-center font-bold text-xl">
             {group.groupTittle}{" "}
-          </p>
-          <p className="ml-3 mt-1 justify-center  text-lg">
-            {group.groupTags
-              .map((sub, index) => {
-                // Check if this is the last item in the array
-                const isLast = index === group.groupTags.length - 1;
-                // Append a "|" character if this is not the last item
-                const separator = isLast ? "" : " | ";
-                // Return the subject name with the separator character
-                return sub + separator;
-              })
-              .join("")}{" "}
-          </p>
+          </p></div>
+          <p className="ml-3 mt-2 justify-center text-sm ">
+                {group.groupTags.map((sub, index) => {
+                  // Check if it's the last element in the array
+                  let color = randomColor({
+                    luminosity: "light",
+                    hue: "random",
+                  });
+                  if (index === group.groupTags.length - 1) {
+                    return (
+                      <Chip
+                        style={{
+                          backgroundColor: color,
+                        }}
+                        key={uuidv4()}
+                        className="mr-2 mt-2 font-bold"
+                        variant="outlined"
+                        label={sub}
+                      />
+                    );
+                  } else {
+                    return (
+                      <Chip
+                        style={{
+                          backgroundColor: color,
+                        }}
+                        key={uuidv4()}
+                        className="mr-2 mt-2 font-bold"
+                        variant="outlined"
+                        label={sub}
+                      />
+                    );
+                  }
+                })}
+              </p>
         </div>
       </div>
 
@@ -162,18 +230,40 @@ function JoinGroupCard({ group }) {
         {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
       </div>
       <div className="flex flex-row ml-3 mt-3">
-        <div>{handleGroupParticipants(group.participants)}</div>
-        <div className=" ml-auto justify-end">
+        <p className="flex flex-row ml-3">
+                {group.participants.map((paticipant) => {
+                  if(paticipant.userRef === activeUser.useRef){userIsParticipant = true}
+                  return (
+                    <Chip
+                      key={uuidv4()}
+                      avatar={
+                        <Avatar
+                          size="small"
+                          shape="circle"
+                          image={paticipant.userImg}
+                        />
+                      }
+                      color="success"
+                      className="mr-2 mt-2"
+                      variant="outlined"
+                      label={paticipant.name}
+                    />
+                  );
+                })}
+              </p>
+              </div>
+        <div className=" ml-auto grid grid-cols-1 text-center">
+          
           <button
-            onClick={() => {
-              handleJoinGroup(group);
+            onClick={() => {userIsParticipant?(handleLeveGroup(group)):(handleJoinGroup(group))
+              
             }}
             className="btn btn-xs  ml-auto mt-1"
           >
-            Join
+            {userIsParticipant?("leave"):("join")}
           </button>
         </div>
-      </div>
+      
     </div>
   );
 }

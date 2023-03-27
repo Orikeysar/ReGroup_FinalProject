@@ -162,7 +162,7 @@ function AddGroup() {
       }
     }
   };
-
+  //פותח קבוצה חדשה עם מספר סידורי הישן 
   const UploadEditedGroup = async (groupId) => {
     const now = new Date();
     const [hours, minutes] = newGroup.timeStamp.split(":");
@@ -198,6 +198,7 @@ function AddGroup() {
         console.log(error);
       });
   };
+  //פותח קבוצה חדשה עם מספר סידור חדש
   const CreateNewEditedGroup = async () => {
     const now = new Date();
     const [hours, minutes] = newGroup.timeStamp.split(":");
