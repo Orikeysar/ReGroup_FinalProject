@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { RxCounterClockwiseClock } from "react-icons/rx";
-import { Avatar } from "@mui/material";
+import { Avatar } from "primereact/avatar";
 
 function RecentActivitiesCard() {
   const navigate = useNavigate();
@@ -121,14 +121,14 @@ function RecentActivitiesCard() {
                 >
                   <div className="col-span-1 self-center align-middle flex flex-nowrap flex-col-reverse items-center">
                     <Avatar
-                      image={""}
-                      size="sm"
+                      image={item.icon}
+                      size="large"
                       shape="circle"
                       className="justify-center flex-auto"
                     />
                   </div>
-                  <div className="col-span-3">{item.text}</div>
-                  <div className="col-span-2">
+                  <div className="col-span-3 mt-3">{item.text}</div>
+                  <div className="col-span-2 mt-3">
                     {handleDateTime(item.timeStamp)}
                   </div>
                 </div>

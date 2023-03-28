@@ -1,30 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState, useRef } from "react";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
 import { db } from "../FirebaseSDK";
-import { doc, setDoc,updateDoc ,
- 
+import {
+  doc,
+  setDoc,
+  updateDoc,
   GeoPoint,
   Timestamp,
   collection,
   query,
   where,
-  getDocs, } from "firebase/firestore";
+  getDocs,
+} from "firebase/firestore";
 import { toast } from "react-toastify";
 import UserProfileModal from "./UserProfileModal";
 import { Dialog } from "primereact/dialog";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
+import UpdateRecentActivities from "./UpdateRecentActivities";
 import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import { useNavigate } from "react-router-dom";
+import { TrendingUpRounded } from "@mui/icons-material";
 function JoinGroupCard({ group }) {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-
-    //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
-    let { managerGroup, participantGroup } = useFindMyGroups();
+  const [btnStatus, setBtnStatus] = useState(false);
+  //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
+  let { managerGroup, participantGroup } = useFindMyGroups();
   //פרטי המשתמש המחובר
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
@@ -50,6 +55,14 @@ function JoinGroupCard({ group }) {
     setSelectedUserId(id);
     setVisible(true);
   };
+  useEffect(()=>{
+    group.participants.forEach(element => {
+      if(element.userRef==activeUser.userRef){
+        setBtnStatus(true)
+      }
+    });
+  })
+  
   // //יצירת הדרופדאון של המשתתפים
   // const handleGroupParticipants = (participants) => {
   //   return (
@@ -107,8 +120,10 @@ function JoinGroupCard({ group }) {
 
   //הצטרפות לקבוצה - רעיון לתת מעבר לעמוד הקבוצה
   const handleJoinGroup = async (group) => {
-    if(participantGroup !=null){
-      return toast.info("you already participant in group!,evry user can join only one group at time!");
+    if (participantGroup != null) {
+      return toast.info(
+        "you already participant in group!,evry user can join only one group at time!"
+      );
     }
     console.log(group);
     let user = {
@@ -131,6 +146,7 @@ function JoinGroupCard({ group }) {
       timeStamp: group.timeStamp,
     })
       .then(() => {
+        UpdateRecentActivities(group, "JoinedGroup", activeUser);
         toast.success("Join successfully!");
       })
       .catch((error) => {
@@ -138,17 +154,15 @@ function JoinGroupCard({ group }) {
       });
     //אם הצליח לתת הודעה
   };
-  const handleLeveGroup= async (group) =>{
-    let groupId = null
-    let newParticipantsList =[]
-group.participants.map((participant)=>{
-
-  if(participant.userRef != activeUser.userRef ){
-
-    newParticipantsList.push(participant)
-  }
-})
-
+  
+  const handleLeaveGroup = async (group) => {
+    let groupId = null;
+    let newParticipantsList = [];
+    group.participants.map((participant) => {
+      if (participant.userRef != activeUser.userRef) {
+        newParticipantsList.push(participant);
+      }
+    });
 
     //בדיקה מה המספר סידורי של הקבוצה בה הוא משתתף
     const q = query(
@@ -158,20 +172,19 @@ group.participants.map((participant)=>{
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
-    
+
       groupId = doc.id;
       console.log(doc.id, " => ", doc.data());
     });
-//מעדכן את המשתתפים בקבוצה
-    const docRef = doc(db, "activeGroups",groupId );
+    //מעדכן את המשתתפים בקבוצה
+    const docRef = doc(db, "activeGroups", groupId);
     // Set the "capital" field of the city 'DC'
     await updateDoc(docRef, {
-      participants: newParticipantsList
+      participants: newParticipantsList,
     });
-navigate("/myGroups")
-
-  }
-  let userIsParticipant = false
+    navigate("/myGroups");
+  };
+  let btn2=false;
   return (
     <div className=" w-auto h-46 m-2">
       <p className=" flex mt-1 justify-end ">
@@ -180,46 +193,47 @@ navigate("/myGroups")
       <div className=" flex flex-row">
         <div className=" ml-2">
           <div>
-          <Avatar image={group.groupImg} size="xlarge" shape="circle" />
-        </div>
-        <div>
-          <p className="ml-3 mt-1 justify-center font-bold text-xl">
-            {group.groupTittle}{" "}
-          </p></div>
-          <p className="ml-3 mt-2 justify-center text-sm ">
-                {group.groupTags.map((sub, index) => {
-                  // Check if it's the last element in the array
-                  let color = randomColor({
-                    luminosity: "light",
-                    hue: "random",
-                  });
-                  if (index === group.groupTags.length - 1) {
-                    return (
-                      <Chip
-                        style={{
-                          backgroundColor: color,
-                        }}
-                        key={uuidv4()}
-                        className="mr-2 mt-2 font-bold"
-                        variant="outlined"
-                        label={sub}
-                      />
-                    );
-                  } else {
-                    return (
-                      <Chip
-                        style={{
-                          backgroundColor: color,
-                        }}
-                        key={uuidv4()}
-                        className="mr-2 mt-2 font-bold"
-                        variant="outlined"
-                        label={sub}
-                      />
-                    );
-                  }
-                })}
-              </p>
+            <Avatar image={group.groupImg} size="xlarge" shape="circle" />
+          </div>
+          <div>
+            <p className="ml-3 mt-1 justify-center font-bold text-xl">
+              {group.groupTittle}{" "}
+            </p>
+          </div>
+          <div className="ml-3 mt-2 justify-center text-sm ">
+            {group.groupTags.map((sub, index) => {
+              // Check if it's the last element in the array
+              let color = randomColor({
+                luminosity: "light",
+                hue: "random",
+              });
+              if (index === group.groupTags.length - 1) {
+                return (
+                  <Chip
+                    style={{
+                      backgroundColor: color,
+                    }}
+                    key={uuidv4()}
+                    className="mr-2 mt-2 font-bold"
+                    variant="outlined"
+                    label={sub}
+                  />
+                );
+              } else {
+                return (
+                  <Chip
+                    style={{
+                      backgroundColor: color,
+                    }}
+                    key={uuidv4()}
+                    className="mr-2 mt-2 font-bold"
+                    variant="outlined"
+                    label={sub}
+                  />
+                );
+              }
+            })}
+          </div>
         </div>
       </div>
 
@@ -228,40 +242,66 @@ navigate("/myGroups")
         {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
       </div>
       <div className="flex flex-row ml-3 mt-3">
-        <p className="flex flex-row ml-3">
-                {group.participants.map((paticipant) => {
-                  if(paticipant.userRef === activeUser.useRef){userIsParticipant = true}
-                  return (
-                    <Chip
-                      key={uuidv4()}
-                      avatar={
-                        <Avatar
-                          size="small"
-                          shape="circle"
-                          image={paticipant.userImg}
-                        />
-                      }
-                      color="success"
-                      className="mr-2 mt-2"
-                      variant="outlined"
-                      label={paticipant.name}
-                    />
-                  );
-                })}
-              </p>
-              </div>
-        <div className=" ml-auto grid grid-cols-1 text-center">
-          
-          <button
-            onClick={() => {userIsParticipant?(handleLeveGroup(group)):(handleJoinGroup(group))
-              
-            }}
-            className="btn btn-xs  ml-auto mt-1"
-          >
-            {userIsParticipant?("leave"):("join")}
-          </button>
+        <div className="flex flex-row ml-3">
+          {group.participants.map((participant) => {
+           {if (participant.userRef==activeUser.userRef){btn2=true} }
+            return (
+              <Chip
+                key={uuidv4()}
+                avatar={
+                  <Avatar
+                    size="small"
+                    shape="circle"
+                    image={participant.userImg}
+                  />
+                }
+                onClick={()=>handleUserClick(participant.userRef)}
+                color="success"
+                className="mr-2 mt-2"
+                variant="outlined"
+                label={participant.name}
+              />
+            );
+
+          })}
         </div>
-      
+      </div>
+      <div className=" ml-auto grid grid-cols-1 text-center">
+      {btnStatus ? (
+          <button
+            onClick={()=>handleLeaveGroup(group)}
+            className="btn btn-sm  bg-red-600  ml-auto mt-3"
+          >
+            Leave
+          </button>
+        ) : (
+          <button
+            onClick={()=>handleJoinGroup(group)}
+            className="btn btn-sm  ml-auto mt-3"
+          >
+            Join
+          </button>
+        )}
+      </div>
+      {visible && (
+        <div>
+          {/* המודל של המשתמש שנבחר */}
+          <div className="card flex justify-content-center">
+            <Dialog
+              header="User profile"
+              visible={visible}
+              onHide={() => setVisible(false)}
+              style={{ width: "50vw" }}
+              breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+            >
+              <div className="m-0">
+                {/* הפרטים של המשתמש */}
+                <UserProfileModal id={selectedUserId} />
+              </div>
+            </Dialog>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
