@@ -1,27 +1,12 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   GoogleMap,
   useLoadScript,
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
-import { RiGroup2Fill } from "react-icons/ri";
 import Spinner from "./Spinner";
-import { formatRelative } from "date-fns";
-import { Avatar } from "primereact/avatar";
-import Circle from "@mui/icons-material/Circle";
-import { uuidv4 } from "@firebase/util";
-import { db } from "../FirebaseSDK";
-import {
-  getDoc,
-  doc,
-  updateDoc,
-  collection,
-  where,
-  getDocs,
-  query
-} from "firebase/firestore";
-import { toast } from "react-toastify";
+
 import JoinGroupCard from "./JoinGroupCard";
 
 export default function Map({ filteredGroups }) {
