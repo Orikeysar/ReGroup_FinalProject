@@ -192,13 +192,15 @@ function JoinGroupCard({ group }) {
       </p>
       <div className=" flex flex-row">
         <div className=" ml-2">
-          <div>
+          <div className="grid grid-cols-6 ">
+          <div className="col-span-2">
             <Avatar image={group.groupImg} size="xlarge" shape="circle" />
           </div>
-          <div>
-            <p className="ml-3 mt-1 justify-center font-bold text-xl">
+          <div className="col-span-4 mt-1 font-bold text-lg " >
+            <p className="col-span-4 mt-1 font-bold text-lg ">
               {group.groupTittle}{" "}
             </p>
+          </div>
           </div>
           <div className="ml-3 mt-2 justify-center text-sm ">
             {group.groupTags.map((sub, index) => {
@@ -237,14 +239,15 @@ function JoinGroupCard({ group }) {
         </div>
       </div>
 
-      <div className=" ml-3 mt-3 text-lg">
-        <p>{group.description}</p>
+      <div className=" ml-3 mt-3  border rounded-lg ">
+        <p className=" ml-3 mt-3 text-sm underline ">discreption:</p>
+        <p className=" ml-3 mt-3 text-lg text-center ">{group.description}</p>
         {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
       </div>
-      <div className="flex flex-row ml-3 mt-3">
-        <div className="flex flex-row ml-3">
+      <div className="w-full">
+        <div className="flex flex-row mt-2">
           {group.participants.map((participant) => {
-           {if (participant.userRef==activeUser.userRef){btn2=true} }
+           {if (participant.userRef === activeUser.userRef){btn2=true} }
             return (
               <Chip
                 key={uuidv4()}
@@ -257,7 +260,7 @@ function JoinGroupCard({ group }) {
                 }
                 onClick={()=>handleUserClick(participant.userRef)}
                 color="success"
-                className="mr-2 mt-2"
+                className="ml-2"
                 variant="outlined"
                 label={participant.name}
               />
@@ -267,7 +270,7 @@ function JoinGroupCard({ group }) {
         </div>
       </div>
       <div className=" ml-auto grid grid-cols-1 text-center">
-      {btnStatus ? (
+      {group.managerRef === activeUser.userRef?(<p className="underline font-bold mt-2">you are the manager</p>): (btnStatus ? (
           <button
             onClick={()=>handleLeaveGroup(group)}
             className="btn btn-sm  bg-red-600  ml-auto mt-3"
@@ -281,7 +284,7 @@ function JoinGroupCard({ group }) {
           >
             Join
           </button>
-        )}
+        ))}
       </div>
       {visible && (
         <div>

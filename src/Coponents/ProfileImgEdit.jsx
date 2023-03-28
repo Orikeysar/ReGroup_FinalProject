@@ -9,18 +9,33 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { updateDoc, doc, getDoc } from "firebase/firestore";
-
+import {
+  updateDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 function ProfileImgEdit() {
   const auth = getAuth();
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState();
   const [profileImageUrl, setProfileImageUrl] = useState();
 
+  const [activeUser, setactiveUser] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("activeUser"));
+    return user;
+  });
+
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    // Store image in firebase
+    // שומר את התמונה החדשה בסטוראג במידה ונשמר שומר את הנתיב בקלאוד דאטה
     const storeImage = async (image) => {
       return new Promise((resolve, reject) => {
         const storage = getStorage();
@@ -31,9 +46,9 @@ function ProfileImgEdit() {
           contentType: "image/jpeg",
           name: auth.currentUser.uid,
         };
-        //UPLOAD THE FILE
+        //מעלה את התמונה לסטורג דאטה
         const uploadTask = uploadBytesResumable(storageRef, image, metadata);
-        //CHECK THE UPLOAD STATUS
+        //בדיקת סטאוטוס העלאה
         uploadTask.on(
           "state_changed",
           (snapshot) => {
@@ -63,7 +78,7 @@ function ProfileImgEdit() {
 
                 const userRef = doc(db, "users", auth.currentUser.uid);
                 const top10Ref = doc(db, "top10", auth.currentUser.uid);
-                //update user image in data
+                //עדכון התנתיב של התמונה בקלאוד דאטה
                 await updateDoc(userRef, {
                   userImg: downloadURL,
                 });
@@ -72,7 +87,7 @@ function ProfileImgEdit() {
                   userImg: downloadURL,
                 });
                 const docSnap = await getDoc(userRef);
-                //Check if user exists,if not, create user
+                //Check if user exists
                 if (docSnap.exists()) {
                   const user = {
                     data: docSnap.data(),
@@ -80,9 +95,22 @@ function ProfileImgEdit() {
                   localStorage.setItem("componentChoosen", "UserAchievemeant");
                   localStorage.setItem("activeUser", JSON.stringify(user.data));
                   toast.success("image saved and upload to your profile");
-
+ 
                   window.location.reload();
-                }
+                } else {
+                  toast.error(
+                    "we have problem to locate your user pls sign in and try again"
+                  );
+                  navigate("/sign-in");
+                } 
+                // Update the image for all of the user's friends
+  activeUser.friendsList.map( (friend) => {
+    try {
+       UpdateFriendsListImg(friend, downloadURL);
+    } catch (error) {
+      console.log(`Error updating friend ${friend.id}: ${error}`);
+    }
+  });
               }
             );
           }
@@ -91,10 +119,50 @@ function ProfileImgEdit() {
     };
 
     storeImage(profileImage);
-
-    // Update user Image
   };
 
+  const UpdateFriendsListImg = async (friend, downloadURL) => {
+    if (downloadURL != null || downloadURL != undefined) {
+      try {
+        console.log("Updating friend with ID:", friend.id);
+        const fRef = doc(db, "users", friend.id)
+        // Get the friend's document snapshot
+        const docSnapfriend = await getDoc(fRef);
+        console.log("docSnapfriend:", docSnapfriend);
+        if (docSnapfriend.exists()) {
+          let tempFriend = docSnapfriend.data();
+  
+          // Get the friend's list of friends
+          let myFriendFriendsList = tempFriend.friendsList;
+  
+          // Update the image for the current user in the friend's list of friends
+          myFriendFriendsList.forEach((friendToFriend) => {
+            if (friendToFriend.id === activeUser.userRef) {
+              friendToFriend.ImgRef = downloadURL;
+            }
+          });
+  
+          // Update the friend's document with the updated friends list
+          await updateDoc(doc(db, "users", friend.id), {
+            friendsList: myFriendFriendsList,
+          });
+  
+          console.log("Friend's image updated");
+        } else {
+          console.log("No such friend!");
+        }
+      } catch (error) {
+        console.log(`Error updating friend ${friend.id}: ${error}`);
+        throw error; // rethrow the error so the calling function can handle it
+      }
+    }
+  };
+  
+  
+  
+  
+  
+  
   const onMutate = (e) => {
     // Files
     if (e.target.files) {

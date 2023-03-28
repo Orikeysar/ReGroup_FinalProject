@@ -19,20 +19,17 @@ function FriendsListCard() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+  const handleGroupTime = (timeStamp) => {
+    if (timeStamp) {
+      const time = timeStamp.toDate();
+      const hours = time.getHours();
+      const minutes = time.getMinutes();
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      return formattedTime;
+    }
+    return "";
+  };
 
-  useEffect(() => {
-    let NewFriendList = [];
-    activeUser.friendsList.map((item) => {
-      let date = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }).format(item.timeStamp.seconds);
-      item.timeStamp = date;
-      return NewFriendList.push(item);
-    });
-    setFriends(NewFriendList);
-  }, [activeUser.friendsList]);
 
   //אחראי על המודל של המשתמש לאחר לחיצה
   const [visible, setVisible] = useState(false);
@@ -65,7 +62,7 @@ function FriendsListCard() {
           </div>
           <div className="flex-column align-items-center gap-3">
             <span className="flex align-items-center gap-2">
-              <span className="font-semibold ">{product.timeStamp}</span>
+              <span className="font-semibold ">{handleGroupTime(product.timeStamp)}</span>
             </span>
           </div>
 
@@ -113,7 +110,7 @@ function FriendsListCard() {
 
       <div className="card w-full justify-center">
         <OrderList
-          value={friends}
+          value={activeUser.friendsList}
           onChange={(e) => setFriends(e.value)}
           itemTemplate={itemTemplate}
           filter
