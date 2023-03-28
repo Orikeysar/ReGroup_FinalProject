@@ -6,7 +6,9 @@ import { db } from "../FirebaseSDK";
 import NavBar from "../Coponents/NavBar";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
-import {  setDoc,updateDoc,
+import {
+  setDoc,
+  updateDoc,
   doc,
   GeoPoint,
   Timestamp,
@@ -280,15 +282,11 @@ function MyGroupPage() {
     );
   };
   //תפס את הלחיצה על מחיקת קבוצה בה הוא מנהל
-  const handleDeleteManagerGroup = async() => {
-let groupId = null
-let groupdata = null
-    if (
-      window.confirm(
-        "you sure you want to delete this group?"
-      ) === true
-    ) {
-         //אם אישר למחוק את הקבוצה
+  const handleDeleteManagerGroup = async () => {
+    let groupId = null;
+    let groupdata = null;
+    if (window.confirm("you sure you want to delete this group?") === true) {
+      //אם אישר למחוק את הקבוצה
 
       const q = query(
         collection(db, "activeGroups"),
@@ -297,26 +295,26 @@ let groupdata = null
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        groupId=doc.id
-        groupdata =  doc.data()
+        groupId = doc.id;
+        groupdata = doc.data();
         console.log(doc.id, " delete=> ", doc.data());
       });
-  // Remove the 'group' field from the document
-       await deleteDoc(doc(db, "activeGroups", doc.id));
-toast.success("delete success")
-await setDoc(doc(db, "recentsGroups", groupId), {
-  groupdata
-})
-  .then(() => {
-    toast.success("update recent Groups success");
-    UpdateRecentActivities(groupData,"CreatedGroup",activeUser)
-  })
-  .catch((error) => {
-    toast.error("Bad Cardictionals details,try again");
-    console.log(error);
-  });
+      // Remove the 'group' field from the document
+      await deleteDoc(doc(db, "activeGroups", doc.id));
+      toast.success("delete success");
+      await setDoc(doc(db, "recentsGroups", groupId), {
+        groupdata,
+      })
+        .then(() => {
+          toast.success("update recent Groups success");
+          UpdateRecentActivities(groupdata, "CreatedGroup", activeUser);
+        })
+        .catch((error) => {
+          toast.error("Bad Cardictionals details,try again");
+          console.log(error);
+        });
     } else {
-      toast.error("group not deleted")
+      toast.error("group not deleted");
     }
   };
 
@@ -324,17 +322,14 @@ await setDoc(doc(db, "recentsGroups", groupId), {
   const handleEditManagerGroup = (group) => {
     navigate("/createGroups");
   };
-  const handleLeveGroup= async (group) =>{
-    let groupId = null
-    let newParticipantsList =[]
-group.participants.map((participant)=>{
-
-  if(participant.userRef != activeUser.userRef ){
-
-    newParticipantsList.push(participant)
-  }
-})
-
+  const handleLeveGroup = async (group) => {
+    let groupId = null;
+    let newParticipantsList = [];
+    group.participants.map((participant) => {
+      if (participant.userRef != activeUser.userRef) {
+        newParticipantsList.push(participant);
+      }
+    });
 
     //בדיקה מה המספר סידורי של הקבוצה בה הוא משתתף
     const q = query(
@@ -344,19 +339,18 @@ group.participants.map((participant)=>{
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
-    
+
       groupId = doc.id;
       console.log(doc.id, " => ", doc.data());
     });
-//מעדכן את המשתתפים בקבוצה
-    const docRef = doc(db, "activeGroups",groupId );
+    //מעדכן את המשתתפים בקבוצה
+    const docRef = doc(db, "activeGroups", groupId);
     // Set the "capital" field of the city 'DC'
     await updateDoc(docRef, {
-      participants: newParticipantsList
+      participants: newParticipantsList,
     });
-navigate("/myGroups")
-
-  }
+    navigate("/myGroups");
+  };
 
   return (
     <div className="container">
