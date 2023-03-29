@@ -54,11 +54,7 @@ function UserProfileModal({ id }) {
       name: user.name,
       timeStamp: Timestamp.fromDate(
         new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          now.getHours(),
-          now.getMinutes()
+        
         )
       ),
       userImg: user.userImg,
