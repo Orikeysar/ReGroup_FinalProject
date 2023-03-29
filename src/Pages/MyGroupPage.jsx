@@ -26,8 +26,8 @@ import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import FillterGroups from "../Coponents/FillterGroups";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
-import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import UserProfileModal from "../Coponents/UserProfileModal";
+import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 
 function MyGroupPage() {
   const navigate = useNavigate();
@@ -67,6 +67,8 @@ useEffect(()=>{
   const [filteredGroups, setFilteredGroups] = useState([]);
 
   const [myFilteredGroups, setMyFilteredGroups] = useState([]);
+
+
   const handleFillterGroups = (filteredGroups) => {
 //מסנן את הקבוצות שלי לתוך המפה
     setFilteredGroups(filteredGroups);
