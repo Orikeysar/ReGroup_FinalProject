@@ -25,7 +25,7 @@ function FriendsListCard() {
       const hours = time.getHours();
       const minutes = time.getMinutes();
       const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-      return formattedTime;
+      return time;
     }
     return "";
   };
