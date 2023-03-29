@@ -23,6 +23,8 @@ import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import { useNavigate } from "react-router-dom";
 import { TrendingUpRounded } from "@mui/icons-material";
+import UserScoreCalculate from "./UserScoreCalculate";
+
 function JoinGroupCard({ group }) {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -147,6 +149,9 @@ function JoinGroupCard({ group }) {
     })
       .then(() => {
         UpdateRecentActivities(group, "JoinedGroup", activeUser);
+        let achiev=activeUser.userAchievements.filter(element=>element.name==="Joined Groups")
+        let item=achiev[0];
+        UserScoreCalculate(item,"JoinedGroup",activeUser)
         toast.success("Join successfully!");
       })
       .catch((error) => {

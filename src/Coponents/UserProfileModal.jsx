@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { uuidv4 } from "@firebase/util";
 import Rating from '@mui/material/Rating';
 import UpdateRecentActivities from "./UpdateRecentActivities";
+import UserScoreCalculate from "./UserScoreCalculate";
 
 function UserProfileModal({ id }) {
   const [activeUser, setActiveUser] = useState(
@@ -71,7 +72,11 @@ function UserProfileModal({ id }) {
         toast.success(
           "congrats ! you and " + newFriend.name + " are new friends"
         );
+        setBtnStatus(true)
         UpdateRecentActivities(newFriend,"friend",activeUser);
+        let achiev=activeUser.userAchievements.filter(element=>element.name==="Community Member")
+        let item=achiev[0];
+        UserScoreCalculate(item,"friend",activeUser)
         localStorage.setItem("activeUser", JSON.stringify(activeUser));
       })
       .catch((error) => {
@@ -97,6 +102,7 @@ function UserProfileModal({ id }) {
       })
         .then(() => {
           toast.success("Done successfully");
+          setBtnStatus(false)
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
         })
         .catch((error) => {
