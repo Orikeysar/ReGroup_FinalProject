@@ -101,7 +101,7 @@ useEffect(()=>{
               <p className="ml-3 mt-2 justify-center font-bold text-xl">
                 {managerGroup.groupTittle}
               </p>
-              <p className="ml-3 mt-2 justify-center text-lg ">
+              <div className="ml-3 mt-2 justify-center text-lg ">
                 {managerGroup.groupTags.map((sub, index) => {
                   // Check if it's the last element in the array
                   let color = randomColor({
@@ -134,13 +134,13 @@ useEffect(()=>{
                     );
                   }
                 })}
-              </p>
+              </div>
               <p className="flex flex-row ml-3 mt-2">
                 <BsFilePerson className="mr-1" />
                 {managerGroup.participants.length} / {managerGroup.groupSize}
                 {/* //see FREINDS */}
               </p>
-              <p className="flex flex-row ml-3">
+              <div className="flex flex-row ml-3">
                 {managerGroup.participants.map((paticipant) => {
                   return (
                     <Chip
@@ -162,7 +162,7 @@ useEffect(()=>{
                     />
                   );
                 })}
-              </p>
+              </div>
               <p className="flex flex-row ml-3 mt-2">
                 <FaAudioDescription className="mr-1 min-w-max" />
                 {managerGroup.description}
@@ -221,7 +221,7 @@ useEffect(()=>{
               <p className="ml-3 mt-2 justify-center font-bold text-xl">
                 {participantGroup.groupTittle}
               </p>
-              <p className="ml-3 mt-2 justify-center text-lg ">
+              <div className="ml-3 mt-2 justify-center text-lg ">
                 {participantGroup.groupTags.map((sub, index) => {
                   // Check if it's the last element in the array
                   let color = randomColor({
@@ -254,14 +254,14 @@ useEffect(()=>{
                     );
                   }
                 })}
-              </p>
+              </div>
               <p className="flex flex-row ml-3 mt-2">
                 <BsFilePerson className="mr-1" />
                 {participantGroup.participants.length} /{" "}
                 {participantGroup.groupSize}
                 {/* //see FREINDS */}
               </p>
-              <p className="flex flex-row ml-3">
+              <div className="flex flex-row ml-3">
                 {participantGroup.participants.map((paticipant) => {
                   return (
                     <Chip
@@ -280,10 +280,10 @@ useEffect(()=>{
                     />
                   );
                 })}
-              </p>
+              </div>
               <p className="flex flex-row ml-3 mt-2">
                 <FaAudioDescription className="mr-1 min-w-max" />
-                {managerGroup.description}
+                {participantGroup.description}
               </p>
 
               <div className="text-center grid grid-cols-1">
