@@ -23,6 +23,7 @@ import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
 import FillterGroups from "../Coponents/FillterGroups";
+import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 
 function AddGroup() {
   const navigate = useNavigate();
@@ -227,6 +228,10 @@ function AddGroup() {
       ),
     })
       .then(() => {
+        let achiev=activeUser.userAchievements.filter(element=>element.name==="Opened Groups")
+        let item=achiev[0];
+
+        UserScoreCalculate(item,"CreatedGroup",activeUser)
         toast.success("create success");
       })
       .catch((error) => {

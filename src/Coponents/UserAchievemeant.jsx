@@ -41,7 +41,7 @@ function UserAchievemeant() {
         <div className="grid grid-cols-6 gap-3 text-center align-middle ">
           <div className="flex-column col-span-1">
             <Avatar
-              image={userAchive.AchievementImg}
+              image={userAchive.achievementImg}
               size="large"
               shape="circle"
             />

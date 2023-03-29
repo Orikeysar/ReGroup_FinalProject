@@ -44,46 +44,57 @@ function GoogleSign() {
           recentActivities: [],
           userAchievements: [
             {
-              name: "Assist Friend",
+              name: "Joined Groups",
               numberOfAchievementDoing: 0,
               activeLevel: 1,
-              achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fsocial-care.png?alt=media&token=95cf7c0b-35fa-4658-abed-2f66854abe15",
-              topLevelOne:100,
-              topLeveTwo:200,
-              topLevelThree:500,
-              valuePerAction: 5
-
-
+              achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fjoin.png?alt=media&token=4395691e-43bf-4f76-9dab-a5aae3841bec",
+              topLevelOne: 100,
+              topLeveTwo: 200,
+              topLevelThree: 500,
+              valuePerAction: 5,
+              actionsNumber:0
             },
             {
-              name: "Open Groups",
+              name: "Opened Groups",
               numberOfAchievementDoing: 0,
               activeLevel: 1,
               achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fteamwork.png?alt=media&token=21523315-cbdc-42e3-b046-2fe14652b1b4",
-              topLevelOne:40,
-              topLeveTwo:100,
-              topLevelThree:200,
-              valuePerAction: 10
+              topLevelOne: 40,
+              topLeveTwo: 100,
+              topLevelThree: 200,
+              valuePerAction: 10,
+              actionsNumber:0
+      
             },
             {
               name: "Helped Answered",
               numberOfAchievementDoing: 0,
               activeLevel: 1,
               achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fhelp.png?alt=media&token=bf9b9c24-fd26-440b-893b-7a68437377fb",
-              topLevelOne:100,
-              topLeveTwo:200,
-              topLevelThree:500,
-              valuePerAction: 3
+              topLevelOne: 100,
+              topLeveTwo: 200,
+              topLevelThree: 500,
+              valuePerAction: 3,
             },
             {
               name: "Like From Community",
               numberOfAchievementDoing: 0,
               activeLevel: 1,
               achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fheart.png?alt=media&token=682793cd-cca9-4b4c-8615-d265a5bac2bb",
-              topLevelOne:200,
-              topLeveTwo:500,
-              topLevelThree:1000,
-              valuePerAction: 1
+              topLevelOne: 200,
+              topLeveTwo: 500,
+              topLevelThree: 1000,
+              valuePerAction: 1,
+            },
+            {
+              name: "Community Member",
+              numberOfAchievementDoing: 0,
+              activeLevel: 1,
+              achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fpeople.png?alt=media&token=9b1c3358-d184-4397-89d8-5898044a3556",
+              topLevelOne: 400,
+              topLeveTwo: 1000,
+              topLevelThree: 1800,
+              valuePerAction: 5,
             },
           ],
          
