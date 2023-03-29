@@ -283,7 +283,7 @@ useEffect(()=>{
               </p>
               <p className="flex flex-row ml-3 mt-2">
                 <FaAudioDescription className="mr-1 min-w-max" />
-                {managerGroup.description}
+                {participantGroup.description}
               </p>
 
               <div className="text-center grid grid-cols-1">

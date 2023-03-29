@@ -4,9 +4,9 @@ import { DataView } from "primereact/dataview";
 import { OrderList } from "primereact/orderlist";
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
-import { AutoComplete } from "primereact/autocomplete";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "./UserProfileModal";
+import { doc, updateDoc, Timestamp, getDoc } from "firebase/firestore";
 
 function FriendsListCard() {
   //array for frinds
@@ -20,8 +20,8 @@ function FriendsListCard() {
     return user;
   });
   const handleGroupTime = (timeStamp) => {
-    if (timeStamp) {
-      const time = timeStamp.toDate();
+    if (timeStamp != null || timeStamp != undefined) { 
+      const time = timeStamp.Timestamp.toDate();
       const hours = time.getHours();
       const minutes = time.getMinutes();
       const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
@@ -62,7 +62,7 @@ function FriendsListCard() {
           </div>
           <div className="flex-column align-items-center gap-3">
             <span className="flex align-items-center gap-2">
-              <span className="font-semibold ">{handleGroupTime(product.timeStamp)}</span>
+              <span className="font-semibold ">{product.timeStamp?.toDate()}</span>
             </span>
           </div>
 
