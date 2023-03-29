@@ -27,6 +27,7 @@ import randomColor from "randomcolor";
 import FillterGroups from "../Coponents/FillterGroups";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
+import UserProfileModal from "../Coponents/UserProfileModal";
 
 function MyGroupPage() {
   const navigate = useNavigate();
@@ -37,7 +38,20 @@ function MyGroupPage() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+useEffect(()=>{
+  let myfilteredgroup = []
+    if(managerGroup !=null){
+      myfilteredgroup.push(managerGroup);
+      
+    }if(participantGroup !=null){
+      myfilteredgroup.push(participantGroup)
+      
+    }
+    if(myfilteredgroup.length>0){
+      setMyFilteredGroups(myfilteredgroup);
 
+    }
+},[managerGroup, participantGroup])
   const [managerGroupId, setManagerGroupId] = useState(null);
   //פונקציה שמסדרת את זמן הקבוצה
   const handleGroupTime = (timeStamp) => {
@@ -52,8 +66,11 @@ function MyGroupPage() {
   //get all the filters from FiltterGroup component
   const [filteredGroups, setFilteredGroups] = useState([]);
 
+  const [myFilteredGroups, setMyFilteredGroups] = useState([]);
   const handleFillterGroups = (filteredGroups) => {
+//מסנן את הקבוצות שלי לתוך המפה
     setFilteredGroups(filteredGroups);
+    
   };
   //הצגת הקבוצה בה המשתמש מנהל כרגע
   const ShowMangerGroup = () => {
@@ -126,13 +143,16 @@ function MyGroupPage() {
                   return (
                     <Chip
                       key={uuidv4()}
+                      onClick={()=>UserProfileModal(paticipant.userRef)}
                       avatar={
                         <Avatar
                           size="small"
                           shape="circle"
                           image={paticipant.userImg}
+                         
                         />
                       }
+                      
                       color="success"
                       className="mr-2 mt-2"
                       variant="outlined"
@@ -379,7 +399,7 @@ function MyGroupPage() {
       </div>
       <div className=" p-1 drop-shadow-xl">
         {/* יצירת מפה ושליחת הקבוצות */}
-        <Map filteredGroups={filteredGroups} isMarkerShown />
+        <Map filteredGroups={myFilteredGroups} isMarkerShown />
       </div>
       <div className="buttomNavBar w-full  sticky bottom-0 pb-4 ">
         <BottumNavigation />
