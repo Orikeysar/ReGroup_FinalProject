@@ -6,6 +6,7 @@ import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
 import Map from "../Coponents/Map";
 import FillterGroups from "../Coponents/FillterGroups";
+import CoursesList from '../Coponents/CoursesList'
 //מציאת קבוצה
 function FindGroups() {
   const navigate = useNavigate();
@@ -39,8 +40,14 @@ function FindGroups() {
           Create new+
         </label>
       </div>
+      <div>
       {/* סינון קבוצות */}
       <FillterGroups handleFillterGroups={handleFillterGroups} />
+      </div>
+      <div className="text-center m-2 border rounded-xl bg-gray-100">
+<p className="text-red-400 text-sm mt-2 mb-2">*in this section you can choose courses that you want to get elart for!<br/> groups who opened with this choosen course as title .</p>
+<CoursesList/>
+      </div>
       <div className=" p-1 drop-shadow-xl">
         {/* יצירת מפה ושליחת הקבוצות */}
         <Map filteredGroups={fillteredGroups} isMarkerShown />

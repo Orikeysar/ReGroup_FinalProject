@@ -20,9 +20,12 @@ function FillterGroups({handleFillterGroups}) {
   const [totalGroupsCount, setTotalGroupsCount] = useState(0);
   //כמה קבוצות ללא מקום פנוי
   const [availableGroups, setAvailableGroups] = useState([]);
+  
 const handleAvailableGroups=(groups)=>{
+  if(groups.length>0){
   let available = groups.filter(group => group.participants.length != group.groupSize);
   setAvailableGroups(available.length)
+}
 }
   //משיכת הקבוצות הפעילות מהדאטה בזמן אמת והכנסה לערך
   const [activeGroups, setActiveGroups] = useState([]);

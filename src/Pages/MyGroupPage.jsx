@@ -28,7 +28,8 @@ import FillterGroups from "../Coponents/FillterGroups";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import UserProfileModal from "../Coponents/UserProfileModal";
 import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
-
+import { getAuth } from "firebase/auth";
+import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 function MyGroupPage() {
   const navigate = useNavigate();
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
@@ -38,20 +39,18 @@ function MyGroupPage() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-useEffect(()=>{
-  let myfilteredgroup = []
-    if(managerGroup !=null){
+  useEffect(() => {
+    let myfilteredgroup = [];
+    if (managerGroup != null) {
       myfilteredgroup.push(managerGroup);
-      
-    }if(participantGroup !=null){
-      myfilteredgroup.push(participantGroup)
-      
     }
-    if(myfilteredgroup.length>0){
+    if (participantGroup != null) {
+      myfilteredgroup.push(participantGroup);
+    }
+    if (myfilteredgroup.length > 0) {
       setMyFilteredGroups(myfilteredgroup);
-
     }
-},[managerGroup, participantGroup])
+  }, [managerGroup, participantGroup]);
   const [managerGroupId, setManagerGroupId] = useState(null);
   //פונקציה שמסדרת את זמן הקבוצה
   const handleGroupTime = (timeStamp) => {
@@ -68,11 +67,9 @@ useEffect(()=>{
 
   const [myFilteredGroups, setMyFilteredGroups] = useState([]);
 
-
   const handleFillterGroups = (filteredGroups) => {
-//מסנן את הקבוצות שלי לתוך המפה
+    //מסנן את הקבוצות שלי לתוך המפה
     setFilteredGroups(filteredGroups);
-    
   };
   //הצגת הקבוצה בה המשתמש מנהל כרגע
   const ShowMangerGroup = () => {
@@ -81,7 +78,7 @@ useEffect(()=>{
       return "Yoy Dont have any group you manager in!";
     }
     return (
-      <div className="col-md-4 animated fadeIn ">
+      <div className="col-md-4 animated fadeIn  ">
         <div
           className="card w-auto h-46 m-2 p-2 border border-stone-400"
           key={managerGroup.managerRef}
@@ -145,16 +142,14 @@ useEffect(()=>{
                   return (
                     <Chip
                       key={uuidv4()}
-                      onClick={()=>UserProfileModal(paticipant.userRef)}
                       avatar={
                         <Avatar
                           size="small"
                           shape="circle"
                           image={paticipant.userImg}
-                         
+                          onClick={() => UserProfileModal(paticipant.id)}
                         />
                       }
-                      
                       color="success"
                       className="mr-2 mt-2"
                       variant="outlined"
@@ -163,10 +158,13 @@ useEffect(()=>{
                   );
                 })}
               </div>
-              <p className="flex flex-row ml-3 mt-2">
+              <div className=" flex flex-row ml-3 mt-2">
                 <FaAudioDescription className="mr-1 min-w-max" />
-                {managerGroup.description}
-              </p>
+                <div className="w-full border rounded-xl mr-2   ">
+              
+        <p className=" ml-3 mt-3 text-lg text-center ">{managerGroup.description}</p>
+                </div>
+              </div>
 
               <div className="text-center grid grid-cols-1">
                 <button
@@ -305,6 +303,7 @@ useEffect(()=>{
   };
   //תפס את הלחיצה על מחיקת קבוצה בה הוא מנהל
   const handleDeleteManagerGroup = async () => {
+    const auth = getAuth();
     let groupId = null;
     let groupdata = null;
     if (window.confirm("you sure you want to delete this group?") === true) {
@@ -315,29 +314,45 @@ useEffect(()=>{
         where("managerRef", "==", activeUser.userRef)
       );
       const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        groupId = doc.id;
-        groupdata = doc.data();
-        console.log(doc.id, " delete=> ", doc.data());
-      });
-      // Remove the 'group' field from the document
-      await deleteDoc(doc(db, "activeGroups", doc.id));
-      toast.success("delete success");
-      await setDoc(doc(db, "recentsGroups", groupId), {
-        groupdata,
-      })
-        .then(() => {
-          toast.success("update recent Groups success");
-          UpdateRecentActivities(groupdata, "CreatedGroup", activeUser);
-        })
-        .catch((error) => {
-          toast.error("Bad Cardictionals details,try again");
-          console.log(error);
-        });
-    } else {
-      toast.error("group not deleted");
-    }
+      if (!querySnapshot.empty) {
+        const docToDelete = querySnapshot.docs[0];
+        const groupId = docToDelete.id;
+        const groupData = docToDelete.data();
+
+        console.log(groupId, " delete=> ", groupData);
+if(groupId){
+ // Delete the document
+await deleteDoc(doc(db, "activeGroups", groupId));
+        console.log("Document deleted:", groupId);
+        toast.success("delete success");
+       //send this group to user recent groups
+       let now = Timestamp.now();
+       let newGroupActiviteis = {
+        address: groupData.address,
+        groupTittle: groupData.groupTittle,
+        groupImg: groupData.groupImg,
+        groupTags: groupData.groupTags,
+        groupSize:groupData.groupSize ,
+        managerRef: activeUser.userRef,
+        location:groupData.location ,
+        description: groupData.description,
+        participants: groupData.participants,
+        isActive: false,
+        timeStamp: now,
+       };
+       activeUser.recentActivities.push(newGroupActiviteis);
+       console.log(activeUser.recentActivities);
+       //updat recent activites
+   
+           localStorage.setItem("activeUser", JSON.stringify(activeUser));
+       
+}
+       
+        
+      } else {
+        console.log("No document found with the specified managerRef.");
+      }
+    } // Remove the 'group' field from the document
   };
 
   //תופס את לחיצת הכפתור עריכה על כרטיס הקבוצה

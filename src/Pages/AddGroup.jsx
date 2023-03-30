@@ -24,6 +24,7 @@ import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
 import FillterGroups from "../Coponents/FillterGroups";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
+import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 
 function AddGroup() {
   const navigate = useNavigate();
@@ -132,7 +133,8 @@ function AddGroup() {
       newGroup.participants.push({
         name: activeUser.name,
         userImg: activeUser.userImg,
-        userRef: activeUser.userRef,
+        id: activeUser.userRef,
+        email:activeUser.email
       });
 
       if (managerGroup != null) {
@@ -154,7 +156,7 @@ function AddGroup() {
             "you already have group you manage, notice that you will edit that group!"
           ) === true
         ) {
-          UploadEditedGroup(groupId);
+          UpdateEditedGroup(groupId);
         } else {
           navigate("/myGroups");
         }
@@ -164,7 +166,7 @@ function AddGroup() {
     }
   };
   //פותח קבוצה חדשה עם מספר סידורי הישן 
-  const UploadEditedGroup = async (groupId) => {
+  const UpdateEditedGroup = async (groupId) => {
     const now = new Date();
     const [hours, minutes] = newGroup.timeStamp.split(":");
     now.setHours(hours, minutes, 0, 0);
@@ -206,6 +208,29 @@ function AddGroup() {
     now.setHours(hours, minutes, 0, 0);
     const geoPoint = new GeoPoint(cordinates.lat, cordinates.lng);
     //SET USER new group
+let newGroupTemp = {
+   groupTittle: selectedCourse,
+      groupTags: selectedSubjects,
+      groupSize: parseInt(selectedNumber),
+      location: geoPoint,
+      isActive: true,
+      groupImg: activeUser.userImg,
+      managerRef: activeUser.userRef,
+      address: newGroup.address,
+      description: newGroup.description,
+      participants: newGroup.participants,
+      timeStamp: Timestamp.fromDate(
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          now.getHours(),
+          now.getMinutes()
+        )
+      ),
+}
+
+
     await setDoc(doc(db, "activeGroups", uuidv4()), {
       groupTittle: selectedCourse,
       groupTags: selectedSubjects,
@@ -230,7 +255,7 @@ function AddGroup() {
       .then(() => {
         let achiev=activeUser.userAchievements.filter(element=>element.name==="Opened Groups")
         let item=achiev[0];
-
+        UpdateRecentActivities(newGroupTemp,"CreatedGroup",activeUser);
         UserScoreCalculate(item,"CreatedGroup",activeUser)
         toast.success("create success");
       })
