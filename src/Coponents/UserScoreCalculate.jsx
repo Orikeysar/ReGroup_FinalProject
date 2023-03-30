@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { doc, updateDoc} from "firebase/firestore";
+import { doc, updateDoc,getDoc} from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 
 function UserScoreCalculate(item, type, user) {
@@ -9,7 +9,8 @@ function UserScoreCalculate(item, type, user) {
   const activeUser = user;
   //קישור לדאטהבייס
   const activeUserRef = doc(db, "users", activeUser.userRef);
-
+  //קישור לטופ10
+  const top10Ref = doc(db, "top10", activeUser.userRef);
   //טיפול בהוספת חבר
   if (type === "friend") {
     item.numberOfAchievementDoing += item.valuePerAction;
@@ -36,11 +37,16 @@ function UserScoreCalculate(item, type, user) {
         activeUser.userAchievements[index] = item;
       }
     }
+    activeUser.points=activeUser.points+item.valuePerAction;
     console.log(activeUser.userAchievements);
     updateDoc(activeUserRef, {
       userAchievements: activeUser.userAchievements,
+      points:activeUser.points
     });
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    updateDoc(top10Ref, {
+      points: activeUser.points
+    });
   }
 
   //טיפול בקבלת לייק על תשובה
@@ -69,11 +75,16 @@ function UserScoreCalculate(item, type, user) {
         activeUser.userAchievements[index] = item;
       }
     }
+    activeUser.points=activeUser.points+item.valuePerAction;
     console.log(activeUser.userAchievements);
     updateDoc(activeUserRef, {
       userAchievements: activeUser.userAchievements,
+      points:activeUser.points
     });
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    updateDoc(top10Ref, {
+      points: activeUser.points
+    });
   }
 
   //טיפול בקבלת לייק על שאלה
@@ -102,11 +113,16 @@ function UserScoreCalculate(item, type, user) {
         activeUser.userAchievements[index] = item;
       }
     }
+    activeUser.points=activeUser.points+item.valuePerAction;
     console.log(activeUser.userAchievements);
     updateDoc(activeUserRef, {
       userAchievements: activeUser.userAchievements,
+      points:activeUser.points
     });
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    updateDoc(top10Ref, {
+      points: activeUser.points
+    });
   }
 
   //טיפול ביצירת קבוצה
@@ -115,6 +131,7 @@ function UserScoreCalculate(item, type, user) {
     if (item.actionsNumber === 3) {
       return null;
     }
+
     item.numberOfAchievementDoing += item.valuePerAction;
     if (
       item.activeLevel === 1 &&
@@ -139,11 +156,16 @@ function UserScoreCalculate(item, type, user) {
         activeUser.userAchievements[index] = item;
       }
     }
+    activeUser.points=activeUser.points+item.valuePerAction;
     console.log(activeUser.userAchievements);
     updateDoc(activeUserRef, {
       userAchievements: activeUser.userAchievements,
+      points:activeUser.points
     });
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    updateDoc(top10Ref, {
+      points: activeUser.points
+    });
   }
   //טיפול הצטרפות לקבוצה
   if (type === "JoinedGroup") {
@@ -175,11 +197,16 @@ function UserScoreCalculate(item, type, user) {
         activeUser.userAchievements[index] = item;
       }
     }
+    activeUser.points=activeUser.points+item.valuePerAction;
     console.log(activeUser.userAchievements);
     updateDoc(activeUserRef, {
       userAchievements: activeUser.userAchievements,
+      points:activeUser.points
     });
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    updateDoc(top10Ref, {
+      points: activeUser.points
+    });
   }
 
   return null;
