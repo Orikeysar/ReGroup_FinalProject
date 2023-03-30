@@ -30,6 +30,7 @@ import UserProfileModal from "../Coponents/UserProfileModal";
 import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import { getAuth } from "firebase/auth";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
+import { Dialog } from "primereact/dialog";
 function MyGroupPage() {
   const navigate = useNavigate();
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
@@ -39,6 +40,14 @@ function MyGroupPage() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+  //מאתחל משתנים שקשורים למודל בעת לחיצה על משתתף בקבוצה
+  const [visible, setVisible] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  //פונקציה שמופעלת בעת לחיצה על חבר בקבוצה
+  const handleUserClick = (id) => {
+    setSelectedUserId(id);
+    setVisible(true);
+  };
   useEffect(() => {
     let myfilteredgroup = [];
     if (managerGroup != null) {
@@ -142,22 +151,43 @@ function MyGroupPage() {
                   return (
                     <Chip
                       key={uuidv4()}
+                      
                       avatar={
                         <Avatar
                           size="small"
                           shape="circle"
                           image={paticipant.userImg}
-                          onClick={() => UserProfileModal(paticipant.id)}
+                          onClick={()=>handleUserClick(paticipant.id)}
                         />
-                      }
+                      } 
+                     
                       color="success"
                       className="mr-2 mt-2"
                       variant="outlined"
                       label={paticipant.name}
                     />
+                    
                   );
                 })}
-              </div>
+              </div> {visible && (
+          <div>
+            {/* המודל של המשתמש שנבחר */}
+            <div className="card flex justify-content-center">
+              <Dialog
+                header="User profile"
+                visible={visible}
+                onHide={() => setVisible(false)}
+                style={{ width: "50vw" }}
+                breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+              >
+                <div className="m-0">
+                  {/* הפרטים של המשתמש */}
+                  <UserProfileModal id={selectedUserId} />
+                </div>
+              </Dialog>
+            </div>
+          </div>
+        )}
               <div className=" flex flex-row ml-3 mt-2">
                 <FaAudioDescription className="mr-1 min-w-max" />
                 <div className="w-full border rounded-xl mr-2   ">
@@ -325,7 +355,7 @@ if(groupId){
 await deleteDoc(doc(db, "activeGroups", groupId));
         console.log("Document deleted:", groupId);
         toast.success("delete success");
-       //send this group to user recent groups
+       //send this group to user recent groups גל שים לב
        let now = Timestamp.now();
        let newGroupActiviteis = {
         address: groupData.address,

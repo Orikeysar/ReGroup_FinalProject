@@ -9,6 +9,7 @@ import UpdateRecentActivities from "./UpdateRecentActivities";
 import UserScoreCalculate from "./UserScoreCalculate";
 
 function UserProfileModal({ id }) {
+  
   const [activeUser, setActiveUser] = useState(
     JSON.parse(localStorage.getItem("activeUser"))
   );

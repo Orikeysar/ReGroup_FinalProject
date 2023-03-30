@@ -255,7 +255,6 @@ let newGroupTemp = {
       .then(() => {
         let achiev=activeUser.userAchievements.filter(element=>element.name==="Opened Groups")
         let item=achiev[0];
-        UpdateRecentActivities(newGroupTemp,"CreatedGroup",activeUser);
         UserScoreCalculate(item,"CreatedGroup",activeUser)
         toast.success("create success");
       })
