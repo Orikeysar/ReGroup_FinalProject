@@ -45,18 +45,15 @@ function UserProfileModal({ id }) {
   }
 
   //בשביל התאריך בהרשמה כחבר
-  const now = new Date();
+
   //הוספת המשתמש לרשימה בדאטה
   const handleAddFriend = async () => {
+      let now = Timestamp.now();
     let newFriend = {
       email: user.email,
       id: user.userRef,
       name: user.name,
-      timeStamp: Timestamp.fromDate(
-        new Date(
-        
-        )
-      ),
+      timeStamp: now,
       userImg: user.userImg,
     };
     activeUser.friendsList.push(newFriend);

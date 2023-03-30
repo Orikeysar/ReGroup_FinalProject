@@ -1,35 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useState,useEffect } from "react";
 import { Button } from "primereact/button";
-import { DataView } from "primereact/dataview";
 import { OrderList } from "primereact/orderlist";
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "./UserProfileModal";
-import { doc, updateDoc, Timestamp, getDoc } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
+import { async } from "@firebase/util";
 
 function FriendsListCard() {
   //array for frinds
   const [friends, setFriends] = useState([]);
-  //array for search friend
-  const [selectedNames, setSelectedNames] = useState(null);
-  const [filteredNames, setFilteredNames] = useState(null);
 
   const [activeUser, setactiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+  
   const handleGroupTime = (timeStamp) => {
-    if (timeStamp != null || timeStamp != undefined) { 
-      const time = timeStamp.Timestamp.toDate();
-      const hours = time.getHours();
-      const minutes = time.getMinutes();
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-      return time;
-    }
-    return "";
-  };
+if(timeStamp){
 
+  const firestoreTimestamp = new Timestamp(
+    timeStamp.seconds,
+    timeStamp.nanoseconds
+  );
+  const date = firestoreTimestamp.toDate();
+  const day = date.getDate();
+  const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}, ${hours}:${minutes.toString().padStart(2, "0")}`;
+}
+  };
+  
+
+
+  useEffect(()=>{
+
+    setFriends(activeUser.friendsList)
+
+  },[])
 
   //אחראי על המודל של המשתמש לאחר לחיצה
   const [visible, setVisible] = useState(false);
@@ -62,7 +73,8 @@ function FriendsListCard() {
           </div>
           <div className="flex-column align-items-center gap-3">
             <span className="flex align-items-center gap-2">
-              <span className="font-semibold ">{product.timeStamp?.toDate()}</span>
+              <p></p>
+              <span className="font-semibold ">{handleGroupTime(product.timeStamp)}</span>
             </span>
           </div>
 
@@ -110,7 +122,7 @@ function FriendsListCard() {
 
       <div className="card w-full justify-center">
         <OrderList
-          value={activeUser.friendsList}
+          value={friends}
           onChange={(e) => setFriends(e.value)}
           itemTemplate={itemTemplate}
           filter
