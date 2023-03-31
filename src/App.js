@@ -18,7 +18,7 @@ function App() {
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCt1tGfbI6o0A6dcCFTstFsPlAUEQYaYS4&callback=initMap&v=weekly"
       defer
     ></script>
-      <div className="container h-full">
+      <div className="container h-full w-full">
         <Router>
           <div className="bodyContent">
             <Routes>

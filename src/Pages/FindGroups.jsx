@@ -6,7 +6,7 @@ import NavBar from "../Coponents/NavBar";
 import BottumNavigation from "../Coponents/BottumNavBar";
 import Map from "../Coponents/Map";
 import FillterGroups from "../Coponents/FillterGroups";
-import CoursesList from '../Coponents/CoursesList'
+import CoursesList from "../Coponents/CoursesList";
 //מציאת קבוצה
 function FindGroups() {
   const navigate = useNavigate();
@@ -15,6 +15,8 @@ function FindGroups() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+  //מציג את הדיב של קבלת התראות על קבוצות
+  const [groupsAlert, setGroupsAlert] = useState(false);
   //יצירת מערך ופונקציה שנשלח לקומפוננט פילטרגרופ כדי לקבל את הקבוצות שנשלח למפה
   const [fillteredGroups, setFillteredGroups] = useState([]);
   const handleFillterGroups = (fillteredGroups) => {
@@ -41,13 +43,23 @@ function FindGroups() {
         </label>
       </div>
       <div>
-      {/* סינון קבוצות */}
-      <FillterGroups handleFillterGroups={handleFillterGroups} />
+        {/* סינון קבוצות */}
+        <FillterGroups handleFillterGroups={handleFillterGroups} />
       </div>
-      <div className="text-center m-2 border rounded-xl bg-gray-100">
-<p className="text-red-400 text-sm mt-2 mb-2">*in this section you can choose courses that you want to get elart for!<br/> groups who opened with this choosen course as title .</p>
-<CoursesList/>
-      </div>
+      <button className="btn btn-md mb-2 ml-1" onClick={()=>setGroupsAlert(!groupsAlert)}>
+        set alert
+      </button>
+      {groupsAlert ? (
+        <div className="text-center m-2 border rounded-xl bg-gray-100">
+          <p className="text-red-400 text-sm mt-2 mb-2">
+            *in this section you can choose courses that you want to get elart
+            for!
+            <br /> groups who opened with this choosen course as title .
+          </p>
+          <CoursesList />
+        </div>
+      ) : null}
+
       <div className=" p-1 drop-shadow-xl">
         {/* יצירת מפה ושליחת הקבוצות */}
         <Map filteredGroups={fillteredGroups} isMarkerShown />

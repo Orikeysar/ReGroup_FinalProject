@@ -14,8 +14,8 @@ function BottumNavBar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setValue(localStorage.getItem("componentChoosen"));
-  }, []);
+    localStorage.setItem("componentChoosen", value);
+  }, [value]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

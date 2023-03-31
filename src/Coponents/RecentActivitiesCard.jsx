@@ -4,22 +4,23 @@ import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { RxCounterClockwiseClock } from "react-icons/rx";
 import { Avatar } from "primereact/avatar";
+import { OrderList } from "primereact/orderlist";
 
 function RecentActivitiesCard() {
   const navigate = useNavigate();
-
+  //משיכת המשתמש המחבור מהלוקאל
   const [activeUser, setActiveUser] = useState(() => {
-    // Read the initial value of the user data from localStorage
     const storedactiveUser = localStorage.getItem("activeUser");
-    // If there is a stored value, parse it and use it as the initial state
     return JSON.parse(storedactiveUser);
   });
+  //מערכים להפרדה בין מה שבטייפ כללי ומה שבטייפ קבוצות והצבעים של הכפתורים
   const [activitiesTypeGroups, setActivitiesTypeGroups] = useState([]);
   const [activitiesTypeGeneral, setActivitiesTypeGeneral] = useState([]);
   const [btnColorGeneral, setBtnColorGeneral] = useState("btn m-2 text-sm ");
   const [btnColorGroups, setBtnColorGroups] = useState(
     "btn m-2 text-sm  text-black glass"
   );
+  //ברירת מחדל יופיעו הכללי קודם
   const [type, setType] = useState("General");
   const handleDateTime = (timeStamp) => {
     let date = new Date(
@@ -46,12 +47,23 @@ function RecentActivitiesCard() {
         },
         { groups: [], general: [] }
       );
+      // Sort the arrays by the timestamp property in descending order
+    groups.sort((a, b) => {
+      const aTimestamp = new Date(a.timeStamp.seconds * 1000 + a.timeStamp.nanoseconds / 1000000);
+      const bTimestamp = new Date(b.timeStamp.seconds * 1000 + b.timeStamp.nanoseconds / 1000000);
+      return bTimestamp - aTimestamp;
+    });
+    general.sort((a, b) => {
+      const aTimestamp = new Date(a.timeStamp.seconds * 1000 + a.timeStamp.nanoseconds / 1000000);
+      const bTimestamp = new Date(b.timeStamp.seconds * 1000 + b.timeStamp.nanoseconds / 1000000);
+      return bTimestamp - aTimestamp;
+    });
       setActivitiesTypeGroups(groups);
       setActivitiesTypeGeneral(general);
     }
   }, [activeUser, activeUser.recentActivities]);
 
-  //משנה את הצבע בחירה
+  //משנה את הצבע בחירה ומעביר אותך למערך הרלוונטי
   const handleClickGeneral = () => {
     setBtnColorGroups("btn m-2 text-sm glass text-black");
     setBtnColorGeneral("btn m-2");
@@ -61,6 +73,47 @@ function RecentActivitiesCard() {
     setBtnColorGroups("btn m-2 ");
     setBtnColorGeneral("btn m-2 text-sm glass text-black");
     setType("Groups");
+  };
+  //הפונקציה מקבלת את המערך של הקבוצות ומרנדרת אובייקט אובייקט לתוך הרשימה
+  const itemTemplateGroups = (item) => {
+    return (
+      <div key={uuidv4()} className="grid grid-cols-6 w-full text-center mt-2 ">
+        <div className="col-span-2 self-center ">
+          <div className=" font-extrabold">{item.course}</div>
+          <div>
+            {item.subjects
+              .map((sub, index) => {
+                // Check if this is the last item in the array
+                const isLast = index === item.subjects.length - 1;
+                // Append a "|" character if this is not the last item
+                const separator = isLast ? "" : " | ";
+                // Return the subject name with the separator character
+                return sub + separator;
+              })
+              .join("")}
+          </div>
+        </div>
+        <div className="col-span-2">{item.text}</div>
+        <div className="col-span-2">{handleDateTime(item.timeStamp)}</div>
+      </div>
+    );
+  };
+  //הפונקציה מקבלת את המערך של הכללי ומרנדרת אובייקט אובייקט לתוך הרשימה
+  const itemTemplateGeneral = (item) => {
+    return (
+      <div key={uuidv4()} className="grid grid-cols-6 w-full text-center mt-2 ">
+        <div className="col-span-1 self-center align-middle flex flex-nowrap flex-col-reverse items-center">
+          <Avatar
+            image={item.icon}
+            size="large"
+            shape="circle"
+            className="justify-center flex-auto"
+          />
+        </div>
+        <div className="col-span-3 mt-3">{item.text}</div>
+        <div className="col-span-2 mt-3">{handleDateTime(item.timeStamp)}</div>
+      </div>
+    );
   };
   if (activeUser.recentActivities.length === 0) {
     return (
@@ -114,25 +167,12 @@ function RecentActivitiesCard() {
               </div>
             </div>
             <div>
-              {activitiesTypeGeneral.map((item) => (
-                <div
-                  key={uuidv4()}
-                  className="grid grid-cols-6 w-full text-center mt-2 "
-                >
-                  <div className="col-span-1 self-center align-middle flex flex-nowrap flex-col-reverse items-center">
-                    <Avatar
-                      image={item.icon}
-                      size="large"
-                      shape="circle"
-                      className="justify-center flex-auto"
-                    />
-                  </div>
-                  <div className="col-span-3 mt-3">{item.text}</div>
-                  <div className="col-span-2 mt-3">
-                    {handleDateTime(item.timeStamp)}
-                  </div>
-                </div>
-              ))}
+              <div className="card w-full  justify-center ">
+                <OrderList
+                  value={activitiesTypeGeneral}
+                  itemTemplate={itemTemplateGeneral}
+                ></OrderList>
+              </div>
             </div>
           </div>
         </div>
@@ -163,30 +203,12 @@ function RecentActivitiesCard() {
                 <div className="col-span-2">Time</div>
               </div>
             </div>
-            {activitiesTypeGroups.map((item) => (
-              <div
-                key={uuidv4()}
-                className="grid grid-cols-6 w-full text-center mt-2 "
-              >
-                <div className="col-span-2 self-center ">
-                  <div className=" font-extrabold">{item.course}</div>
-                  <div>
-                    {item.subjects
-                      .map((sub, index) => {
-                        // Check if this is the last item in the array
-                        const isLast = index === item.subjects.length - 1;
-                        // Append a "|" character if this is not the last item
-                        const separator = isLast ? "" : " | ";
-                        // Return the subject name with the separator character
-                        return sub + separator;
-                      })
-                      .join("")}
-                  </div>
-                </div>
-                <div className="col-span-2">{item.text}</div>
-                <div className="col-span-2">{handleDateTime(item.timeStamp)}</div>
-              </div>
-            ))}
+            <div className="card w-full  justify-center ">
+              <OrderList
+                value={activitiesTypeGroups}
+                itemTemplate={itemTemplateGroups}
+              ></OrderList>
+            </div>
           </div>
         </div>
       </div>

@@ -25,6 +25,8 @@ const handleAvailableGroups=(groups)=>{
   if(groups.length>0){
   let available = groups.filter(group => group.participants.length != group.groupSize);
   setAvailableGroups(available.length)
+}else{
+  setAvailableGroups(0)
 }
 }
   //משיכת הקבוצות הפעילות מהדאטה בזמן אמת והכנסה לערך

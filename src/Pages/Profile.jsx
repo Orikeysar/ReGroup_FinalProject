@@ -27,9 +27,11 @@ import { AiOutlineMail } from "react-icons/ai";
 import { BsFilePerson } from "react-icons/bs";
 import { FaUniversity } from "react-icons/fa";
 import ProfileImgEdit from "../Coponents/ProfileImgEdit";
+import { width } from "@mui/system";
 function Profile() {
   const auth = getAuth();
   const navigate = useNavigate();
+  
   const [componentChoosen, setComponentChoosen] = useState(
     localStorage.getItem("componentChoosen")
   );
@@ -59,7 +61,7 @@ function Profile() {
       [e.target.id]: e.target.value,
     }));
   };
-//הפונקציה מעלה תמונה לסטורג ושולחת קישור לדאטה בייס
+  //הפונקציה מעלה תמונה לסטורג ושולחת קישור לדאטה בייס
   const onSubmitEdit = async () => {
     try {
       if (activeUser.name !== name || activeUser.degree !== degree) {
@@ -70,27 +72,25 @@ function Profile() {
 
         // Update in firestore
         const userRef = doc(db, "users", auth.currentUser.uid);
-       
+
         await updateDoc(userRef, {
           name,
-          degree
+          degree,
         });
 
         const top10Ref = doc(db, "top10", auth.currentUser.uid);
         await updateDoc(top10Ref, {
           name,
-    
         });
         const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
-          const user={
-           data:docSnap.data()
-          } 
-         localStorage.setItem("activeUser",JSON.stringify(user.data))
+          const user = {
+            data: docSnap.data(),
+          };
+          localStorage.setItem("activeUser", JSON.stringify(user.data));
         }
 
         toast.success("Updated profile details! ");
-
       }
     } catch (error) {
       console.log(error);
@@ -102,13 +102,16 @@ function Profile() {
     return <Spinner />;
   }
 
-const editImageIconClicked=()=>{
- 
-  localStorage.setItem("componentChoosen", "EditImage");
-  navigate("/")
-}
-
-
+  const editImageIconClicked = () => {
+    if (localStorage.getItem("componentChoosen") === "EditImage") {
+      localStorage.setItem("componentChoosen", "/");
+      navigate("/");
+    } else {
+      localStorage.setItem("componentChoosen", "EditImage");
+      setComponentChoosen("EditImage");
+      navigate("/");
+    }
+  };
 
   return (
     <div className="container">
@@ -118,14 +121,17 @@ const editImageIconClicked=()=>{
       </div>
       <div className="row userInfo">
         <div className="col-md-4 animated fadeIn " key={activeUser.name}>
-          <div className="card ">  
-         
+          <div className="card ">
             <div className="card-body flex-row ">
-
               <div className="avatar w-2/5 ">
-              <button id="about" className="relative  right-0 flex-grow-0 max-h-4 w-5  "> <FiEdit onClick={editImageIconClicked}/></button>
+                <button
+                  id="about"
+                  className="relative  right-0 flex-grow-0 max-h-4 w-5  "
+                >
+                  {" "}
+                  <FiEdit onClick={editImageIconClicked} />
+                </button>
                 <div className="w-28 rounded-full object-fill">
-
                   <img
                     src={activeUser.userImg}
                     className="object-center object-fill"
@@ -134,56 +140,63 @@ const editImageIconClicked=()=>{
                 </div>
               </div>
 
-              <div className="userInfo  justify-center w-3/5 bg-slate-100">
-                <div  className="flex flex-row-reverse">
-                  <button><FiEdit
-                  className="changePersonalDetails  "
-                  onClick={() => {
-                    changeDetails && onSubmitEdit();
-                    setChangeDetails((prevState) => !prevState);
-                  }}
-                >
-                  {changeDetails ? "done" : "edit"}
-                </FiEdit></button>
-                
+              <div className="userInfo justify-center w-3/5">
+                <div className="flex flex-row-reverse">
+                  <button>
+                    <FiEdit
+                      className="changePersonalDetails  "
+                      onClick={() => {
+                        changeDetails && onSubmitEdit();
+                        setChangeDetails((prevState) => !prevState);
+                      }}
+                    >
+                      {changeDetails ? "done" : "edit"}
+                    </FiEdit>
+                  </button>
                 </div>
                 <div className="text-xl text-center bg-transparent flex flex-row">
-                  <BsFilePerson className="self-center"/>
-                    <input
-                      type="text"
-                      id="name"
-                      className={
-                        !changeDetails ? "underline w-5/6  bg-transparent ml-4" : "profileName ml-4 w-5/6 "
-                      }
-                      disabled={!changeDetails}
-                      value={name}
-                      onChange={onEdit}
-                    />
-                  
+                  <BsFilePerson className="self-center" />
+                  <input
+                    type="text"
+                    id="name"
+                    className={
+                      !changeDetails
+                        ? "underline w-5/6  ml-4"
+                        : "profileName ml-4 w-5/6 "
+                    }
+                    disabled={!changeDetails}
+                    value={name}
+                    onChange={onEdit}
+                  />
                 </div>
                 <div className="flex flex-row ">
-                <AiOutlineMail className="self-center"/>
-                  <p  className="card-text ml-4 ">{activeUser.email}</p>
+                  <AiOutlineMail className="self-center" />
+                  <p className="card-text ml-4 ">{activeUser.email}</p>
                 </div>
                 <div className=" flex flex-row">
-                  <FaUniversity className="self-center"/>
+                  <FaUniversity className="self-center" />
                   <input
                     type="text"
                     id="degree"
-                    className="ml-4 "
+                    className={
+                      !changeDetails
+                        ? "underline w-5/6  ml-4"
+                        : "profileName ml-4 w-5/6 "
+                    }
                     disabled={!changeDetails}
                     value={degree}
                     onChange={onEdit}
                   />
                 </div>
                 <div className="text-center">
-                <button
-                  type="button"
-                  className="logOut btn-xs border-gray-500 bg-gray-600 text-white rounded-md mt-2 justify-center "
-                  onClick={onLogout}
-                >
-                  Logout
-                </button></div>
+                  <button
+                    type="button"
+                    className="logOut btn-xs border-gray-500 bg-gray-600 text-white rounded-md mt-2 justify-center "
+                    onClick={onLogout}
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
             </div>
           </div>

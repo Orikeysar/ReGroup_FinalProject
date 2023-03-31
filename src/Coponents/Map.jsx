@@ -88,10 +88,13 @@ export default function Map({ filteredGroups }) {
           longitude: myLng,
         },
         index: filteredGroups.length + 1,
-        icon: {
+        groupImg: {
           url: "https://cdn-icons-png.flaticon.com/512/75/75768.png",
           scaledSize: new window.google.maps.Size(42, 42),
         },
+        groupSize:1,
+        participants:[]
+
       });
     });
   };
@@ -121,16 +124,16 @@ export default function Map({ filteredGroups }) {
       <button onClick={handleMyLocation} className="btn btn-xs mb-2">
         My location
       </button>
-      <button onClick={handleRuppinLocation} className="btn btn-xs mb-2">
+      <button onClick={handleRuppinLocation} className="btn btn-xs mb-2 ml-1">
         Ruppin center
       </button>
       <GoogleMap
         zoom={16}
         center={center}
-        mapContainerClassName=" map-container"
+        mapContainerClassName=" map-container mb-20"
       >
       {filteredGroups.map((item) =>
-  item.groupSize > item.participants.length ? (
+       item.groupSize > item.participants.length ? (
     <Marker
       key={item.index}
       title={item.groupTittle}
@@ -139,7 +142,7 @@ export default function Map({ filteredGroups }) {
         setSelectedMarker(item);
         handleDistance(item.location);
       }}
-      icon={item.groupTittle === "my location" ? item.icon : null}
+      icon={item.groupTittle === "my location" ? item.groupImg : null}
     />
   ) : null
 )}

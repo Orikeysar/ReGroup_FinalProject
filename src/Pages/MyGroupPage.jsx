@@ -31,10 +31,12 @@ import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import { getAuth } from "firebase/auth";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 import { Dialog } from "primereact/dialog";
-import IconButton from "@mui/material/IconButton";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { FaCircle } from "react-icons/fa";
+
 function MyGroupPage() {
   const navigate = useNavigate();
+  const date = new Date();
+
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
   //מושך מהלוקל את פרטי המשתמש המחובר
@@ -69,8 +71,23 @@ function MyGroupPage() {
       let time = timeStamp.toDate();
       let hours = time.getHours();
       let minutes = time.getMinutes();
-      time = hours + ":" + minutes;
-      return time;
+      minutes < 10
+        ? (time = "start at " + hours + ": 0" + minutes)
+        : (time = hours + ":" + minutes);
+      //יציג עיגול ירוק עם כיתוב של פתוח עם הזמן הגיע
+      console.log(date.getHours());
+      if (hours > date.getHours()) {
+        return time;
+      } else if (hours === date.getHours() && minutes > date.getMinutes()) {
+        return time;
+      } else {
+        return (
+          <>
+            <FaCircle style={{ color: "green", marginRight: "5px" }} />
+            <span>Open</span>
+          </>
+        );
+      }
     }
   };
   //get all the filters from FiltterGroup component
@@ -89,13 +106,13 @@ function MyGroupPage() {
       return "Yoy Dont have any group you manager in!";
     }
     return (
-      <div className="col-md-4 animated fadeIn  ">
+      <div className="col-md-4 animated fadeIn ">
         <div
           className="card w-auto h-46 m-2 p-2 border border-stone-400"
           key={managerGroup.managerRef}
         >
           <p className=" flex mt-1 justify-end ">
-            start at {handleGroupTime(managerGroup.timeStamp)}
+            {handleGroupTime(managerGroup.timeStamp)}
           </p>
           <div className=" flex flex-row">
             <div className=" ml-2">
@@ -143,7 +160,6 @@ function MyGroupPage() {
                   }
                 })}
               </div>
-              
               <p className="flex flex-row ml-3 mt-2">
                 <BsFilePerson className="mr-1" />
                 {managerGroup.participants.length} / {managerGroup.groupSize}
@@ -153,35 +169,20 @@ function MyGroupPage() {
                 {managerGroup.participants.map((paticipant) => {
                   return (
                     <Chip
-                    key={uuidv4()}
-                    avatar={
-                      <Avatar
-                        size="small"
-                        shape="circle"
-                        image={paticipant.userImg}
-                        onClick={() => handleUserClick(paticipant.id)}
-                      />
-                    }
-                    color="success"
-                    className="mr-2 mt-2"
-                    variant="outlined"
-                    label={paticipant.name}
-
-                    deleteIcon={
-                      paticipant.id !== managerGroup.managerRef ? (
-                        <IconButton
+                      key={uuidv4()}
+                      avatar={
+                        <Avatar
                           size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                           
-                          }}
-                        >
-                          <CancelIcon fontSize="small" />
-                        </IconButton>
-                      ) : null
-                    }
-                    onDelete={() => {handlePaticipantDeleteFromManagerGroup(paticipant.id)}}
-                  />
+                          shape="circle"
+                          image={paticipant.userImg}
+                          onClick={() => handleUserClick(paticipant.id)}
+                        />
+                      }
+                      color="success"
+                      className="mr-2 mt-2"
+                      variant="outlined"
+                      label={paticipant.name}
+                    />
                   );
                 })}
               </div>{" "}
@@ -403,44 +404,6 @@ function MyGroupPage() {
   const handleEditManagerGroup = (group) => {
     navigate("/createGroups");
   };
-//מהנהל הקבוצה מוחק משתתף בקבוצה
- const handlePaticipantDeleteFromManagerGroup=async(id)=>{
-  console.log("delet participant",id)
-  
-    let groupId = null;
-    let newParticipantsList = [];
-    managerGroup.participants.map((participant) => {
-      if (participant.id !== id) {
-        
- newParticipantsList.push(participant);
-       
-       
-      }
-    });
-
-    //בדיקה מה המספר סידורי של הקבוצה בה הוא משתתף
-    const q = query(
-      collection(db, "activeGroups"),
-      where("managerRef", "==", managerGroup.managerRef)
-    );
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-
-      groupId = doc.id;
-      console.log(doc.id, " => ", doc.data());
-    });
-    //מעדכן את המשתתפים בקבוצה
-    const docRef = doc(db, "activeGroups", groupId);
-    // Set the "capital" field of the city 'DC'
-    await updateDoc(docRef, {
-      participants: newParticipantsList,
-    });
-    
-    navigate("/myGroups");
-toast.success("paticipant delete from group")
- }
- //משתמש בקבוצה לוחץ על עזיבת קבוצה
   const handleLeveGroup = async (group) => {
     let groupId = null;
     let newParticipantsList = [];
