@@ -141,6 +141,7 @@ function MyGroupPage() {
                   }
                 })}
               </div>
+              
               <p className="flex flex-row ml-3 mt-2">
                 <BsFilePerson className="mr-1" />
                 {managerGroup.participants.length} / {managerGroup.groupSize}

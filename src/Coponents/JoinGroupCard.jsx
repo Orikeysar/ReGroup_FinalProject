@@ -65,61 +65,7 @@ function JoinGroupCard({ group }) {
     });
   })
   
-  // //יצירת הדרופדאון של המשתתפים
-  // const handleGroupParticipants = (participants) => {
-  //   return (
-  //     <div className="dropdown">
-  //       <label
-  //         onClick={handleDropdownClick}
-  //         tabIndex={0}
-  //         className="btn btn-xs m-1"
-  //       >
-  //         participants
-  //       </label>
-  //       {showDropdown && (
-  //         <ul
-  //           ref={dropdownRef}
-  //           tabIndex={0}
-  //           className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-  //         >
-  //           {participants.map((user) => {
-  //             return (
-  //               <li
-  //                 key={uuidv4()}
-  //                 className="flex flex-row"
-  //                 onClick={() => handleUserClick(user.userRef)}
-  //               >
-  //                 <Avatar image={user.userImg} size="large" shape="circle" />
-  //                 <label className=" text-md font-bold">{user.name}</label>
-  //               </li>
-  //             );
-  //           })}
-  //           ,
-  //         </ul>
-  //       )}
-  //       {visible && (
-  //         <div>
-  //           {/* המודל של המשתמש שנבחר */}
-  //           <div className="card flex justify-content-center">
-  //             <Dialog
-  //               header="User profile"
-  //               visible={visible}
-  //               onHide={() => setVisible(false)}
-  //               style={{ width: "50vw" }}
-  //               breakpoints={{ "960px": "75vw", "641px": "100vw" }}
-  //             >
-  //               <div className="m-0">
-  //                 {/* הפרטים של המשתמש */}
-  //                 <UserProfileModal id={selectedUserId} />
-  //               </div>
-  //             </Dialog>
-  //           </div>
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // };
-
+  
   //הצטרפות לקבוצה - רעיון לתת מעבר לעמוד הקבוצה
   const handleJoinGroup = async (group) => {
     if (participantGroup != null) {
@@ -148,6 +94,7 @@ function JoinGroupCard({ group }) {
       timeStamp: group.timeStamp,
     })
       .then(() => {
+        UpdateRecentActivities(group, "JoinedGroup", activeUser);
         let achiev=activeUser.userAchievements.filter(element=>element.name==="Joined Groups")
         let item=achiev[0];
         UserScoreCalculate(item,"JoinedGroup",activeUser)
@@ -182,10 +129,10 @@ function JoinGroupCard({ group }) {
     });
     //מעדכן את המשתתפים בקבוצה
     const docRef = doc(db, "activeGroups", groupId);
+    // Set the "capital" field of the city 'DC'
     await updateDoc(docRef, {
       participants: newParticipantsList,
     });
-    UpdateRecentActivities(group, "JoinedGroup", activeUser);
     navigate("/myGroups");
   };
   let btn2=false;
@@ -249,29 +196,46 @@ function JoinGroupCard({ group }) {
         {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
       </div>
       <div className="w-full">
-        <div className="flex flex-row mt-2">
-          {group.participants.map((participant) => {
-           {if (participant.userRef === activeUser.userRef){btn2=true} }
-            return (
-              <Chip
-                key={uuidv4()}
-                avatar={
-                  <Avatar
-                    size="small"
-                    shape="circle"
-                    image={participant.userImg}
-                  />
-                }
-                onClick={()=>handleUserClick(participant.userRef)}
-                color="success"
-                className="ml-2"
-                variant="outlined"
-                label={participant.name}
-              />
-            );
-
-          })}
-        </div>
+      <div className="flex flex-row ml-3">
+                {group.participants.map((paticipant) => {
+                  return (
+                    <Chip
+                      key={uuidv4()}
+                      avatar={
+                        <Avatar
+                          size="small"
+                          shape="circle"
+                          image={paticipant.userImg}
+                          onClick={() => handleUserClick(paticipant.id)}
+                        />
+                      }
+                      color="success"
+                      className="mr-2 mt-2"
+                      variant="outlined"
+                      label={paticipant.name}
+                    />
+                  );
+                })}
+              </div>{" "}
+              {visible && (
+                <div>
+                  {/* המודל של המשתמש שנבחר */}
+                  <div className="card flex justify-content-center">
+                    <Dialog
+                      header="User profile"
+                      visible={visible}
+                      onHide={() => setVisible(false)}
+                      style={{ width: "50vw" }}
+                      breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+                    >
+                      <div className="m-0">
+                        {/* הפרטים של המשתמש */}
+                        <UserProfileModal id={selectedUserId} />
+                      </div>
+                    </Dialog>
+                  </div>
+                </div>
+              )}
       </div>
       <div className=" ml-auto grid grid-cols-1 text-center">
       {group.managerRef === activeUser.userRef?(<p className="underline font-bold mt-2">you are the manager</p>): (btnStatus ? (
@@ -290,25 +254,7 @@ function JoinGroupCard({ group }) {
           </button>
         ))}
       </div>
-      {visible && (
-        <div>
-          {/* המודל של המשתמש שנבחר */}
-          <div className="card flex justify-content-center">
-            <Dialog
-              header="User profile"
-              visible={visible}
-              onHide={() => setVisible(false)}
-              style={{ width: "50vw" }}
-              breakpoints={{ "960px": "75vw", "641px": "100vw" }}
-            >
-              <div className="m-0">
-                {/* הפרטים של המשתמש */}
-                <UserProfileModal id={selectedUserId} />
-              </div>
-            </Dialog>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 }
