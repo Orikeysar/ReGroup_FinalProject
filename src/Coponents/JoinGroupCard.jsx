@@ -77,7 +77,7 @@ function JoinGroupCard({ group }) {
     let user = {
       name: activeUser.name,
       userImg: activeUser.userImg,
-      userRef: activeUser.userRef,
+      id: activeUser.userRef,
     };
     group.participants.push(user);
     console.log(group);
@@ -110,7 +110,7 @@ function JoinGroupCard({ group }) {
     let groupId = null;
     let newParticipantsList = [];
     group.participants.map((participant) => {
-      if (participant.userRef != activeUser.userRef) {
+      if (participant.id != activeUser.userRef) {
         newParticipantsList.push(participant);
       }
     });

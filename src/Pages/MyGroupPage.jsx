@@ -31,6 +31,8 @@ import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import { getAuth } from "firebase/auth";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 import { Dialog } from "primereact/dialog";
+import IconButton from "@mui/material/IconButton";
+import CancelIcon from "@mui/icons-material/Cancel";
 function MyGroupPage() {
   const navigate = useNavigate();
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
@@ -151,20 +153,35 @@ function MyGroupPage() {
                 {managerGroup.participants.map((paticipant) => {
                   return (
                     <Chip
-                      key={uuidv4()}
-                      avatar={
-                        <Avatar
+                    key={uuidv4()}
+                    avatar={
+                      <Avatar
+                        size="small"
+                        shape="circle"
+                        image={paticipant.userImg}
+                        onClick={() => handleUserClick(paticipant.id)}
+                      />
+                    }
+                    color="success"
+                    className="mr-2 mt-2"
+                    variant="outlined"
+                    label={paticipant.name}
+
+                    deleteIcon={
+                      paticipant.id !== managerGroup.managerRef ? (
+                        <IconButton
                           size="small"
-                          shape="circle"
-                          image={paticipant.userImg}
-                          onClick={() => handleUserClick(paticipant.id)}
-                        />
-                      }
-                      color="success"
-                      className="mr-2 mt-2"
-                      variant="outlined"
-                      label={paticipant.name}
-                    />
+                          onClick={(e) => {
+                            e.stopPropagation();
+                           
+                          }}
+                        >
+                          <CancelIcon fontSize="small" />
+                        </IconButton>
+                      ) : null
+                    }
+                    onDelete={() => {handlePaticipantDeleteFromManagerGroup(paticipant.id)}}
+                  />
                   );
                 })}
               </div>{" "}
@@ -386,6 +403,44 @@ function MyGroupPage() {
   const handleEditManagerGroup = (group) => {
     navigate("/createGroups");
   };
+//מהנהל הקבוצה מוחק משתתף בקבוצה
+ const handlePaticipantDeleteFromManagerGroup=async(id)=>{
+  console.log("delet participant",id)
+  
+    let groupId = null;
+    let newParticipantsList = [];
+    managerGroup.participants.map((participant) => {
+      if (participant.id !== id) {
+        
+ newParticipantsList.push(participant);
+       
+       
+      }
+    });
+
+    //בדיקה מה המספר סידורי של הקבוצה בה הוא משתתף
+    const q = query(
+      collection(db, "activeGroups"),
+      where("managerRef", "==", managerGroup.managerRef)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+
+      groupId = doc.id;
+      console.log(doc.id, " => ", doc.data());
+    });
+    //מעדכן את המשתתפים בקבוצה
+    const docRef = doc(db, "activeGroups", groupId);
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(docRef, {
+      participants: newParticipantsList,
+    });
+    
+    navigate("/myGroups");
+toast.success("paticipant delete from group")
+ }
+ //משתמש בקבוצה לוחץ על עזיבת קבוצה
   const handleLeveGroup = async (group) => {
     let groupId = null;
     let newParticipantsList = [];
