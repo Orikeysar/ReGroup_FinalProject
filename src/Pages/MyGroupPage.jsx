@@ -151,51 +151,49 @@ function MyGroupPage() {
                   return (
                     <Chip
                       key={uuidv4()}
-                      
                       avatar={
                         <Avatar
                           size="small"
                           shape="circle"
                           image={paticipant.userImg}
-                          onClick={()=>handleUserClick(paticipant.id)}
+                          onClick={() => handleUserClick(paticipant.id)}
                         />
-                      } 
-                     
+                      }
                       color="success"
                       className="mr-2 mt-2"
                       variant="outlined"
                       label={paticipant.name}
                     />
-                    
                   );
                 })}
-              </div> {visible && (
-          <div>
-            {/* המודל של המשתמש שנבחר */}
-            <div className="card flex justify-content-center">
-              <Dialog
-                header="User profile"
-                visible={visible}
-                onHide={() => setVisible(false)}
-                style={{ width: "50vw" }}
-                breakpoints={{ "960px": "75vw", "641px": "100vw" }}
-              >
-                <div className="m-0">
-                  {/* הפרטים של המשתמש */}
-                  <UserProfileModal id={selectedUserId} />
+              </div>{" "}
+              {visible && (
+                <div>
+                  {/* המודל של המשתמש שנבחר */}
+                  <div className="card flex justify-content-center">
+                    <Dialog
+                      header="User profile"
+                      visible={visible}
+                      onHide={() => setVisible(false)}
+                      style={{ width: "50vw" }}
+                      breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+                    >
+                      <div className="m-0">
+                        {/* הפרטים של המשתמש */}
+                        <UserProfileModal id={selectedUserId} />
+                      </div>
+                    </Dialog>
+                  </div>
                 </div>
-              </Dialog>
-            </div>
-          </div>
-        )}
+              )}
               <div className=" flex flex-row ml-3 mt-2">
                 <FaAudioDescription className="mr-1 min-w-max" />
                 <div className="w-full border rounded-xl mr-2   ">
-              
-        <p className=" ml-3 mt-3 text-lg text-center ">{managerGroup.description}</p>
+                  <p className=" ml-3 mt-3 text-lg text-center ">
+                    {managerGroup.description}
+                  </p>
                 </div>
               </div>
-
               <div className="text-center grid grid-cols-1">
                 <button
                   key={uuidv4()}
@@ -350,35 +348,33 @@ function MyGroupPage() {
         const groupData = docToDelete.data();
 
         console.log(groupId, " delete=> ", groupData);
-if(groupId){
- // Delete the document
-await deleteDoc(doc(db, "activeGroups", groupId));
-        console.log("Document deleted:", groupId);
-        toast.success("delete success");
-       //send this group to user recent groups גל שים לב
-       let now = Timestamp.now();
-       let newGroupActiviteis = {
-        address: groupData.address,
-        groupTittle: groupData.groupTittle,
-        groupImg: groupData.groupImg,
-        groupTags: groupData.groupTags,
-        groupSize:groupData.groupSize ,
-        managerRef: activeUser.userRef,
-        location:groupData.location ,
-        description: groupData.description,
-        participants: groupData.participants,
-        isActive: false,
-        timeStamp: now,
-       };
-       activeUser.recentActivities.push(newGroupActiviteis);
-       console.log(activeUser.recentActivities);
-       //updat recent activites
-   
-           localStorage.setItem("activeUser", JSON.stringify(activeUser));
-       
-}
-       
-        
+        if (groupId) {
+          // Delete the document
+          await deleteDoc(doc(db, "activeGroups", groupId));
+          console.log("Document deleted:", groupId);
+          toast.success("delete success");
+          //send this group to user recent groups גל שים לב
+          let now = Timestamp.now();
+          let newGroupActiviteis = {
+            address: groupData.address,
+            groupTittle: groupData.groupTittle,
+            groupImg: groupData.groupImg,
+            groupTags: groupData.groupTags,
+            groupSize: groupData.groupSize,
+            managerRef: activeUser.userRef,
+            location: groupData.location,
+            description: groupData.description,
+            participants: groupData.participants,
+            isActive: false,
+            timeStamp: now,
+          };
+          // activeUser.recentActivities.push(newGroupActiviteis);
+          console.log(activeUser.recentActivities);
+          //updat recent activites
+          UpdateRecentActivities(newGroupActiviteis, "CreatedGroups", activeUser);
+
+          localStorage.setItem("activeUser", JSON.stringify(activeUser));
+        }
       } else {
         console.log("No document found with the specified managerRef.");
       }

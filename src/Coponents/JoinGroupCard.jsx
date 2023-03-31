@@ -148,7 +148,6 @@ function JoinGroupCard({ group }) {
       timeStamp: group.timeStamp,
     })
       .then(() => {
-        UpdateRecentActivities(group, "JoinedGroup", activeUser);
         let achiev=activeUser.userAchievements.filter(element=>element.name==="Joined Groups")
         let item=achiev[0];
         UserScoreCalculate(item,"JoinedGroup",activeUser)
@@ -183,10 +182,10 @@ function JoinGroupCard({ group }) {
     });
     //מעדכן את המשתתפים בקבוצה
     const docRef = doc(db, "activeGroups", groupId);
-    // Set the "capital" field of the city 'DC'
     await updateDoc(docRef, {
       participants: newParticipantsList,
     });
+    UpdateRecentActivities(group, "JoinedGroup", activeUser);
     navigate("/myGroups");
   };
   let btn2=false;
