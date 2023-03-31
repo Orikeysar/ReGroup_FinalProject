@@ -1,7 +1,6 @@
 import React from "react";
 import Logo from "../asset/ReGroupIcon.png";
 import { useNavigate } from "react-router-dom";
-import NotficationBell from "../Coponents/NotficationBell";
 import Top10Modal from "./Top10Modal";
 function NavBar() {
   const navigate = useNavigate();
@@ -27,9 +26,7 @@ function NavBar() {
         <div className="navbar-center"></div>
         <div className="navbar-end">
           <Top10Modal />
-          <button onClick={()=>{alert("Yo!")}} className="btn btn-ghost btn-circle  bg-white h-5  ">
-            <NotficationBell className="max-h-fit" />
-          </button>
+          
         </div>
       </div>
     </>

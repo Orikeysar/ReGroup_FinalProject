@@ -98,6 +98,15 @@ export default function Map({ filteredGroups }) {
   const handleRuppinLocation = () => {
     setCenter({ lat: 32.342884, lng: 34.912755 });
   };
+  const offsetCoordinates=(lat, lng, index)=> {
+    const offsetAngle = (index * 360) / 10; // Adjust the divisor to change the spacing between markers
+    const offsetDistance = 0.0001; // Adjust the value to change the distance between markers
+  
+    const newLat = lat + offsetDistance * Math.cos((offsetAngle * Math.PI) / 180);
+    const newLng = lng + offsetDistance * Math.sin((offsetAngle * Math.PI) / 180);
+  
+    return { lat: newLat, lng: newLng };
+  }
   
   
   if (!isLoaded) return <Spinner />;
@@ -120,23 +129,21 @@ export default function Map({ filteredGroups }) {
         center={center}
         mapContainerClassName=" map-container"
       >
-        {filteredGroups.map((item) =>
-          item.groupSize > item.participants.length ? (
-            <Marker
-              key={item.index}
-              title={item.groupTittle}
-              position={{
-                lat: item.location.latitude,
-                lng: item.location.longitude,
-              }}
-              onClick={() => {
-                setSelectedMarker(item);
-                handleDistance(item.location);
-              }}
-              icon={item.groupTittle === "my location" ? item.icon : null}
-            />
-          ) : null
-        )}
+      {filteredGroups.map((item) =>
+  item.groupSize > item.participants.length ? (
+    <Marker
+      key={item.index}
+      title={item.groupTittle}
+      position={offsetCoordinates(item.location.latitude, item.location.longitude, item.index)}
+      onClick={() => {
+        setSelectedMarker(item);
+        handleDistance(item.location);
+      }}
+      icon={item.groupTittle === "my location" ? item.icon : null}
+    />
+  ) : null
+)}
+
         {selectedMarker ? (
           <InfoWindow
             position={{

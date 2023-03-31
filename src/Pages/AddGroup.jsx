@@ -195,6 +195,7 @@ function AddGroup() {
     })
       .then(() => {
         toast.success("edit success");
+        navigate('/myGroups')
       })
       .catch((error) => {
         toast.error("Bad Cardictionals details,try again");
@@ -208,29 +209,6 @@ function AddGroup() {
     now.setHours(hours, minutes, 0, 0);
     const geoPoint = new GeoPoint(cordinates.lat, cordinates.lng);
     //SET USER new group
-let newGroupTemp = {
-   groupTittle: selectedCourse,
-      groupTags: selectedSubjects,
-      groupSize: parseInt(selectedNumber),
-      location: geoPoint,
-      isActive: true,
-      groupImg: activeUser.userImg,
-      managerRef: activeUser.userRef,
-      address: newGroup.address,
-      description: newGroup.description,
-      participants: newGroup.participants,
-      timeStamp: Timestamp.fromDate(
-        new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          now.getHours(),
-          now.getMinutes()
-        )
-      ),
-}
-
-
     await setDoc(doc(db, "activeGroups", uuidv4()), {
       groupTittle: selectedCourse,
       groupTags: selectedSubjects,
@@ -257,6 +235,7 @@ let newGroupTemp = {
         let item=achiev[0];
         UserScoreCalculate(item,"CreatedGroup",activeUser)
         toast.success("create success");
+        navigate('/myGroups')
       })
       .catch((error) => {
         toast.error("Bad Cardictionals details,try again");

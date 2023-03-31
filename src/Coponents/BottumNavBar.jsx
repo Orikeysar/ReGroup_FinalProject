@@ -25,7 +25,6 @@ function BottumNavBar() {
     console.log("Friends list clicked!");
     localStorage.setItem("componentChoosen", "FriendsList");
     navigate("/");
-   window.location.reload()
   };
 
   const handleGroupsNavButton = () => {
