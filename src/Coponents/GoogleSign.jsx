@@ -99,7 +99,7 @@ function GoogleSign() {
           ],
          
         });
-        toast.success("Build user with facebook success");
+        toast.success("Build user with google success");
       }
 
       //Check if user exists,if not, create user

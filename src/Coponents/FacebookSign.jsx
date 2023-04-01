@@ -16,25 +16,15 @@ import { toast } from "react-toastify";
 function FacebookSign() {
   const navigate = useNavigate();
 
-  
   const onFaceBookClick = async () => {
     try {
       const auth = getAuth();
       const provider = new FacebookAuthProvider();
       const result = await signInWithPopup(auth, provider);
-
       if (!result) {
-        toast.error("cound not signin to facebook");
+        toast.error("cound not signin to Facebook");
       }
-      // The signed-in user info.
-
-      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-
-      const credential = FacebookAuthProvider.credentialFromResult(result);
-      const accessToken = credential.accessToken;
       const user = result.user;
-
-      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
       //Check for user
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
@@ -107,25 +97,22 @@ function FacebookSign() {
               valuePerAction: 5,
             },
           ],
-    
+         
         });
-
-        toast.success("Build user with facebook success");
+        toast.success("Build user with Facebook success");
       }
-      const docUserRef = doc(db, "users", user.uid);
-      const docSnapUser = await getDoc(docUserRef);
+
       //Check if user exists,if not, create user
-      if (docSnapUser.exists()) {
+      if (docSnap.exists()) {
         const userData = {
-          id: docSnapUser.uid,
-          data: docSnapUser.data(),
+          data: docSnap.data(),
         };
 
         localStorage.setItem("componentChoosen", "UserAchievemeant");
         localStorage.setItem("activeUser", JSON.stringify(userData.data));
-
         //GETTING ALL COURSES AND INSERT TO LOCAL STORAGE
         let coursesTempList = [];
+
         const querySnapshot = await getDocs(collection(db, "courses"));
         if (querySnapshot) {
           querySnapshot.forEach((doc) => {
@@ -151,27 +138,21 @@ function FacebookSign() {
             JSON.stringify(achievementsTempList)
           );
         }
-        //SET USER TOP10 
+         //SET USER TOP10 
         await setDoc(doc(db, "top10",auth.currentUser.uid), {
           name: user.displayName,
           email: user.email,
           points: 0,
           userImg: user.photoURL,
         });
-
         navigate("/");
         toast.success("Sign in Complete");
       } else {
         toast.error("Could not get data from server");
       }
     } catch (error) {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = FacebookAuthProvider.credentialFromError(error);
+      console.log(error);
+      toast.error("Could not Authorize with Facebook");
     }
   };
 

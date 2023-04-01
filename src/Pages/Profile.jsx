@@ -51,7 +51,7 @@ function Profile() {
   });
 
   const onLogout = () => {
-    // auth.signOut();
+    auth.signOut();
     navigate("/sign-in");
   };
 
