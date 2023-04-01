@@ -131,9 +131,9 @@ function UserScoreCalculate(item, type, user) {
   }
 
   //טיפול ביצירת קבוצה
-  if (type === "CreatedGroup") {
-    item.actionsNumber += 1;
-    if (item.actionsNumber === 4) {
+  if (type === "CreatedGroups") {
+    item.actionsNumber ++;
+    if (item.actionsNumber > 4) {
       return null;
     } else {
       item.numberOfAchievementDoing += item.valuePerAction;
@@ -176,8 +176,8 @@ function UserScoreCalculate(item, type, user) {
 
   //טיפול הצטרפות לקבוצה
   if (type === "JoinedGroup") {
-    item.actionsNumber += 1;
-    if (item.actionsNumber ===4 ) {
+    item.actionsNumber ++;
+    if (item.actionsNumber >4 ) {
       return null;
     } else {
       item.numberOfAchievementDoing += item.valuePerAction;

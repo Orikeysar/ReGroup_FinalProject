@@ -83,7 +83,7 @@ function UpdateRecentActivities(item, type, user) {
   }
 
   //טיפול ביצירת קבוצה
-  if (type === "CreatedGroup") {
+  if (type === "CreatedGroups") {
     let CreatedGroup = {
       course: item.groupTittle,
       subjects: item.groupTags,
@@ -107,7 +107,7 @@ function UpdateRecentActivities(item, type, user) {
     });
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
   }
-  //טיפול הצטרפות לקבוצה
+  //טיפול עזיבת קבוצה 
   if (type === "JoinedGroup") {
     let JoinedGroup = {
       course: item.groupTittle,

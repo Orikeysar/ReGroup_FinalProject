@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "primereact/button";
 import { OrderList } from "primereact/orderlist";
 import { TbFriends } from "react-icons/tb";
@@ -16,31 +16,28 @@ function FriendsListCard() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  
+
   const handleGroupTime = (timeStamp) => {
-if(timeStamp){
-
-  const firestoreTimestamp = new Timestamp(
-    timeStamp.seconds,
-    timeStamp.nanoseconds
-  );
-  const date = firestoreTimestamp.toDate();
-  const day = date.getDate();
-  const month = date.getMonth() + 1; // JavaScript months are 0-indexed
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}, ${hours}:${minutes.toString().padStart(2, "0")}`;
-}
+    if (timeStamp) {
+      const firestoreTimestamp = new Timestamp(
+        timeStamp.seconds,
+        timeStamp.nanoseconds
+      );
+      const date = firestoreTimestamp.toDate();
+      const day = date.getDate();
+      const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}, ${hours}:${minutes
+        .toString()
+        .padStart(2, "0")}`;
+    }
   };
-  
 
-
-  useEffect(()=>{
-
-    setFriends(activeUser.friendsList)
-
-  },[])
+  useEffect(() => {
+    setFriends(activeUser.friendsList);
+  }, []);
 
   //אחראי על המודל של המשתמש לאחר לחיצה
   const [visible, setVisible] = useState(false);
@@ -74,7 +71,9 @@ if(timeStamp){
           <div className="flex-column align-items-center gap-3">
             <span className="flex align-items-center gap-2">
               <p></p>
-              <span className="font-semibold ">{handleGroupTime(product.timeStamp)}</span>
+              <span className="font-semibold ">
+                {handleGroupTime(product.timeStamp)}
+              </span>
             </span>
           </div>
 
@@ -82,7 +81,7 @@ if(timeStamp){
             <Button
               className=" btn-xs border-gray-500 bg-gray-600 text-white  rounded-md mb-2"
               value={product.name}
-              onClick={()=>handleUserClick(product.id)}
+              onClick={() => handleUserClick(product.id)}
             >
               View
             </Button>

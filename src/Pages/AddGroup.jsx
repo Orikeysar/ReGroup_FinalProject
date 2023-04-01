@@ -49,7 +49,7 @@ function AddGroup() {
     groupImg: activeUser.userImg,
     groupTags: [],
     groupSize: 0,
-    id: activeUser.userRef,
+    userRef: activeUser.userRef,
     location: { lat: 0, lng: 0 },
     description: "",
     participants: [],
@@ -86,7 +86,7 @@ function AddGroup() {
         location: cordinates,
         isActive: true,
         groupImg: activeUser.userImg,
-        id: activeUser.userRef,
+        userRef: activeUser.userRef,
       });
     },
     [newGroup]);
@@ -133,7 +133,7 @@ function AddGroup() {
       newGroup.participants.push({
         name: activeUser.name,
         userImg: activeUser.userImg,
-        id: activeUser.userRef,
+        userRef: activeUser.userRef,
         email:activeUser.email
       });
 
@@ -233,7 +233,7 @@ function AddGroup() {
       .then(() => {
         let achiev=activeUser.userAchievements.filter(element=>element.name==="Opened Groups")
         let item=achiev[0];
-        UserScoreCalculate(item,"CreatedGroup",activeUser)
+        UserScoreCalculate(item,"CreatedGroups",activeUser)
         toast.success("create success");
         navigate('/myGroups')
       })

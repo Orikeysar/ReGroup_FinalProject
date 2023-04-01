@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { RxCounterClockwiseClock } from "react-icons/rx";
 import { Avatar } from "primereact/avatar";
 import { OrderList } from "primereact/orderlist";
+import { Timestamp } from "firebase/firestore";
 
 function RecentActivitiesCard() {
   const navigate = useNavigate();
@@ -23,15 +24,21 @@ function RecentActivitiesCard() {
   //ברירת מחדל יופיעו הכללי קודם
   const [type, setType] = useState("General");
   const handleDateTime = (timeStamp) => {
-    let date = new Date(
-      timeStamp.seconds * 1000 + timeStamp.nanoseconds / 1000000
-    );
-    let mm = date.getMonth();
-    let dd = date.getDate();
-    let yyyy = date.getFullYear();
-
-    date = mm + "/" + dd + "/" + yyyy;
-    return date;
+    if (timeStamp) {
+      const firestoreTimestamp = new Timestamp(
+        timeStamp.seconds,
+        timeStamp.nanoseconds
+      );
+      const date = firestoreTimestamp.toDate();
+      const day = date.getDate();
+      const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}, ${hours}:${minutes
+        .toString()
+        .padStart(2, "0")}`;
+    }
   };
   //בודק אם יש משתמש ואם יש לו פעילויות אחרונות. ויוצר מערכים לקבוצות וכללי
   useEffect(() => {

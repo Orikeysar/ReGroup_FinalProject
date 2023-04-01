@@ -6,6 +6,7 @@ import {
   InfoWindow,
 } from "@react-google-maps/api";
 import Spinner from "./Spinner";
+import { uuidv4 } from "@firebase/util";
 
 import JoinGroupCard from "./JoinGroupCard";
 
@@ -32,7 +33,29 @@ export default function Map({ filteredGroups }) {
   //הצגת משתתפים של קבוצה ויצירת הפונקציה שתסגור את הדרופדאון בלחיצה החוצה ותתאים את גודל הכרטיס בהתאם
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-
+  //אחראי על רינדור קבוצות מלאות שאנחנו כן משתתפםי בהם, ואם לא יחזיר ריק
+  const handleRenderGroup = (item) => {
+    for (let i = 0; i < item.participants.length; i++) {
+      if (item.participants[i].userRef === activeUser.userRef) {
+        return (
+          <Marker
+            key={uuidv4()}
+            title={item.groupTittle}
+            position={offsetCoordinates(
+              item.location.latitude,
+              item.location.longitude,
+              item.index
+            )}
+            onClick={() => {
+              setSelectedMarker(item);
+              handleDistance(item.location);
+            }}
+            icon={item.groupTittle === "my location" ? item.groupImg : null}
+          />
+        );
+      }
+  };
+}
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -92,26 +115,26 @@ export default function Map({ filteredGroups }) {
           url: "https://cdn-icons-png.flaticon.com/512/75/75768.png",
           scaledSize: new window.google.maps.Size(42, 42),
         },
-        groupSize:1,
-        participants:[]
-
+        groupSize: 1,
+        participants: [],
       });
     });
   };
   const handleRuppinLocation = () => {
     setCenter({ lat: 32.342884, lng: 34.912755 });
   };
-  const offsetCoordinates=(lat, lng, index)=> {
+  const offsetCoordinates = (lat, lng, index) => {
     const offsetAngle = (index * 360) / 10; // Adjust the divisor to change the spacing between markers
     const offsetDistance = 0.0001; // Adjust the value to change the distance between markers
-  
-    const newLat = lat + offsetDistance * Math.cos((offsetAngle * Math.PI) / 180);
-    const newLng = lng + offsetDistance * Math.sin((offsetAngle * Math.PI) / 180);
-  
+
+    const newLat =
+      lat + offsetDistance * Math.cos((offsetAngle * Math.PI) / 180);
+    const newLng =
+      lng + offsetDistance * Math.sin((offsetAngle * Math.PI) / 180);
+
     return { lat: newLat, lng: newLng };
-  }
-  
-  
+  };
+
   if (!isLoaded) return <Spinner />;
 
   return (
@@ -132,20 +155,26 @@ export default function Map({ filteredGroups }) {
         center={center}
         mapContainerClassName=" map-container mb-20"
       >
-      {filteredGroups.map((item) =>
-       item.groupSize > item.participants.length ? (
-    <Marker
-      key={item.index}
-      title={item.groupTittle}
-      position={offsetCoordinates(item.location.latitude, item.location.longitude, item.index)}
-      onClick={() => {
-        setSelectedMarker(item);
-        handleDistance(item.location);
-      }}
-      icon={item.groupTittle === "my location" ? item.groupImg : null}
-    />
-  ) : null
-)}
+        {filteredGroups.map((item) =>
+          item.groupSize > item.participants.length ? (
+            <Marker
+              key={uuidv4()}
+              title={item.groupTittle}
+              position={offsetCoordinates(
+                item.location.latitude,
+                item.location.longitude,
+                item.index
+              )}
+              onClick={() => {
+                setSelectedMarker(item);
+                handleDistance(item.location);
+              }}
+              icon={item.groupTittle === "my location" ? item.groupImg : null}
+            />
+          ) : (
+            handleRenderGroup(item)
+          )
+        )}
 
         {selectedMarker ? (
           <InfoWindow
@@ -158,7 +187,7 @@ export default function Map({ filteredGroups }) {
               setDistance(null);
             }}
           >
-           <JoinGroupCard  group={selectedMarker}/>
+            <JoinGroupCard group={selectedMarker} />
           </InfoWindow>
         ) : null}
       </GoogleMap>

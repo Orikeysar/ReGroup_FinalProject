@@ -29,7 +29,6 @@ import useFindMyGroups from "../Hooks/useFindMyGroups";
 import UserProfileModal from "../Coponents/UserProfileModal";
 import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import { getAuth } from "firebase/auth";
-import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 import { Dialog } from "primereact/dialog";
 import { FaCircle } from "react-icons/fa";
 
@@ -166,7 +165,7 @@ function MyGroupPage() {
                 {/* //see FREINDS */}
               </p>
               <div className="flex flex-row ml-3">
-                {managerGroup.participants.map((paticipant) => {
+                {managerGroup.participants.map((participants) => {
                   return (
                     <Chip
                       key={uuidv4()}
@@ -174,14 +173,14 @@ function MyGroupPage() {
                         <Avatar
                           size="small"
                           shape="circle"
-                          image={paticipant.userImg}
-                          onClick={() => handleUserClick(paticipant.id)}
+                          image={participants.userImg}
                         />
                       }
+                      onClick={() => handleUserClick(participants.userRef)}
                       color="success"
                       className="mr-2 mt-2"
                       variant="outlined"
-                      label={paticipant.name}
+                      label={participants.name}
                     />
                   );
                 })}
@@ -307,7 +306,7 @@ function MyGroupPage() {
                 {/* //see FREINDS */}
               </p>
               <div className="flex flex-row w-full ml-3">
-                {participantGroup.participants.map((paticipant) => {
+                {participantGroup.participants.map((participants) => {
                   return (
                     <Chip
                       key={uuidv4()}
@@ -315,14 +314,14 @@ function MyGroupPage() {
                         <Avatar
                           size="small"
                           shape="circle"
-                          image={paticipant.userImg}
-                          onClick={() => handleUserClick(paticipant.id)}
+                          image={participants.userImg}
                         />
                       }
+                      onClick={() => handleUserClick(participants.userRef)}
                       color="success"
                       className="mr-2 mt-2"
                       variant="outlined"
-                      label={paticipant.name}
+                      label={participants.name}
                     />
                   );
                 })}
@@ -359,7 +358,7 @@ function MyGroupPage() {
                   key={uuidv4()}
                   className="editButton btn btn-xs text-sm mt-2 "
                   onClick={() => {
-                    handleLeveGroup(participantGroup);
+                    handleLeaveGroup(participantGroup);
                   }}
                 >
                   Leave Group
@@ -433,7 +432,7 @@ function MyGroupPage() {
   const handleEditManagerGroup = (group) => {
     navigate("/createGroups");
   };
-  const handleLeveGroup = async (group) => {
+  const handleLeaveGroup = async (group) => {
     let groupId = null;
     let newParticipantsList = [];
     group.participants.map((participant) => {
@@ -460,7 +459,12 @@ function MyGroupPage() {
     await updateDoc(docRef, {
       participants: newParticipantsList,
     });
-    navigate("/myGroups");
+    UpdateRecentActivities(
+      group,
+      "JoinedGroup",
+      activeUser
+    );
+    navigate("/");
   };
 
   return (
@@ -478,7 +482,7 @@ function MyGroupPage() {
         <div className="col-md-4 animated fadeIn ">
           <p className="font-bold text-center text-lg">
             {" "}
-            Group You Manager In:
+            Group you manager in:
           </p>
           {ShowMangerGroup()}
           <p className="font-bold text-center text-lg">

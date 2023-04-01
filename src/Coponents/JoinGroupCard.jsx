@@ -75,12 +75,12 @@ function JoinGroupCard({ group }) {
     setVisible(true);
   };
   useEffect(() => {
-    group.participants.forEach((element) => {
-      if (element.userRef == activeUser.userRef) {
-        setBtnStatus(true);
-      }
-    });
-  });
+    const isParticipant = group.participants.some(
+      (participant) => participant.userRef === activeUser.userRef
+    );
+    setBtnStatus(isParticipant);
+  }, [group.participants, activeUser.userRef]);
+  
 
   // //יצירת הדרופדאון של המשתתפים
   // const handleGroupParticipants = (participants) => {
@@ -171,10 +171,13 @@ function JoinGroupCard({ group }) {
         let item = achiev[0];
         UserScoreCalculate(item, "JoinedGroup", activeUser);
         toast.success("Join successfully!");
+        setBtnStatus(true);
       })
       .catch((error) => {
         toast.error("An error occurred. Please try again.");
       });
+    localStorage.setItem("componentChoosen", "MyGroupsPage");
+    navigate("/myGroups");
     //אם הצליח לתת הודעה
   };
 
@@ -186,6 +189,7 @@ function JoinGroupCard({ group }) {
         newParticipantsList.push(participant);
       }
     });
+    group.participants=newParticipantsList;
 
     //בדיקה מה המספר סידורי של הקבוצה בה הוא משתתף
     const q = query(
@@ -205,8 +209,9 @@ function JoinGroupCard({ group }) {
       participants: newParticipantsList,
     });
     UpdateRecentActivities(group, "JoinedGroup", activeUser);
-    navigate("/myGroups");
+    setBtnStatus(false);
   };
+
   let btn2 = false;
   return (
     <div className=" w-auto h-46 m-2">
