@@ -20,6 +20,7 @@
     "babel-plugin-macros": "^3.1.0",
     "daisyui": "^2.50.2",
     "date-fns": "^2.29.3",
+    "eslint-config-google": "^0.14.0",
     "firebase": "^9.17.1",
     "firebase-admin": "^11.5.0",
     "firebase-auth": "^0.1.2",
