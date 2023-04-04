@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "primereact/button";
 import { OrderList } from "primereact/orderlist";
-import {saveMessagingDeviceToken} from '../messaging';
+import { saveMessagingDeviceToken } from "../messaging";
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { ProgressBar } from "primereact/progressbar";
-import {onButtonClick} from '../FirebaseSDK'
+import { onButtonClick } from "../FirebaseSDK";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "../FirebaseSDK";
+
 //render card of friend
 
 function UserAchievemeant() {
   const [componentChoosen, setComponentChoosen] = useState(
-    localStorage.setItem("componentChoosen","/")
+    localStorage.setItem("componentChoosen", "/")
   );
 
   const [activeUser, setActiveUser] = useState(() => {
@@ -20,10 +23,14 @@ function UserAchievemeant() {
   const [userAchievements, setUserAchievements] = useState(
     activeUser.userAchievements
   );
-  const handleClick=()=>{
+  const handleClick = async () => {
     saveMessagingDeviceToken(activeUser.userRef);
-    onButtonClick(activeUser.userRef);
-  }
+    const docRef = doc(db, "fcmTokens", activeUser.userRef);
+    const docSnap = await getDoc(docRef);
+    const data = docSnap.data();
+    const token = data.fcmToken;
+    onButtonClick(token);
+  };
   const currentTopUseForItem = (userAchive) => {
     if (userAchive.activeLevel === 3) {
       return userAchive.topLevelThree;
@@ -83,9 +90,7 @@ function UserAchievemeant() {
             <button
               className=" btn-xs text-xs w-11 border-gray-500 bg-gray-600 text-white align-middle text-left rounded-md "
               value={userAchive.name}
-              onClick={()=>
-                handleClick()
-              }
+              onClick={() => handleClick()}
             >
               View
             </button>
@@ -106,7 +111,6 @@ function UserAchievemeant() {
 
       <div className="card w-full  justify-center ">
         <OrderList
-        
           value={userAchievements}
           itemTemplate={itemTemplate}
         ></OrderList>

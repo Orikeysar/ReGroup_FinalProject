@@ -1,6 +1,7 @@
 import { db, messaging } from './FirebaseSDK';
 import { doc, setDoc } from 'firebase/firestore';
 import { getToken, onMessage } from 'firebase/messaging';
+import { toast } from 'react-toastify';
 
 export const FCM_TOKEN_COLLECTION = "fcmTokens";
 export const FCM_TOKEN_KEY = "fcmToken"; // key for storing FCM token in Firestore
@@ -9,7 +10,6 @@ const VAPID_KEY = "BMKJvycjE-kKNIovHIzMJ7qjdfnEPZITCQiL32EPKuCPRVIc7IWFTqOzIk52E
 async function requestNotificationsPermissions(uid) {
   console.log('Requesting notifications permission...');
   const permission = await Notification.requestPermission();
-  
   if (permission === 'granted') {
     console.log('Notification permission granted.');
     // Notification permission granted.
@@ -38,7 +38,7 @@ export async function saveMessagingDeviceToken(uid) {
           'New foreground notification from Firebase Messaging!',
           message.notification
         );
-        new Notification(message.notification.title, { body: message.notification.body });
+        throw toast( message.notification.body );
       });
     } else {
       // Need to request permissions to show notifications.
