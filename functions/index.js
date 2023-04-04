@@ -31,31 +31,31 @@ exports.scheduledFunction = functions.pubsub
       console.log("Actions number reset complete");
     });
 
-// Define the function that will send message
-exports.onButtonClick = functions.https.onCall(async (data, context) => {
-  // Get the user ID from the client-side
-  const userId = data.userId;
-  const documentSnapshot = await admin.firestore().collection(FCM_TOKEN_COLLECTION).get();
-  const userTokenById = usersSnapshot.docs.map((doc) => ({
-    if(doc.id === userId){
-    id: doc.id,
-    token: doc.data(),
-    },
-  }));
-  const token = userTokenById.token
-  const message = "ITS WORKS!!!";
-  const payload = {
-    token,
-    notification: {
-      title: "ReGroup",
-      body: message,
-    },
-  };
-
-  admin.messaging().send(payload).then((response) => {
-    // Response is a message ID string.
-    functions.logger.log("Successfully sent message: ", response);
-  }).catch((error) => {
-    functions.logger.log("error: ", error);
-  });
-});
+    exports.onButtonClick = functions.https.onCall(async (data, context) => {
+      try {
+        // Get the user ID from the client-side
+        const userId = data.userId;
+        
+        // Get the FCM token for the user
+        const documentSnapshot = await admin.firestore().collection(FCM_TOKEN_COLLECTION).doc(userId).get();
+        const token = documentSnapshot.get(FCM_TOKEN_KEY);
+        
+        // Send the notification
+        const message = "ITS WORKS!!!";
+        const payload = {
+          token,
+          notification: {
+            title: "ReGroup",
+            body: message,
+          },
+        };
+        
+        const response = await admin.messaging().send(payload);
+        functions.logger.log("Successfully sent message: ", response);
+        return "Message sent successfully!";
+      } catch (error) {
+        functions.logger.log("Error sending message: ", error);
+        throw new functions.https.HttpsError("internal", "Error sending message");
+      }
+    });
+    
