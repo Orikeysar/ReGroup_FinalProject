@@ -35,9 +35,14 @@ exports.scheduledFunction = functions.pubsub
 exports.onButtonClick = functions.https.onCall(async (data, context) => {
   // Get the user ID from the client-side
   const userId = data.userId;
-  const documentSnapshot = await admin.firestore()
-      .collection(FCM_TOKEN_COLLECTION).doc(userId).get();
-  const token = documentSnapshot.data()[FCM_TOKEN_KEY];
+  const documentSnapshot = await admin.firestore().collection(FCM_TOKEN_COLLECTION).get();
+  const userTokenById = usersSnapshot.docs.map((doc) => ({
+    if(doc.id === userId){
+    id: doc.id,
+    token: doc.data(),
+    },
+  }));
+  const token = userTokenById.token
   const message = "ITS WORKS!!!";
   const payload = {
     token,
