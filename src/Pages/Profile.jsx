@@ -1,16 +1,10 @@
 import React from "react";
 import { useState, useEffect } from "react";
-
 import { getAuth, updateProfile } from "firebase/auth";
 import {
   updateDoc,
   doc,
-  collection,
   getDoc,
-  query,
-  where,
-  orderBy,
-  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +21,6 @@ import { AiOutlineMail } from "react-icons/ai";
 import { BsFilePerson } from "react-icons/bs";
 import { FaUniversity } from "react-icons/fa";
 import ProfileImgEdit from "../Coponents/ProfileImgEdit";
-import { width } from "@mui/system";
 function Profile() {
   const auth = getAuth();
   const navigate = useNavigate();

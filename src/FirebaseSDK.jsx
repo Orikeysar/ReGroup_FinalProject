@@ -2,6 +2,10 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore"
+import { getMessaging, isSupported } from 'firebase/messaging';
+import firebase from 'firebase/compat/app'
+import { getFunctions,httpsCallable } from 'firebase/functions';
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -17,9 +21,13 @@ const firebaseConfig = {
   appId: "1:88302389135:web:c6f541f2e7db86e2bcedfa",
   measurementId: "G-Z8J1Y1SEMN"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 // eslint-disable-next-line no-unused-vars
 const analytics = getAnalytics(app);
 export const db = getFirestore(app);
+export const messaging = async () => await isSupported() && getMessaging(app);
+const functions = getFunctions(app);
+
+export const onButtonClick = httpsCallable(functions, 'onButtonClick');
+

@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "primereact/button";
 import { OrderList } from "primereact/orderlist";
-
+import {saveMessagingDeviceToken} from '../messaging';
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { ProgressBar } from "primereact/progressbar";
+import {onButtonClick} from '../FirebaseSDK'
 //render card of friend
 
 function UserAchievemeant() {
   const [componentChoosen, setComponentChoosen] = useState(
     localStorage.setItem("componentChoosen","/")
   );
+
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
@@ -18,6 +20,10 @@ function UserAchievemeant() {
   const [userAchievements, setUserAchievements] = useState(
     activeUser.userAchievements
   );
+  const handleClick=()=>{
+    saveMessagingDeviceToken(activeUser.userRef);
+    onButtonClick(activeUser.userRef);
+  }
   const currentTopUseForItem = (userAchive) => {
     if (userAchive.activeLevel === 3) {
       return userAchive.topLevelThree;
@@ -77,6 +83,9 @@ function UserAchievemeant() {
             <button
               className=" btn-xs text-xs w-11 border-gray-500 bg-gray-600 text-white align-middle text-left rounded-md "
               value={userAchive.name}
+              onClick={()=>
+                handleClick()
+              }
             >
               View
             </button>
