@@ -2,8 +2,10 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore"
-import firebase from "firebase/compat/app";
-import "firebase/compat/functions";
+import { getMessaging, isSupported } from 'firebase/messaging';
+import firebase from 'firebase/compat/app'
+import { getFunctions,httpsCallable } from 'firebase/functions';
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -17,15 +19,15 @@ const firebaseConfig = {
   storageBucket: "regroup-a4654.appspot.com",
   messagingSenderId: "88302389135",
   appId: "1:88302389135:web:c6f541f2e7db86e2bcedfa",
-  measurementId: "G-Z8J1Y1SEMN",
-  facebookAppId: "1306808449930839",
-  facebookAppSecret: "b36c888388e8752681aa4f629870c1cd",
+  measurementId: "G-Z8J1Y1SEMN"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 // eslint-disable-next-line no-unused-vars
 const analytics = getAnalytics(app);
 export const db = getFirestore(app);
-// Get a reference to your Cloud Function
-export const onButtonClick = firebase.functions().httpsCallable('onButtonClick');
+export const messaging = async () => await isSupported() && getMessaging(app);
+const functions = getFunctions(app);
+
+export const onButtonClick = httpsCallable(functions, 'onButtonClick');
+
