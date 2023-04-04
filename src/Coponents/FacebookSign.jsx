@@ -151,18 +151,6 @@ function FacebookSign() {
         toast.error("Could not get data from server");
       }
     } catch (error) {
-      if (error.code === 'auth/account-exists-with-different-credential') {
-        // The user is attempting to sign in with a different provider than the one they previously used
-        const email = error.email;
-       getAuth().fetchSignInMethodsForEmail(email)
-          .then((methods) => {
-            // Display a UI to allow the user to link their accounts
-            // The user can choose to link their account with the existing authentication method or to sign up for a new account
-          })
-          .catch((error) => {
-            // Handle error
-          });
-        }
       console.log(error);
       toast.error("Could not Authorize with Facebook");
     }

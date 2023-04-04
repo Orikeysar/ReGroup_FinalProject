@@ -1,8 +1,6 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
-const FCM_TOKEN_COLLECTION = "fcmTokens";
-const FCM_TOKEN_KEY = "fcmToken";
 // runs every day at 00:00 am and reset the actionsNuumber for users
 exports.scheduledFunction = functions.pubsub
     .schedule("0 0 * * *")
@@ -34,16 +32,8 @@ exports.scheduledFunction = functions.pubsub
 // Define the function that will send message
 exports.onButtonClick = functions.https.onCall(async (data, context) => {
   // Get the user ID from the client-side
-  const userId = data.userId;
-  const documentSnapshot = await admin.firestore().collection(FCM_TOKEN_COLLECTION).get();
-  const userTokenById = usersSnapshot.docs.map((doc) => ({
-    if(doc.id === userId){
-    id: doc.id,
-    token: doc.data(),
-    },
-  }));
-  const token = userTokenById.token
-  const message = "ITS WORKS!!!";
+  const token = data;
+  const message = "work";
   const payload = {
     token,
     notification: {
@@ -51,7 +41,7 @@ exports.onButtonClick = functions.https.onCall(async (data, context) => {
       body: message,
     },
   };
-
+  console.log(payload);
   admin.messaging().send(payload).then((response) => {
     // Response is a message ID string.
     functions.logger.log("Successfully sent message: ", response);

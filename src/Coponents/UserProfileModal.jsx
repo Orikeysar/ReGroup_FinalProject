@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { doc, updateDoc, Timestamp, getDoc } from "firebase/firestore";
-import { db,onButtonClick } from "../FirebaseSDK";
+import { db } from "../FirebaseSDK";
 import { Avatar } from "primereact/avatar";
 import { toast } from "react-toastify";
 import { uuidv4 } from "@firebase/util";
@@ -57,11 +57,7 @@ function UserProfileModal({ id }) {
       timeStamp: now,
       userImg: user.userImg,
     };
-    //שליחת הודעה למשתמש
-    onButtonClick({ userId: user.userRef })
-    .then(async(result) => {
-      //מוסיף חבר
- activeUser.friendsList.push(newFriend);
+    activeUser.friendsList.push(newFriend);
     console.log(activeUser.friendsList);
     await updateDoc(activeUserRef, {
       friendsList: activeUser.friendsList,
@@ -81,16 +77,6 @@ function UserProfileModal({ id }) {
         toast.error("Bad Cardictionals details,try again");
         console.log(error);
       });
-      // Handle successful function invocation
-      console.log(result);
-    })
-    .catch((error) => {
-      // Handle function invocation error
-      console.error(error);
-    });
-
-
-   
   };
   //מחיקת המשתמש מהרשימה
   const handleRemoveFriend = async () => {
