@@ -13,7 +13,9 @@ import AddGroup from "./Pages/AddGroup";
 import MyGroupPage from "./Pages/MyGroupPage";
 import FriendsListCard from "./Coponents/FriendsListCard";
 import UserFriendsPage from "./Pages/UserFriendsPage";
+
 function App() {
+  
   return (
     <>
     <script
