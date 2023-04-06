@@ -65,17 +65,23 @@ function UserProfileModal({ id }) {
       }
     }
 
-    if (friendExists) {
-      toast.error(`${newFriend} already get your request`);
-    } else {
-      saveMessagingDeviceToken(activeUser.userRef);
+ saveMessagingDeviceToken(activeUser.userRef);
       const docRef = doc(db, "fcmTokens", id);
       const docSnap = await getDoc(docRef);
       const data = docSnap.data();
       const token = data.fcmToken;
+      const msgData={
+token: token,
 
-      onButtonClick(token);
+      }
+
+      onButtonClick(msgData);
       //סיום
+
+    if (friendExists) {
+      toast.error(`${newFriend} already get your request`);
+    } else {
+     
       activeUser.friendsListToAccept.push(newFriend);
       console.log(activeUser.friendsListToAccept);
       await updateDoc(activeUserRef, {
