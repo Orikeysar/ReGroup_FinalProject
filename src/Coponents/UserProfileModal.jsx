@@ -7,7 +7,8 @@ import { uuidv4 } from "@firebase/util";
 import Rating from '@mui/material/Rating';
 import UpdateRecentActivities from "./UpdateRecentActivities";
 import UserScoreCalculate from "./UserScoreCalculate";
-
+import { saveMessagingDeviceToken } from "../messaging";
+import { onButtonClick } from "../FirebaseSDK";
 function UserProfileModal({ id }) {
   
   const [activeUser, setActiveUser] = useState(
@@ -57,6 +58,15 @@ function UserProfileModal({ id }) {
       timeStamp: now,
       userImg: user.userImg,
     };
+    //שליחת הודעה למשתמש
+    saveMessagingDeviceToken(activeUser.userRef);
+    const docRef = doc(db, "fcmTokens", id);
+    const docSnap = await getDoc(docRef);
+    const data = docSnap.data();
+    const token = data.fcmToken;
+    
+    onButtonClick(token);
+    //סיום
     activeUser.friendsList.push(newFriend);
     console.log(activeUser.friendsList);
     await updateDoc(activeUserRef, {

@@ -33,14 +33,19 @@ exports.scheduledFunction = functions.pubsub
 exports.onButtonClick = functions.https.onCall(async (data, context) => {
   // Get the user ID from the client-side
   const token = data;
-  const message = "work";
+  const message = "you have a friend request from another user";
   const payload = {
     token,
     notification: {
       title: "ReGroup",
       body: message,
     },
-  };
+    webpush: {
+      "fcm_options": {
+        "link": `https://regroup-a4654.web.app/myFriends`
+      }
+  }
+};
   console.log(payload);
   admin.messaging().send(payload).then((response) => {
     // Response is a message ID string.

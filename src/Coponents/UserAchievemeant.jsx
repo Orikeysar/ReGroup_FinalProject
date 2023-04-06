@@ -25,7 +25,7 @@ function UserAchievemeant() {
   );
   const handleClick = async () => {
     saveMessagingDeviceToken(activeUser.userRef);
-    const docRef = doc(db, "fcmTokens", activeUser.userRef);
+    const docRef = doc(db, "fcmTokens", "MZweJTkSdsf3HaSaSeMR70lOTzX2");
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
     const token = data.fcmToken;
