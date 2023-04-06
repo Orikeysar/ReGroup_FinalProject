@@ -31,11 +31,13 @@ function SignUp() {
     email: "",
     password: "",
     userImg: "",
+    userRef:"",
     degree: "",
     friendsList: [],
     courses: [],
     points: 0,
     recentActivities: [],
+    friendsListToAccept:[],
     userAchievements: [
       {
         name: "Joined Groups",
