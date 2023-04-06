@@ -94,7 +94,6 @@ const handleAvailableGroups=(groups)=>{
   useEffect(() => {
     const filterMarkers = () => {
       let newFilter = activeGroups;
-      console.log(newFilter);
       if (selectedCourse) {
         newFilter = newFilter.filter(
           (group) => group.groupTittle === selectedCourse
@@ -111,7 +110,6 @@ const handleAvailableGroups=(groups)=>{
         );
       } 
 
-      console.log(newFilter);
       handleFillterGroups(newFilter,selectedCourse,selectedSubjects,selectedNumber);
       setTotalGroupsCount(newFilter.length)
       handleAvailableGroups(newFilter)

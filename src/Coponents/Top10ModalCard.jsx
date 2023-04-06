@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { getAuth } from "firebase/auth";
 import { async } from "@firebase/util";
 import { onSnapshot, doc, collection, getDocs, orderBy,query } from "firebase/firestore";
+import { Dialog } from "primereact/dialog";
+import UserProfileModal from "./UserProfileModal";
 
 function Top10ModalCard() {
   const [activeUser, setActiveUser] = useState(() => {
@@ -28,11 +30,18 @@ function Top10ModalCard() {
       setTop10list(newTop10list);
     }
   });
+  //אחראי על מודל המשתמש שלוחצים עליו
+  const [visible, setVisible] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const handleUserClick = (id) => {
+    setSelectedUserId(id);
+    setVisible(true);
+  };
 
   return (
     <>
       {top10list.map((item) => (
-        <tr key={item.email}>
+        <tr key={item.email} >
           <th
             className={
               activeUser.email === item.email ? " bg-blue-300" : " bg-white"
@@ -44,6 +53,7 @@ function Top10ModalCard() {
             className={
               activeUser.email === item.email ? " bg-blue-300" : " bg-white"
             }
+            onClick={() => handleUserClick(item.id)}
           >
             <div className="flex items-center space-x-3">
               <div className="avatar">
@@ -56,9 +66,34 @@ function Top10ModalCard() {
                 <div className="text-sm opacity-50">{item.points}</div>
               </div>
             </div>
+            
           </td>
+          
         </tr>
       ))}
+      {visible && (
+        <tr>
+          <td>
+          <div>
+            {/* המודל של המשתמש שנבחר */}
+            <div className="card flex justify-content-center">
+              <Dialog
+                header="User profile"
+                visible={visible}
+                onHide={() => setVisible(false)}
+                style={{ width: "50vw" }}
+                breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+              >
+                <div className="m-0">
+                  {/* הפרטים של המשתמש */}
+                  <UserProfileModal id={selectedUserId} />
+                </div>
+              </Dialog>
+            </div>
+          </div>
+          </td>
+          </tr>
+        )}
     </>
   );
 }

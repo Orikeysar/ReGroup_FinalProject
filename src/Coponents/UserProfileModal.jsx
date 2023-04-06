@@ -34,7 +34,6 @@ function UserProfileModal({ id }) {
     const docSnap = await getDoc(userRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
-      console.log(data);
       setUser(data);
     }
   };

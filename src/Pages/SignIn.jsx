@@ -13,6 +13,8 @@ import {
   collection,
   getDocs,} from "firebase/firestore";
 import { db } from "../FirebaseSDK";
+import { saveMessagingDeviceToken } from "../messaging";
+
 function SignIn() {
   //SET ICON SHOW PASSWORD
   const [showPassword, setShowPassword] = useState(false);
@@ -88,6 +90,8 @@ function SignIn() {
   
         navigate("/");
         toast.success("Sign in Complete");
+        saveMessagingDeviceToken(auth.currentUser.uid);
+
       }
 
     } catch (eror) {

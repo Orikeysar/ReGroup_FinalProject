@@ -13,6 +13,8 @@ import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
 import { uuidv4 } from "@firebase/util";
 import { FaGoogle } from "react-icons/fa";
+import { saveMessagingDeviceToken } from "../messaging";
+
 function GoogleSign() {
   const navigate = useNavigate();
 
@@ -147,6 +149,7 @@ function GoogleSign() {
         });
         navigate("/");
         toast.success("Sign in Complete");
+        saveMessagingDeviceToken(auth.currentUser.uid);
       } else {
         toast.error("Could not get data from server");
       }

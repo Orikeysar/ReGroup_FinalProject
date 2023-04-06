@@ -25,6 +25,7 @@ import { uuidv4 } from "@firebase/util";
 import FillterGroups from "../Coponents/FillterGroups";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
+import SendAlertToUserForNewGroup from "../Coponents/SendAlertToUserForNewGroup";
 
 function AddGroup() {
   const navigate = useNavigate();
@@ -235,6 +236,8 @@ function AddGroup() {
         let item=achiev[0];
         UserScoreCalculate(item,"CreatedGroups",activeUser)
         toast.success("create success");
+        //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה 
+        SendAlertToUserForNewGroup(selectedCourse,selectedSubjects);
         navigate('/myGroups')
       })
       .catch((error) => {

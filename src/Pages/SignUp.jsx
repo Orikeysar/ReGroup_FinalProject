@@ -19,6 +19,8 @@ import { toast } from "react-toastify";
 import GoogleSign from "../Coponents/GoogleSign";
 import SelectCheckBox from "../Coponents/SelectCheckBox";
 import { uuidv4 } from "@firebase/util";
+import { saveMessagingDeviceToken } from "../messaging";
+
 
 function SignUp() {
   //SET ICON SHOW PASSWORD
@@ -163,6 +165,7 @@ function SignUp() {
       localStorage.setItem("componentChoosen", "UserAchievemeant");
       localStorage.setItem("activeUser", JSON.stringify(formDataCopy));
       navigate("/");
+      saveMessagingDeviceToken(auth.currentUser.uid);
     } catch (error) {
       toast.error("Bad Cardictionals details,try again");
     }

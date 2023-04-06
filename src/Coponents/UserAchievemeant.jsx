@@ -8,7 +8,8 @@ import { ProgressBar } from "primereact/progressbar";
 import { onButtonClick } from "../FirebaseSDK";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoins } from '@fortawesome/free-solid-svg-icons'
 //render card of friend
 
 function UserAchievemeant() {
@@ -24,8 +25,7 @@ function UserAchievemeant() {
     activeUser.userAchievements
   );
   const handleClick = async () => {
-    saveMessagingDeviceToken(activeUser.userRef);
-    const docRef = doc(db, "fcmTokens", "MZweJTkSdsf3HaSaSeMR70lOTzX2");
+    const docRef = doc(db, "fcmTokens", activeUser.userRef);
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
     const token = data.fcmToken;
@@ -62,7 +62,7 @@ function UserAchievemeant() {
 
           <div className=" align-top text-center flex-col col-span-4 sm:align-items-start gap-3">
             <div className="font-semibold align-top">
-              {userAchive.name}: {userAchive.numberOfAchievementDoing}
+              {userAchive.name}
             </div>
 
             <div className="card">
@@ -86,14 +86,9 @@ function UserAchievemeant() {
             </div>
           </div>
 
-          <div className="  text-left self-center sm:align-items-end gap-3 sm:gap-2">
-            <button
-              className=" btn-xs text-xs w-11 border-gray-500 bg-gray-600 text-white align-middle text-left rounded-md "
-              value={userAchive.name}
-              onClick={() => handleClick()}
-            >
-              View
-            </button>
+          <div className=" pt-3 text-left self-center sm:align-items-end gap-3 sm:gap-2">
+          {userAchive.numberOfAchievementDoing}{" "}
+          <FontAwesomeIcon icon={faCoins} />
           </div>
         </div>
       </div>
