@@ -2,6 +2,7 @@ import { db, messaging } from './FirebaseSDK';
 import { doc, setDoc } from 'firebase/firestore';
 import { getToken, onMessage } from 'firebase/messaging';
 import { toast } from 'react-toastify';
+import firebase from 'firebase/compat/app'
 
 export const FCM_TOKEN_COLLECTION = "fcmTokens";
 export const FCM_TOKEN_KEY = "fcmToken"; // key for storing FCM token in Firestore

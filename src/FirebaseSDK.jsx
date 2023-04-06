@@ -28,6 +28,6 @@ const analytics = getAnalytics(app);
 export const db = getFirestore(app);
 export const messaging = async () => await isSupported() && getMessaging(app);
 const functions = getFunctions(app);
-
 export const onButtonClick = httpsCallable(functions, 'onButtonClick');
+export const alertGroupAdded = httpsCallable(functions, 'alertGroupAdded');
 

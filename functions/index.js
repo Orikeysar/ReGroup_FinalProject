@@ -49,3 +49,25 @@ exports.onButtonClick = functions.https.onCall(async (data, context) => {
     functions.logger.log("error: ", error);
   });
 });
+
+// send message by alert of groups
+exports.alertGroupAdded = functions.https.onCall(async (data, context) => {
+  // Get the user ID from the client-side
+  const token=data.token;
+  const title=data.title;
+  const message=data.message;
+  const payload = {
+    token,
+    notification: {
+      title: title,
+      body: message,
+    },
+  };
+  console.log(payload);
+  admin.messaging().send(payload).then((response) => {
+    // Response is a message ID string.
+    functions.logger.log("Successfully sent message: ", response);
+  }).catch((error) => {
+    functions.logger.log("error: ", error);
+  });
+});
