@@ -13,9 +13,20 @@ import AddGroup from "./Pages/AddGroup";
 import MyGroupPage from "./Pages/MyGroupPage";
 import FriendsListCard from "./Coponents/FriendsListCard";
 import UserFriendsPage from "./Pages/UserFriendsPage";
+import { useEffect,useState } from "react";
+import { saveMessagingDeviceToken } from "./messaging";
+
 
 function App() {
-  
+  const [activeUser, setActiveUser] = useState(
+  JSON.parse(localStorage.getItem("activeUser"))
+);
+
+ useEffect(()=>{
+  saveMessagingDeviceToken(activeUser.userRef);
+
+},[]);
+
   return (
     <>
     <script
