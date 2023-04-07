@@ -32,22 +32,19 @@ exports.scheduledFunction = functions.pubsub
 // Define the function that will send message
 exports.onButtonClick = functions.https.onCall(async (data, context) => {
   // Get the user ID from the client-side
-  const token = data.token;
-  const friendRequstUrl = `https://regroup-a4654.web.app/myFriends`; // Add this line to get the friend profile URL from the client-side
-  const message = "you have a friend request from another user";
+  const token = data;
   const payload = {
-    token,
-    notification: {
-      title: "ReGroup",
-      body: message,
-      click_action: `FLUTTER_NOTIFICATION_CLICK?url=${friendRequstUrl}`, // Modify this line to include the friend profile URL as a query parameter
+    "token": token,
+    "notification": {
+      "title": "You got a friend request",
+      "body": "click here to see the request",
     },
-    webpush: {
-      fcm_options: {
-        link: friendRequstUrl
-      }
-  }
-};
+    "webpush": {
+      "fcm_options": {
+        "link": "https://regroup-a4654.web.app/myFriends",
+      },
+    },
+  };
   console.log(payload);
   admin.messaging().send(payload).then((response) => {
     // Response is a message ID string.
@@ -56,7 +53,6 @@ exports.onButtonClick = functions.https.onCall(async (data, context) => {
     functions.logger.log("error: ", error);
   });
 });
-
 // send message by alert of groups
 exports.alertGroupAdded = functions.https.onCall(async (data, context) => {
   // Get the user ID from the client-side

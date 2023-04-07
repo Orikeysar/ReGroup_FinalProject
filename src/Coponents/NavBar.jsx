@@ -2,6 +2,7 @@ import React from "react";
 import Logo from "../asset/ReGroupIcon.png";
 import { useNavigate } from "react-router-dom";
 import Top10Modal from "./Top10Modal";
+import SideBar from "./SideBar";
 function NavBar() {
   const navigate = useNavigate();
 
@@ -22,9 +23,13 @@ function NavBar() {
             onClick={handleLogoClick}
           ></img>
         </div>
-        <div className="navbar-center"></div>
         <div className="navbar-end">
-          <Top10Modal />
+          <div >
+            <Top10Modal/>
+          </div>
+          <div>
+            <SideBar/>
+          </div>
           
         </div>
       </div>
