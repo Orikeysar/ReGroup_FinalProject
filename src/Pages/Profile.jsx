@@ -109,7 +109,7 @@ function Profile() {
   return (
     <div className="container">
       {/* //TOP NAVBAR */}
-      <div className="w-full mb-20">
+      <div className="topNavBar w-full mb-2">
         <NavBar />
       </div>
       <div className="row userInfo">

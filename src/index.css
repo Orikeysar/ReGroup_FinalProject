@@ -51,18 +51,3 @@ display: none;
   background-color: white !important;
 }
 /* Position and style the burger icon */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1; /* ensure navbar is above sidebar */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* add box shadow */
-}
-
-.sidebar {
-  width: 250px;
-  background-color: rgb(149, 148, 148);
-  height: 100%;
-}
-
