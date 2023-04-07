@@ -70,7 +70,11 @@ function UserProfileModal({ id }) {
       const docSnap = await getDoc(docRef);
       const data = docSnap.data();
       const token = data.fcmToken;
+  
+
       onButtonClick(token);
+      //סיום
+
     if (friendExists) {
       toast.error(`${newFriend} already get your request`);
     } else {

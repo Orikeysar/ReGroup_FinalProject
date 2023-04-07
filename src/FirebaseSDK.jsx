@@ -3,7 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore"
 import { getMessaging, isSupported } from 'firebase/messaging';
-import firebase from 'firebase/compat/app'
 import { getFunctions,httpsCallable } from 'firebase/functions';
 
 // TODO: Add SDKs for Firebase products that you want to use
