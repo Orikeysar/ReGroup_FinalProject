@@ -12,8 +12,10 @@ import FindGroups from "./Pages/FindGroups";
 import AddGroup from "./Pages/AddGroup";
 import MyGroupPage from "./Pages/MyGroupPage";
 import FriendsListCard from "./Coponents/FriendsListCard";
+import UserFriendsPage from "./Pages/UserFriendsPage";
 
 function App() {
+  
   return (
     <>
     <script
@@ -35,7 +37,7 @@ function App() {
               <Route path="/findGroups" element={<FindGroups />} />
               <Route path="/createGroups" element={<AddGroup />} />
               <Route path="/myGroups" element={<MyGroupPage />} />
-              <Route path="/myFriends" element={<FriendsListCard />} />
+              <Route path="/myFriends" element={<UserFriendsPage />} />
               
             </Routes>
           </div>

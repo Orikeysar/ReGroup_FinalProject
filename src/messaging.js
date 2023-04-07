@@ -47,6 +47,6 @@ export async function saveMessagingDeviceToken(uid) {
     }
   } catch (error) {
     console.error('Unable to get messaging token.', error);
-    requestNotificationsPermissions(uid);
+   
   };
 }

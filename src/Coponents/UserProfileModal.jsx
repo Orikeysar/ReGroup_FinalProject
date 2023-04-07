@@ -64,16 +64,17 @@ function UserProfileModal({ id }) {
         break;
       }
     }
-    saveMessagingDeviceToken(activeUser.userRef);
-    const docRef = doc(db, "fcmTokens", id);
-    const docSnap = await getDoc(docRef);
-    const data = docSnap.data();
-    const token = data.fcmToken;
-    onButtonClick(token);
-    //סיום
+
+ saveMessagingDeviceToken(activeUser.userRef);
+      const docRef = doc(db, "fcmTokens", id);
+      const docSnap = await getDoc(docRef);
+      const data = docSnap.data();
+      const token = data.fcmToken;
+      onButtonClick(token);
     if (friendExists) {
       toast.error(`${newFriend} already get your request`);
     } else {
+     
       activeUser.friendsListToAccept.push(newFriend);
       console.log(activeUser.friendsListToAccept);
       await updateDoc(activeUserRef, {
