@@ -70,12 +70,9 @@ function UserProfileModal({ id }) {
       const docSnap = await getDoc(docRef);
       const data = docSnap.data();
       const token = data.fcmToken;
-      const msgData={
-token: token,
+  
 
-      }
-
-      onButtonClick(msgData);
+      onButtonClick(token);
       //סיום
 
     if (friendExists) {
