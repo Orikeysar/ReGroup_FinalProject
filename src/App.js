@@ -12,6 +12,7 @@ import FindGroups from "./Pages/FindGroups";
 import AddGroup from "./Pages/AddGroup";
 import MyGroupPage from "./Pages/MyGroupPage";
 import FriendsListCard from "./Coponents/FriendsListCard";
+
 function App() {
   return (
     <>
