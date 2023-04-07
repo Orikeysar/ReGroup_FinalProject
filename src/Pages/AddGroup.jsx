@@ -266,7 +266,7 @@ function AddGroup() {
   return (
     <div className="container  ">
       {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-2">
+      <div className="w-full mb-20">
         <NavBar />
       </div>
       <div className=" flex items-center space-x-2 justify-center text-base align-middle mb-5">

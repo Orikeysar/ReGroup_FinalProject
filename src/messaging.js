@@ -2,10 +2,7 @@ import { db, messaging } from './FirebaseSDK';
 import { doc, setDoc } from 'firebase/firestore';
 import { getToken, onMessage } from 'firebase/messaging';
 import { toast } from 'react-toastify';
-import firebase from 'firebase/compat/app'
 
-export const FCM_TOKEN_COLLECTION = "fcmTokens";
-export const FCM_TOKEN_KEY = "fcmToken"; // key for storing FCM token in Firestore
 const VAPID_KEY = "BMKJvycjE-kKNIovHIzMJ7qjdfnEPZITCQiL32EPKuCPRVIc7IWFTqOzIk52Ex9z9G8fciZHLaIkNvia5ys7f04";
 // Requests permissions to show notifications.
 async function requestNotificationsPermissions(uid) {
@@ -30,8 +27,10 @@ export async function saveMessagingDeviceToken(uid) {
     if (fcmToken) {
       console.log('Got FCM device token:', fcmToken);
       // Save device token to Firestore
-      const tokenRef = doc(db, FCM_TOKEN_COLLECTION, uid);
-      await setDoc(tokenRef, { fcmToken });
+      const tokenRef = doc(db, "fcmTokens", uid);
+      await setDoc(tokenRef, {
+        fcmToken:fcmToken
+      } );
       // This will fire when a message is received while the app is in the foreground.
       // When the app is in the background, firebase-messaging-sw.js will receive the message instead.
       onMessage(msg, (message) => {
@@ -47,6 +46,6 @@ export async function saveMessagingDeviceToken(uid) {
     }
   } catch (error) {
     console.error('Unable to get messaging token.', error);
-   
+    requestNotificationsPermissions(uid);
   };
 }
