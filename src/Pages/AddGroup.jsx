@@ -18,7 +18,6 @@ import {
   getDocs,
 } from "firebase/firestore";
 import NavBar from "../Coponents/NavBar";
-import BottumNavigation from "../Coponents/BottumNavBar";
 import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
@@ -299,7 +298,7 @@ if(participants >0){
   return (
     <div className="container  ">
       {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-2">
+      <div className="topNavBar w-full mb-20">
         <NavBar />
       </div>
       <div className=" flex items-center space-x-2 justify-center text-base align-middle mb-5">
@@ -398,10 +397,6 @@ if(participants >0){
           filteredGroups={filteredGroups}
           fillteredGroupShow={fillteredGroupShow}
         />
-      </div>
-
-      <div className="buttomNavBar w-full  sticky bottom-0 pb-4 ">
-        <BottumNavigation />
       </div>
     </div>
   );

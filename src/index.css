@@ -50,4 +50,39 @@ display: none;
 .userInfo input  {
   background-color: white !important;
 }
-/* Position and style the burger icon */
+/* text style */
+body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: 0;
+}
+
+a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.btn {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+/* .btn-ghost {
+  border: 2px solid #e5e7eb;
+  background-color: transparent;
+  color: #1f2937;
+} */
+
+.btn-ghost:hover {
+  background-color: #e5e7eb;
+}
