@@ -23,17 +23,18 @@ function NavBar() {
         }}
       >
         <div className="navbar-start">
-          <img
+        <HamburgerMenu/>
+
+        </div>
+        <div className="navbar-center"><img
             src={Logo}
             alt=""
-            className="btn btn-ghost left-0 normal-case border border-gray-400 "
+            className="btn btn-ghost left-0 normal-case "
             onClick={handleLogoClick}
           ></img>
-        </div>
-        <div className="navbar-center"></div>
+          </div>
         <div className="navbar-end ">
           <Top10Modal />
-          <HamburgerMenu/>
         </div>
       </div>
     </>

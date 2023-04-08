@@ -1,10 +1,11 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
+import { Dialog } from "primereact/dialog";
+import UserAchievemeant from "./UserAchievemeant";
 
 function HamburgerMenu() {
-
   const [isOpen, setIsOpen] = useState(false);
   const [activeUser, setactiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
@@ -15,9 +16,11 @@ function HamburgerMenu() {
     setIsOpen(!isOpen);
   };
   //profile image is clicked
-  const handleProfileClick = () => {
-    alert('click')
+  const [visible, setVisible] = useState(false);
+  const handleProfileClick = (id) => {
+    setVisible(true);
   };
+
   //navigate
   const auth = getAuth();
   const [value, setValue] = useState(localStorage.getItem("componentChoosen"));
@@ -27,13 +30,9 @@ function HamburgerMenu() {
     localStorage.setItem("componentChoosen", value);
   }, [value]);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
   const handleFriendNavButton = () => {
     localStorage.setItem("componentChoosen", "FriendsList");
-    navigate("/");
+    navigate("/myFriends");
   };
 
   const handleGroupsNavButton = () => {
@@ -53,7 +52,7 @@ function HamburgerMenu() {
 
   const handleRecentNavButton = () => {
     localStorage.setItem("componentChoosen", "RecentActivities");
-    navigate("/");
+    navigate("/recentActivities");
   };
   const onLogout = () => {
     auth.signOut();
@@ -80,8 +79,8 @@ function HamburgerMenu() {
         onClick={handleClick}
       ></div>
       <div
-        className={`fixed top-0 right-0 h-full w-60 bg-base-100 z-50 shadow-lg transition-transform ${
-          isOpen ? "transform translate-x-0" : "transform translate-x-full"
+        className={`fixed top-0 left-0 h-full w-60 bg-base-100 z-50 shadow-lg transition-transform ${
+          isOpen ? "transform translate-x-0" : "transform -translate-x-full"
         }`}
       >
         <div className="relative flex justify-center">
@@ -94,37 +93,75 @@ function HamburgerMenu() {
         </div>{" "}
         <ul className="p-4">
           <li className="mb-2">
-            <a  className="btn btn-ghost w-full" value="MyGroupsPage" onClick={handleMyGroupNavButton}>
+            <a
+              className="btn btn-ghost w-full"
+              value="MyGroupsPage"
+              onClick={handleMyGroupNavButton}
+            >
               My Groups
             </a>
           </li>
           <li className="mb-2">
-            <a  className="btn btn-ghost w-full" value="groups" onClick={handleGroupsNavButton}>
+            <a
+              className="btn btn-ghost w-full"
+              value="groups"
+              onClick={handleGroupsNavButton}
+            >
               Find Groups
             </a>
           </li>
           <li className="mb-2">
-            <a  className="btn btn-ghost w-full" onClick={handleCreateGroupNavButton} value="createGroups">
+            <a
+              className="btn btn-ghost w-full"
+              onClick={handleCreateGroupNavButton}
+              value="createGroups"
+            >
               Create Group
             </a>
           </li>
           <li className="mb-2">
-            <a  className="btn btn-ghost w-full" value="FriendsList"  onClick={handleFriendNavButton}>
+            <a
+              className="btn btn-ghost w-full"
+              value="FriendsList"
+              onClick={handleFriendNavButton}
+            >
               Friends List
             </a>
           </li>
-          <li className="mb-2" value="RecentActivities" onClick={handleRecentNavButton}>
-            <a  className="btn btn-ghost w-full">
-              Recent Activities
-            </a>
+          <li
+            className="mb-2"
+            value="RecentActivities"
+            onClick={handleRecentNavButton}
+          >
+            <a className="btn btn-ghost w-full">Recent Activities</a>
           </li>
-          <li className="mb-2"  onClick={onLogout}>
-            <a  className="btn btn-ghost w-full">
-              Log Out
-            </a>
+          <li className="mb-2" onClick={onLogout}>
+            <a className="btn btn-ghost w-full">Log Out</a>
           </li>
         </ul>
       </div>
+      {visible && (
+        <tr>
+          <td>
+            <div>
+              {/* המודל של המשתמש שנבחר */}
+              <div className="card flex justify-content-center">
+                <Dialog
+                  visible={visible}
+                  onHide={() => setVisible(false)}
+                  style={{ width: "50vw" }}
+                  breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+                >
+                  <div className="m-0">
+                    {/* הפרטים של המשתמש */}
+                    <UserAchievemeant />
+                  </div>
+                </Dialog>
+              </div>
+            </div>
+          </td>
+        </tr>
+      )}
     </>
   );
 }

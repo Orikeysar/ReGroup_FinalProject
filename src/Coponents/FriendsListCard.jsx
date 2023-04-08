@@ -7,6 +7,7 @@ import { Dialog } from "primereact/dialog";
 import UserProfileModal from "./UserProfileModal";
 import { Timestamp } from "firebase/firestore";
 import { async } from "@firebase/util";
+import NavBar from "../Coponents/NavBar";
 
 function FriendsListCard() {
   //array for frinds
@@ -59,6 +60,9 @@ function FriendsListCard() {
     }
     return (
       <div className="col-12 mt-4">
+        <div className="topNavBar w-full mb-20">
+        <NavBar />
+      </div>
         <div className="grid grid-cols-4 gap-3 text-center ">
           <div className="flex-column">
             {" "}
@@ -112,6 +116,9 @@ function FriendsListCard() {
 
   return (
     <div className="friendsList  mt-4 mb-4">
+      <div className="topNavBar w-full mb-20">
+        <NavBar />
+      </div>
       <div className="friendsListHeader   mb-4 ">
         <div className="flex  items-center space-x-2 justify-center text-3xl align-middle ">
           <TbFriends className=" mr-2 w-max " />
