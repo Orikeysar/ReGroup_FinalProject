@@ -237,6 +237,7 @@ function AddGroup() {
         UserScoreCalculate(item,"CreatedGroups",activeUser)
         toast.success("create success");
         //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה 
+        sendInviteByEmail(newGroup.participants)
         SendAlertToUserForNewGroup(selectedCourse,selectedSubjects);
         navigate('/myGroups')
       })
@@ -262,7 +263,18 @@ function AddGroup() {
       CreateNewGroup();
     }
   };
-
+  const sendInviteByEmail=async(participants)=>{
+    
+    await setDoc(doc(db, "mail", uuidv4()), {
+      to: "naorori1212@gmail.com",
+      message: {
+        subject: "Hello from Firebase!",
+        text: "This is the plaintext section of the email body.",
+        html: "This is the <code>HTML</code> section of the email body.",
+      },
+    })
+   .then(() => console.log("Queued email for delivery!"));
+  
   return (
     <div className="container  ">
       {/* //TOP NAVBAR */}
