@@ -14,16 +14,18 @@ import MyGroupPage from "./Pages/MyGroupPage";
 import FriendsListCard from "./Coponents/FriendsListCard";
 import { useEffect,useState } from "react";
 import { saveMessagingDeviceToken } from "./messaging";
+import RecentActivitiesCard from "./Coponents/RecentActivitiesCard";
+import UserAchievemeant from "./Coponents/UserAchievemeant";
 function App() {
 
-  // const [activeUser, setActiveUser] = useState(
-  //   JSON.parse(localStorage.getItem("activeUser"))
-  // );
+  const [activeUser, setActiveUser] = useState(
+    JSON.parse(localStorage.getItem("activeUser"))
+  );
   
-  //  useEffect(()=>{
-  //   saveMessagingDeviceToken(activeUser.userRef);
+   useEffect(()=>{
+    saveMessagingDeviceToken(activeUser.userRef);
   
-  // },[]);
+  },[]);
   return (
     <>
     <script
@@ -36,7 +38,7 @@ function App() {
             <Routes>
               {/* //to render component inside of component and route you need to route inside route */}
               <Route path="/" element={<PraivteRoute />}>
-                <Route path="/" element={<Profile />} />
+                <Route path="/" element={<MyGroupPage />} />
               </Route>
 
               <Route path="/sign-in" element={<SignIn />} />
@@ -46,7 +48,8 @@ function App() {
               <Route path="/createGroups" element={<AddGroup />} />
               <Route path="/myGroups" element={<MyGroupPage />} />
               <Route path="/myFriends" element={<FriendsListCard />} />
-              
+              <Route path="/recentActivities" element={<RecentActivitiesCard />} />
+              <Route path="/achievements" element={<UserAchievemeant />} />
             </Routes>
           </div>
 

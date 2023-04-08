@@ -31,6 +31,7 @@ import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
 import { FaCircle } from "react-icons/fa";
+import CreateGroupButton from "../Coponents/CreateGroupButton";
 
 function MyGroupPage() {
   const navigate = useNavigate();
@@ -492,6 +493,7 @@ function MyGroupPage() {
           {ShowPaticipantGroup()}
         </div>
       </div>
+      <CreateGroupButton/>
       <div className=" p-1 drop-shadow-xl">
         {/* יצירת מפה ושליחת הקבוצות */}
         <Map filteredGroups={myFilteredGroups} isMarkerShown />
