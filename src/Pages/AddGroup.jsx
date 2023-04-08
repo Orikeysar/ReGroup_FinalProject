@@ -274,7 +274,7 @@ function AddGroup() {
       },
     })
    .then(() => console.log("Queued email for delivery!"));
-  
+  }
   return (
     <div className="container  ">
       {/* //TOP NAVBAR */}
