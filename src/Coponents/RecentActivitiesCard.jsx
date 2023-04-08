@@ -6,7 +6,6 @@ import { RxCounterClockwiseClock } from "react-icons/rx";
 import { Avatar } from "primereact/avatar";
 import { OrderList } from "primereact/orderlist";
 import { Timestamp } from "firebase/firestore";
-import NavBar from "../Coponents/NavBar";
 
 function RecentActivitiesCard() {
   const navigate = useNavigate();
@@ -126,9 +125,6 @@ function RecentActivitiesCard() {
   if (activeUser.recentActivities.length === 0) {
     return (
       <div>
-        <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
           {" "}
           <RxCounterClockwiseClock className=" mr-2 w-max " />
@@ -155,9 +151,6 @@ function RecentActivitiesCard() {
   if (type === "General") {
     return (
       <div>
-        <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
           {" "}
           <RxCounterClockwiseClock className=" mr-2 w-max " />
@@ -195,9 +188,6 @@ function RecentActivitiesCard() {
   } else {
     return (
       <div>
-        <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
           {" "}
           <RxCounterClockwiseClock className=" mr-2 w-max " />

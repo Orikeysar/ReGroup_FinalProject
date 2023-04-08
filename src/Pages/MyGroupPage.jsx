@@ -1,5 +1,6 @@
 import React from "react";
 import Map from "../Coponents/Map";
+import BottumNavigation from "../Coponents/BottumNavBar";
 import { useState, useEffect } from "react";
 import { db } from "../FirebaseSDK";
 import NavBar from "../Coponents/NavBar";
@@ -469,7 +470,7 @@ function MyGroupPage() {
   return (
     <div className="container">
       {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-20">
+      <div className="topNavBar w-full mb-2">
         <NavBar />
       </div>
       <div className="row userInfo">
@@ -494,6 +495,9 @@ function MyGroupPage() {
       <div className=" p-1 drop-shadow-xl">
         {/* יצירת מפה ושליחת הקבוצות */}
         <Map filteredGroups={myFilteredGroups} isMarkerShown />
+      </div>
+      <div className="buttomNavBar w-full  sticky bottom-0 pb-4 ">
+        <BottumNavigation />
       </div>
     </div>
   );

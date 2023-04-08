@@ -22,11 +22,13 @@ function BottumNavBar() {
   };
 
   const handleFriendNavButton = () => {
+    console.log("Friends list clicked!");
     localStorage.setItem("componentChoosen", "FriendsList");
     navigate("/");
   };
 
   const handleGroupsNavButton = () => {
+    console.log("Groups list clicked!");
     localStorage.setItem("componentChoosen", "groups");
     navigate("/findGroups");
   };
@@ -37,11 +39,13 @@ function BottumNavBar() {
 
   const handleCoursesNavButton = () => {
     localStorage.setItem("componentChoosen", "MyGroupsPage");
+    console.log("courses list clicked!");
     navigate("/myGroups");
   };
 
   const handleRecentNavButton = () => {
     localStorage.setItem("componentChoosen", "RecentActivities");
+    console.log("recent list clicked!");
     navigate("/");
   };
   return (

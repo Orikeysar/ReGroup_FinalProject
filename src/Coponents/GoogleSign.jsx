@@ -102,13 +102,6 @@ function GoogleSign() {
           ],
          
         });
-        //SET USER TOP10 
-        await setDoc(doc(db, "top10",auth.currentUser.uid), {
-          name: user.displayName,
-          email: user.email,
-          points: 0,
-          userImg: user.photoURL,
-        });
         toast.success("Build user with google success");
       }
 
@@ -148,6 +141,13 @@ function GoogleSign() {
             JSON.stringify(achievementsTempList)
           );
         }
+         //SET USER TOP10 
+        await setDoc(doc(db, "top10",auth.currentUser.uid), {
+          name: user.displayName,
+          email: user.email,
+          points: 0,
+          userImg: user.photoURL,
+        });
         navigate("/");
         toast.success("Sign in Complete");
         saveMessagingDeviceToken(auth.currentUser.uid);
