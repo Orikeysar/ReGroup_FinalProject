@@ -16,14 +16,14 @@ import { useEffect,useState } from "react";
 import { saveMessagingDeviceToken } from "./messaging";
 function App() {
 
-  const [activeUser, setActiveUser] = useState(
-    JSON.parse(localStorage.getItem("activeUser"))
-  );
+  // const [activeUser, setActiveUser] = useState(
+  //   JSON.parse(localStorage.getItem("activeUser"))
+  // );
   
-   useEffect(()=>{
-    saveMessagingDeviceToken(activeUser.userRef);
+  //  useEffect(()=>{
+  //   saveMessagingDeviceToken(activeUser.userRef);
   
-  },[]);
+  // },[]);
   return (
     <>
     <script
