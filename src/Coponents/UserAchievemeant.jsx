@@ -5,6 +5,7 @@ import { ProgressBar } from "primereact/progressbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
 import NavBar from "../Coponents/NavBar";
+import CreateGroupButton from "./CreateGroupButton";
 
 
 function UserAchievemeant() {
@@ -102,6 +103,7 @@ function UserAchievemeant() {
         ></OrderList>
       </div>
     </div>
+    <CreateGroupButton/>
     </>
   );
 }

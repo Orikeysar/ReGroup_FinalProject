@@ -86,3 +86,32 @@ a {
 .btn-ghost:hover {
   background-color: #e5e7eb;
 }
+.create-group-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 120px;
+  height: 50px;
+  background-color: #00bcd4;
+  color: #fff;
+  border-radius: 50px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 10px;
+}
+
+.create-group-btn:hover {
+  background-color: #0097a7;
+}
+
+.create-group-btn.clicked {
+  transform: scale(0.95);
+}
+
+.icon {
+  margin-right: 10px;
+}

@@ -8,6 +8,7 @@ import UserProfileModal from "./UserProfileModal";
 import { Timestamp } from "firebase/firestore";
 import { async } from "@firebase/util";
 import NavBar from "../Coponents/NavBar";
+import CreateGroupButton from "../Coponents/CreateGroupButton";
 
 function FriendsListCard() {
   //array for frinds
@@ -57,6 +58,8 @@ function FriendsListCard() {
           <p className="text-4xl">Cant find this friend!</p>
         </div>
       );
+      <CreateGroupButton/>
+
     }
     return (
       <div className="col-12 mt-4">
@@ -112,6 +115,8 @@ function FriendsListCard() {
         )}
       </div>
     );
+    <CreateGroupButton/>
+
   };
 
   return (
@@ -135,8 +140,12 @@ function FriendsListCard() {
           filterBy="name"
         ></OrderList>
       </div>
+      <CreateGroupButton/>
+
     </div>
+    
   );
+
 }
 
 export default FriendsListCard;

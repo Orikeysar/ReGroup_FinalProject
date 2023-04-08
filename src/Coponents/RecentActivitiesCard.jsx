@@ -7,6 +7,7 @@ import { Avatar } from "primereact/avatar";
 import { OrderList } from "primereact/orderlist";
 import { Timestamp } from "firebase/firestore";
 import NavBar from "../Coponents/NavBar";
+import CreateGroupButton from "../Coponents/CreateGroupButton";
 
 function RecentActivitiesCard() {
   const navigate = useNavigate();
@@ -148,6 +149,8 @@ function RecentActivitiesCard() {
             There are no recent activities yet
           </p>
         </div>
+        <CreateGroupButton/>
+
       </div>
     );
   }
@@ -190,6 +193,8 @@ function RecentActivitiesCard() {
             </div>
           </div>
         </div>
+        <CreateGroupButton/>
+
       </div>
     );
   } else {
@@ -228,6 +233,8 @@ function RecentActivitiesCard() {
             </div>
           </div>
         </div>
+        <CreateGroupButton/>
+
       </div>
     );
   }

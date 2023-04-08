@@ -6,6 +6,8 @@ import NavBar from "../Coponents/NavBar";
 import Map from "../Coponents/Map";
 import FillterGroups from "../Coponents/FillterGroups";
 import CoursesList from "../Coponents/CoursesList";
+import CreateGroupButton from "../Coponents/CreateGroupButton";
+
 //מציאת קבוצה
 function FindGroups() {
   const navigate = useNavigate();
@@ -58,12 +60,14 @@ function FindGroups() {
           <CoursesList />
         </div>
       ) : null}
+        <CreateGroupButton/>
 
       <div className=" p-1 drop-shadow-xl">
         {/* יצירת מפה ושליחת הקבוצות */}
         <Map filteredGroups={fillteredGroups} isMarkerShown />
       </div>
     </div>
+
   );
 }
 
