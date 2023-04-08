@@ -15,6 +15,7 @@ import FriendsListCard from "./Coponents/FriendsListCard";
 import { useEffect,useState } from "react";
 import { saveMessagingDeviceToken } from "./messaging";
 import RecentActivitiesCard from "./Coponents/RecentActivitiesCard";
+import UserAchievemeant from "./Coponents/UserAchievemeant";
 function App() {
 
   const [activeUser, setActiveUser] = useState(
@@ -48,7 +49,7 @@ function App() {
               <Route path="/myGroups" element={<MyGroupPage />} />
               <Route path="/myFriends" element={<FriendsListCard />} />
               <Route path="/recentActivities" element={<RecentActivitiesCard />} />
-              
+              <Route path="/achievements" element={<UserAchievemeant />} />
             </Routes>
           </div>
 

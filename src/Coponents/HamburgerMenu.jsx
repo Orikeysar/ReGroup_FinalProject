@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
 import UserAchievemeant from "./UserAchievemeant";
+import Top10Modal from "./Top10Modal";
+import Top10ModalCard from "./Top10ModalCard";
 
 function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,11 +16,6 @@ function HamburgerMenu() {
   //menu click
   const handleClick = () => {
     setIsOpen(!isOpen);
-  };
-  //profile image is clicked
-  const [visible, setVisible] = useState(false);
-  const handleProfileClick = (id) => {
-    setVisible(true);
   };
 
   //navigate
@@ -54,12 +51,17 @@ function HamburgerMenu() {
     localStorage.setItem("componentChoosen", "RecentActivities");
     navigate("/recentActivities");
   };
+  const handleAchievementsNavButton = () => {
+    localStorage.setItem("componentChoosen", "RecentActivities");
+    navigate("/achievements");
+  };
   const onLogout = () => {
     auth.signOut();
     navigate("/sign-in");
   };
   return (
     <>
+
       <button
         className="btn btn-ghost btn-sm rounded-btn ml-2"
         onClick={handleClick}
@@ -83,14 +85,6 @@ function HamburgerMenu() {
           isOpen ? "transform translate-x-0" : "transform -translate-x-full"
         }`}
       >
-        <div className="relative flex justify-center">
-          <img
-            className="rounded-full cursor-pointer transition duration-300 hover:scale-110 w-20 h-20 ml-4 mt-4"
-            src={activeUser.userImg}
-            alt="user profile"
-            onClick={handleProfileClick}
-          />
-        </div>{" "}
         <ul className="p-4">
           <li className="mb-2">
             <a
@@ -122,6 +116,15 @@ function HamburgerMenu() {
           <li className="mb-2">
             <a
               className="btn btn-ghost w-full"
+              value="achievements"
+              onClick={handleAchievementsNavButton}
+            >
+              Achievements
+            </a>
+          </li>
+          <li className="mb-2">
+            <a
+              className="btn btn-ghost w-full"
               value="FriendsList"
               onClick={handleFriendNavButton}
             >
@@ -140,28 +143,7 @@ function HamburgerMenu() {
           </li>
         </ul>
       </div>
-      {visible && (
-        <tr>
-          <td>
-            <div>
-              {/* המודל של המשתמש שנבחר */}
-              <div className="card flex justify-content-center">
-                <Dialog
-                  visible={visible}
-                  onHide={() => setVisible(false)}
-                  style={{ width: "50vw" }}
-                  breakpoints={{ "960px": "75vw", "641px": "100vw" }}
-                >
-                  <div className="m-0">
-                    {/* הפרטים של המשתמש */}
-                    <UserAchievemeant />
-                  </div>
-                </Dialog>
-              </div>
-            </div>
-          </td>
-        </tr>
-      )}
+      
     </>
   );
 }

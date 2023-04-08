@@ -107,12 +107,8 @@ function Profile() {
 
   return (
     <div className="container">
-      {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
       <div className="row userInfo">
-        {/* <div className="col-md-4 animated fadeIn " key={activeUser.name}>
+        <div className="col-md-4 animated fadeIn " key={activeUser.name}>
           <div className="card ">
             <div className="card-body flex-row ">
               <div className="avatar w-2/5 ">
@@ -180,23 +176,15 @@ function Profile() {
                     onChange={onEdit}
                   />
                 </div>
-                <div className="text-center">
-                  <button
-                    type="button"
-                    className="logOut btn-xs border-gray-500 bg-gray-600 text-white rounded-md mt-2 justify-center "
-                    onClick={onLogout}
-                  >
-                    Logout
-                  </button>
-                </div>
               </div>
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
       {/* //LAST ACTIVITIES  */}
       <div className=" mt-4 mb-4">
         {/* //select between components */}
+        {componentChoosen === "EditImage"?<ProfileImgEdit />:null}
         {/* <div>
           {componentChoosen === "RecentActivities" ? (
             <RecentActivitiesCard />
