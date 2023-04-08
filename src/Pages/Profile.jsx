@@ -13,7 +13,6 @@ import Spinner from "../Coponents/Spinner";
 import RecentActivitiesCard from "../Coponents/RecentActivitiesCard";
 import CoursesList from "../Coponents/CoursesList";
 import NavBar from "../Coponents/NavBar";
-import BottumNavigation from "../Coponents/BottumNavBar";
 import FriendsListCard from "../Coponents/FriendsListCard";
 import UserAchievemeant from "../Coponents/UserAchievemeant";
 import { FiEdit } from "react-icons/fi";
@@ -211,9 +210,6 @@ function Profile() {
             <UserAchievemeant />
           )}
         </div>
-      </div>
-      <div className="buttomNavBar w-full  sticky bottom-0 pb-4">
-        <BottumNavigation />
       </div>
     </div>
   );

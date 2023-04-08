@@ -3,7 +3,6 @@ import { useState } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../Coponents/NavBar";
-import BottumNavigation from "../Coponents/BottumNavBar";
 import Map from "../Coponents/Map";
 import FillterGroups from "../Coponents/FillterGroups";
 import CoursesList from "../Coponents/CoursesList";
@@ -63,10 +62,6 @@ function FindGroups() {
       <div className=" p-1 drop-shadow-xl">
         {/* יצירת מפה ושליחת הקבוצות */}
         <Map filteredGroups={fillteredGroups} isMarkerShown />
-      </div>
-
-      <div className="buttomNavBar w-full sticky bottom-0 pb-4">
-        <BottumNavigation />
       </div>
     </div>
   );

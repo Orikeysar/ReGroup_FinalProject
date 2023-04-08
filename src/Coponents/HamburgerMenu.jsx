@@ -1,20 +1,63 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
 
 function HamburgerMenu() {
+
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
   const [activeUser, setactiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+  //menu click
   const handleClick = () => {
     setIsOpen(!isOpen);
   };
   //profile image is clicked
   const handleProfileClick = () => {
     alert('click')
+  };
+  //navigate
+  const auth = getAuth();
+  const [value, setValue] = useState(localStorage.getItem("componentChoosen"));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem("componentChoosen", value);
+  }, [value]);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handleFriendNavButton = () => {
+    localStorage.setItem("componentChoosen", "FriendsList");
+    navigate("/");
+  };
+
+  const handleGroupsNavButton = () => {
+    localStorage.setItem("componentChoosen", "groups");
+    navigate("/findGroups");
+  };
+
+  const handleCreateGroupNavButton = () => {
+    localStorage.setItem("componentChoosen", "createGroups");
+    navigate("/createGroups");
+  };
+
+  const handleMyGroupNavButton = () => {
+    localStorage.setItem("componentChoosen", "MyGroupsPage");
+    navigate("/myGroups");
+  };
+
+  const handleRecentNavButton = () => {
+    localStorage.setItem("componentChoosen", "RecentActivities");
+    navigate("/");
+  };
+  const onLogout = () => {
+    auth.signOut();
+    navigate("/sign-in");
   };
   return (
     <>
@@ -51,32 +94,32 @@ function HamburgerMenu() {
         </div>{" "}
         <ul className="p-4">
           <li className="mb-2">
-            <a href="#" className="btn btn-ghost w-full">
+            <a  className="btn btn-ghost w-full" value="MyGroupsPage" onClick={handleMyGroupNavButton}>
               My Groups
             </a>
           </li>
           <li className="mb-2">
-            <a href="#" className="btn btn-ghost w-full">
+            <a  className="btn btn-ghost w-full" value="groups" onClick={handleGroupsNavButton}>
               Find Groups
             </a>
           </li>
           <li className="mb-2">
-            <a href="#" className="btn btn-ghost w-full">
+            <a  className="btn btn-ghost w-full" onClick={handleCreateGroupNavButton} value="createGroups">
               Create Group
             </a>
           </li>
           <li className="mb-2">
-            <a href="#" className="btn btn-ghost w-full">
+            <a  className="btn btn-ghost w-full" value="FriendsList"  onClick={handleFriendNavButton}>
               Friends List
             </a>
           </li>
-          <li className="mb-2">
-            <a href="#" className="btn btn-ghost w-full">
+          <li className="mb-2" value="RecentActivities" onClick={handleRecentNavButton}>
+            <a  className="btn btn-ghost w-full">
               Recent Activities
             </a>
           </li>
-          <li className="mb-2">
-            <a href="#" className="btn btn-ghost w-full">
+          <li className="mb-2"  onClick={onLogout}>
+            <a  className="btn btn-ghost w-full">
               Log Out
             </a>
           </li>
