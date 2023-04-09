@@ -174,19 +174,15 @@ function SignUp() {
   };
 
   return (
-    <div className="pageContainer">
-      <header>
-        <p className="pageHeader">hedear!</p>
+    <div className="fixed shadow-md w-4/5 ">
+      <header className=" mt-10 text-center">
+        <p className=" text-2xl font-bold">Create an account</p>
+        <p className=" text-xl ">let's get started</p>
       </header>
 
-      <form onSubmit={onSubmit} className=" place-content-center">
+      <form onSubmit={onSubmit} className=" text-center">
         {/* INSERT NAME */}
-        <div>
-          <label className="label">
-            <span className="label-text">Your Name</span>
-          </label>
-          <label className="input-group">
-            <span className="w-24">Name</span>
+        <div className="mt-4">
             <input
               id="name"
               type="text"
@@ -195,15 +191,9 @@ function SignUp() {
               value={name}
               className="nameInput input input-bordered"
             />
-          </label>
         </div>
         {/* IMSERT EMAIL */}
-        <div>
-          <label className="label">
-            <span className="label-text">Your Email</span>
-          </label>
-          <label className="input-group ">
-            <span className="w-24">Email</span>
+        <div className="mt-4">
             <input
               id="email"
               type="email"
@@ -212,17 +202,11 @@ function SignUp() {
               value={email}
               className="emailInput input input-bordered"
             />
-          </label>
         </div>
         {/* INPUT PASSWORD */}
-        <div className="passwordInputDiv">
-          <label className="label">
-            <span className="label-text">Your Password</span>
-          </label>
-
-          <label className="input-group max-w-100px">
-            <span>Password</span>
-            <div className="">
+        <div className="mt-4">
+          <label className=" max-w-100px">
+            <div className="ml-5">
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
@@ -243,12 +227,7 @@ function SignUp() {
 
           {/* DEGREE INPUT */}
 
-          <div>
-            <label className="label">
-              <span className="label-text">Your degree</span>
-            </label>
-            <label className="input-group">
-              <span className="w-24">Degree</span>
+          <div className="mt-4">
               <input
                 id="degree"
                 type="text"
@@ -257,12 +236,11 @@ function SignUp() {
                 value={degree}
                 className="degreeInput input input-bordered"
               />
-            </label>
           </div>
         </div>
 
-        <div className="signUpBar">
-          <button className="signUpButton btn-primary w-full bg-neutral-focus min-h-12 max-h-12 mt-2">
+        <div className="mt-4 ml-6 mr-6">
+          <button className=" rounded-full btn-primary w-full bg-neutral-focus min-h-12 max-h-12 mt-2">
             Sign up
           </button>
         </div>
