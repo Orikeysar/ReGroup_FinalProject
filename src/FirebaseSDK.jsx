@@ -18,8 +18,7 @@ const firebaseConfig = {
   storageBucket: "regroup-a4654.appspot.com",
   messagingSenderId: "88302389135",
   appId: "1:88302389135:web:c6f541f2e7db86e2bcedfa",
-  measurementId: "G-Z8J1Y1SEMN",
-
+  measurementId: "G-Z8J1Y1SEMN"
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
