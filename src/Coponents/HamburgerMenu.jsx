@@ -87,59 +87,59 @@ function HamburgerMenu() {
       >
         <ul className="p-4">
           <li className="mb-2">
-            <a
+            <p
               className="btn btn-ghost w-full"
               value="MyGroupsPage"
               onClick={handleMyGroupNavButton}
             >
               My Groups
-            </a>
+            </p>
           </li>
           <li className="mb-2">
-            <a
+            <p
               className="btn btn-ghost w-full"
               value="groups"
               onClick={handleGroupsNavButton}
             >
               Find Groups
-            </a>
+            </p>
           </li>
           <li className="mb-2">
-            <a
+            <p
               className="btn btn-ghost w-full"
               onClick={handleCreateGroupNavButton}
               value="createGroups"
             >
               Create Group
-            </a>
+            </p>
           </li>
           <li className="mb-2">
-            <a
+            <p
               className="btn btn-ghost w-full"
               value="achievements"
               onClick={handleAchievementsNavButton}
             >
               Achievements
-            </a>
+            </p>
           </li>
           <li className="mb-2">
-            <a
+            <p
               className="btn btn-ghost w-full"
               value="FriendsList"
               onClick={handleFriendNavButton}
             >
               Friends List
-            </a>
+            </p>
           </li>
           <li
             className="mb-2"
             value="RecentActivities"
             onClick={handleRecentNavButton}
           >
-            <a className="btn btn-ghost w-full">Recent Activities</a>
+            <p className="btn btn-ghost w-full">Recent Activities</p>
           </li>
           <li className="mb-2" onClick={onLogout}>
-            <a className="btn btn-ghost w-full">Log Out</a>
+            <p className="btn btn-ghost w-full">Log Out</p>
           </li>
         </ul>
       </div>
