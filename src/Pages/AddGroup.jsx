@@ -23,7 +23,6 @@ import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
 import FillterGroups from "../Coponents/FillterGroups";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
-import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import SendAlertToUserForNewGroup from "../Coponents/SendAlertToUserForNewGroup";
 
 function AddGroup() {

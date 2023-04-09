@@ -1,6 +1,5 @@
 import React from "react";
 import Map from "../Coponents/Map";
-
 import { useState, useEffect } from "react";
 import { db } from "../FirebaseSDK";
 import NavBar from "../Coponents/NavBar";
@@ -32,6 +31,7 @@ import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
 import { FaCircle } from "react-icons/fa";
 import CreateGroupButton from "../Coponents/CreateGroupButton";
+import "animate.css/animate.min.css";
 
 function MyGroupPage() {
   const navigate = useNavigate();
@@ -90,6 +90,12 @@ function MyGroupPage() {
       }
     }
   };
+  //animation my groups divs
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
   //get all the filters from FiltterGroup component
   const [filteredGroups, setFilteredGroups] = useState([]);
 
@@ -100,7 +106,7 @@ function MyGroupPage() {
     setFilteredGroups(filteredGroups);
   };
   //הצגת הקבוצה בה המשתמש מנהל כרגע
-  const ShowMangerGroup = () => {
+  const ShowManagerGroup = () => {
     let { managerGroup, participantGroup } = useFindMyGroups();
     if (managerGroup == null) {
       return "Yoy Dont have any group you manager in!";
@@ -240,7 +246,7 @@ function MyGroupPage() {
     );
   };
   //הצגת הקבוצה בה המשתמש חבר כרגע
-  const ShowPaticipantGroup = () => {
+  const ShowParticipantGroup = () => {
     let { managerGroup, participantGroup } = useFindMyGroups();
     if (participantGroup == null) {
       return "Yoy Dont have any group you paticipant in!";
@@ -437,7 +443,7 @@ function MyGroupPage() {
     let groupId = null;
     let newParticipantsList = [];
     group.participants.map((participant) => {
-      if (participant.userRef !== activeUser.userRef) {
+      if (participant.userRef != activeUser.userRef) {
         newParticipantsList.push(participant);
       }
     });
@@ -460,18 +466,14 @@ function MyGroupPage() {
     await updateDoc(docRef, {
       participants: newParticipantsList,
     });
-    UpdateRecentActivities(
-      group,
-      "JoinedGroup",
-      activeUser
-    );
+    UpdateRecentActivities(group, "JoinedGroup", activeUser);
     navigate("/");
   };
 
   return (
     <div className="container">
       {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-2">
+      <div className="topNavBar w-full mb-20">
         <NavBar />
       </div>
       <div className="row userInfo">
@@ -480,25 +482,46 @@ function MyGroupPage() {
         </div>
 
         {/* //הצגת הקבוצות שנמצאו */}
-        <div className="col-md-4 animated fadeIn ">
-          <p className="font-bold text-center text-lg">
-            {" "}
-            Group you manager in:
+        <div
+          className="col-md-4 animate__animated animate__fadeIn animate__slow"
+          style={{
+            backgroundColor: "#f8f8f8",
+            padding: "20px",
+            borderRadius: "10px",
+            marginTop: "20px",
+          }}
+        >
+          <p
+            className="animate__animated animate__slideInLeft"
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+              textAlign: "center",
+              marginBottom: "20px",
+            }}
+          >
+            Groups you manage:
           </p>
-          {ShowMangerGroup()}
-          <p className="font-bold text-center text-lg">
-            {" "}
-            Group you participant in:
+          {ShowManagerGroup()}
+          <p
+            className="animate__animated animate__slideInLeft"
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+              textAlign: "center",
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+          >
+            Groups you participate in:
           </p>
-          {ShowPaticipantGroup()}
+          {ShowParticipantGroup()}
         </div>
       </div>
-      <CreateGroupButton/>
-      <div className=" p-1 drop-shadow-xl">
-        {/* יצירת מפה ושליחת הקבוצות */}
+      <CreateGroupButton />
+      <div className="p-1 drop-shadow-xl map-container animate__animated animate__fadeIn animate__slow">
         <Map filteredGroups={myFilteredGroups} isMarkerShown />
       </div>
-     
     </div>
   );
 }

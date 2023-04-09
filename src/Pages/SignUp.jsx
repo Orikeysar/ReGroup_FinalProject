@@ -248,9 +248,13 @@ function SignUp() {
       {/* Google Oauth Place */}
       <GoogleSign />
 
-      <Link to="/sign-in" className="registerLink link-primary underline">
-        Sign In Insted{" "}
-      </Link>
+      <div className="mt-4 ml-6 mr-6">
+        <button className=" rounded-full w-full  min-h-12 max-h-12 mt-2">
+          <Link to="/sign-in" className=" w-full register-link ">
+            Sign in now
+          </Link>
+        </button>
+      </div>
     </div>
   );
 }
