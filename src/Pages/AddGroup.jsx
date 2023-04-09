@@ -4,7 +4,7 @@ import { RiGroup2Fill } from "react-icons/ri";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
-import { db } from "../FirebaseSDK";
+import { db, sendEmail } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -114,7 +114,7 @@ function AddGroup() {
     // //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
     // let { managerGroup, participantGroup } = useFindMyGroups();
     let groupId = null;
-    
+
     if (cordinates == null) {
       return toast.error("choose group location on the map");
     } else if (newGroup.timeStamp === "00:00:00") {
@@ -134,7 +134,7 @@ function AddGroup() {
         name: activeUser.name,
         userImg: activeUser.userImg,
         userRef: activeUser.userRef,
-        email:activeUser.email
+        email: activeUser.email,
       });
 
       if (managerGroup != null) {
@@ -165,7 +165,7 @@ function AddGroup() {
       }
     }
   };
-  //פותח קבוצה חדשה עם מספר סידורי הישן 
+  //פותח קבוצה חדשה עם מספר סידורי הישן
   const UpdateEditedGroup = async (groupId) => {
     const now = new Date();
     const [hours, minutes] = newGroup.timeStamp.split(":");
@@ -195,7 +195,7 @@ function AddGroup() {
     })
       .then(() => {
         toast.success("edit success");
-        navigate('/myGroups')
+        navigate("/myGroups");
       })
       .catch((error) => {
         toast.error("Bad Cardictionals details,try again");
@@ -231,19 +231,25 @@ function AddGroup() {
       ),
     })
       .then(() => {
-        let achiev=activeUser.userAchievements.filter(element=>element.name==="Opened Groups")
-        let item=achiev[0];
-        UserScoreCalculate(item,"CreatedGroups",activeUser)
+        let achiev = activeUser.userAchievements.filter(
+          (element) => element.name === "Opened Groups"
+        );
+        let item = achiev[0];
+        UserScoreCalculate(item, "CreatedGroups", activeUser);
         toast.success("create success");
-        //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה 
-        SendAlertToUserForNewGroup(selectedCourse,selectedSubjects);
-        navigate('/myGroups')
+        //שולח הזמנה לחברים שהוזמנו
+        handleSendEmail(newGroup.participants);
+        //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה
+
+        SendAlertToUserForNewGroup(selectedCourse, selectedSubjects);
+        navigate("/myGroups");
       })
       .catch((error) => {
         toast.error("Bad Cardictionals details,try again");
         console.log(error);
       });
   };
+  //בלחיצה על יצירת קבוצה הפונקציה בודקת האם יש קבוצות דומות שפתוחות
   const onSubmitForm = async (e) => {
     //במידה ויש קבוצה דומה המשתמש יקבל התראה לפני פתיחת הקבוצה
     if (filteredGroups.length > 0) {
@@ -261,6 +267,32 @@ function AddGroup() {
       CreateNewGroup();
     }
   };
+
+  function handleSendEmail(invitedList) {
+    let data = {
+      name: "",
+      email: "",
+      message: "",
+    };
+
+    if (invitedList.length > 0) {
+      invitedList.map((friend) => {
+        if (friend.userRef !== activeUser.userRef) {
+          data.name = friend.name;
+          data.email = friend.email;
+          data.message = `${activeUser.name} invite you to his group! click here to enter `;
+
+          sendEmail({ data })
+            .then((result) => {
+              console.log(result.data.message);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        }
+      });
+    }
+  }
 
   return (
     <div className="container  ">
@@ -365,8 +397,6 @@ function AddGroup() {
           fillteredGroupShow={fillteredGroupShow}
         />
       </div>
-
-      
     </div>
   );
 }
