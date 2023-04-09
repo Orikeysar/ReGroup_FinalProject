@@ -174,7 +174,7 @@ function SignUp() {
   };
 
   return (
-    <div className="fixed shadow-md w-4/5 ">
+    <div className=" ">
       <header className=" mt-10 text-center">
         <p className=" text-2xl font-bold">Create an account</p>
         <p className=" text-xl ">let's get started</p>

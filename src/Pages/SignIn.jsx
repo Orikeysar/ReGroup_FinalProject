@@ -136,9 +136,9 @@ function SignIn() {
           Fotgot Password
         </Link>
 
-        <div className="signInBar mb-3 mt-3 text-center w-full">
-          <button className="signInButton btn-primary w-full bg-neutral-focus min-h-12 max-h-12 ">
-            <p>Sign In</p>
+        <div className="mt-4 ml-6 mr-6">
+          <button className=" rounded-full btn-primary w-full bg-neutral-focus min-h-12 max-h-12 mt-2">
+            Sign in
           </button>
         </div>
       </form>
@@ -147,7 +147,7 @@ function SignIn() {
       <GoogleSign />
       {/* Facebook Oauth Place */}
 
-      <FacebookSign />
+      {/* <FacebookSign /> */}
 
       <Link to="/sign-up" className="registerLink btn btn-link ">
         Sign Up Insted
