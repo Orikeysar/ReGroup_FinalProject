@@ -237,8 +237,8 @@ function AddGroup() {
         UserScoreCalculate(item,"CreatedGroups",activeUser)
         toast.success("create success");
         //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה 
-        sendInviteByEmail(newGroup.participants)
         SendAlertToUserForNewGroup(selectedCourse,selectedSubjects);
+        sendInviteByEmail(newGroup.participants)
         navigate('/myGroups')
       })
       .catch((error) => {
@@ -263,17 +263,38 @@ function AddGroup() {
       CreateNewGroup();
     }
   };
+
   const sendInviteByEmail=async(participants)=>{
+
     
-    await setDoc(doc(db, "mail", uuidv4()), {
-      to: "naorori1212@gmail.com",
-      message: {
-        subject: "Hello from Firebase!",
-        text: "This is the plaintext section of the email body.",
-        html: "This is the <code>HTML</code> section of the email body.",
-      },
-    })
-   .then(() => console.log("Queued email for delivery!"));
+      await setDoc(doc(db, "mail", uuidv4()), {
+        to: "someone@example.com",
+        message: {
+          subject: "Hello from Firebase!",
+          text: "This is the plaintext section of the email body.",
+          html: "This is the <code>HTML</code> section of the email body.",
+        },
+      })
+     .then(() => console.log("Queued email for delivery!"));
+    
+     
+
+if(participants >0){
+      // participants.map((friend)=>{
+
+       
+      //   collection("mail").add({
+      //     to: "naorori1212@gmail.com",
+      //     message: {
+      //       subject: "Hello from Firebase!",
+      //       text: "This is the plaintext section of the email body.",
+      //       html: "This is the <code>HTML</code> section of the email body.",
+      //     },
+      //   })
+      //   .then(() => console.log("Queued email for delivery!"));
+
+      // })
+    }
   }
   return (
     <div className="container  ">

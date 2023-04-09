@@ -6,8 +6,6 @@ import { RxCounterClockwiseClock } from "react-icons/rx";
 import { Avatar } from "primereact/avatar";
 import { OrderList } from "primereact/orderlist";
 import { Timestamp } from "firebase/firestore";
-import NavBar from "../Coponents/NavBar";
-import CreateGroupButton from "../Coponents/CreateGroupButton";
 
 function RecentActivitiesCard() {
   const navigate = useNavigate();
@@ -127,9 +125,6 @@ function RecentActivitiesCard() {
   if (activeUser.recentActivities.length === 0) {
     return (
       <div>
-        <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
           {" "}
           <RxCounterClockwiseClock className=" mr-2 w-max " />
@@ -149,8 +144,6 @@ function RecentActivitiesCard() {
             There are no recent activities yet
           </p>
         </div>
-        <CreateGroupButton/>
-
       </div>
     );
   }
@@ -158,9 +151,6 @@ function RecentActivitiesCard() {
   if (type === "General") {
     return (
       <div>
-        <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
           {" "}
           <RxCounterClockwiseClock className=" mr-2 w-max " />
@@ -193,16 +183,11 @@ function RecentActivitiesCard() {
             </div>
           </div>
         </div>
-        <CreateGroupButton/>
-
       </div>
     );
   } else {
     return (
       <div>
-        <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
           {" "}
           <RxCounterClockwiseClock className=" mr-2 w-max " />
@@ -233,8 +218,6 @@ function RecentActivitiesCard() {
             </div>
           </div>
         </div>
-        <CreateGroupButton/>
-
       </div>
     );
   }

@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Button } from "primereact/button";
 import { OrderList } from "primereact/orderlist";
+import { saveMessagingDeviceToken } from "../messaging";
+import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { ProgressBar } from "primereact/progressbar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoins } from "@fortawesome/free-solid-svg-icons";
-import NavBar from "../Coponents/NavBar";
-import CreateGroupButton from "./CreateGroupButton";
-
+import { onButtonClick } from "../FirebaseSDK";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "../FirebaseSDK";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoins } from '@fortawesome/free-solid-svg-icons'
+//render card of friend
 
 function UserAchievemeant() {
+  const [componentChoosen, setComponentChoosen] = useState(
+    localStorage.setItem("componentChoosen", "/")
+  );
+
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
@@ -16,7 +24,13 @@ function UserAchievemeant() {
   const [userAchievements, setUserAchievements] = useState(
     activeUser.userAchievements
   );
-  
+  const handleClick = async () => {
+    const docRef = doc(db, "fcmTokens", activeUser.userRef);
+    const docSnap = await getDoc(docRef);
+    const data = docSnap.data();
+    const token = data.fcmToken;
+    onButtonClick(token);
+  };
   const currentTopUseForItem = (userAchive) => {
     if (userAchive.activeLevel === 3) {
       return userAchive.topLevelThree;
@@ -48,10 +62,7 @@ function UserAchievemeant() {
 
           <div className=" align-top text-center flex-col col-span-4 sm:align-items-start gap-3">
             <div className="font-semibold align-top">
-              {userAchive.name}:{" "}
-              {Math.floor(
-                userAchive.numberOfAchievementDoing / userAchive.valuePerAction
-              )}
+              {userAchive.name}
             </div>
 
             <div className="card">
@@ -62,11 +73,9 @@ function UserAchievemeant() {
                     100 >
                   100
                     ? 100
-                    : (
-                        (userAchive.numberOfAchievementDoing /
-                          currentTopUseForItem(userAchive)) *
-                        100
-                      ).toFixed(1)
+                    : (userAchive.numberOfAchievementDoing /
+                        currentTopUseForItem(userAchive)) *
+                      100
                 }
                 className="self-center w-full border rounded-xl align-middle "
                 displayValueTemplate={valueTemplate}
@@ -78,33 +87,30 @@ function UserAchievemeant() {
           </div>
 
           <div className=" pt-3 text-left self-center sm:align-items-end gap-3 sm:gap-2">
-            {userAchive.numberOfAchievementDoing}{" "}
-            <FontAwesomeIcon icon={faCoins} />
+          {userAchive.numberOfAchievementDoing}{" "}
+          <FontAwesomeIcon icon={faCoins} />
           </div>
         </div>
       </div>
     );
   };
+
   return (
-    <>
-    <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
     <div className="AchievementsList  mt-4 mb-4">
-    <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
-    <img className=" w-10 h-10 rounded-full " src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fachievement.png?alt=media&token=13f69c5c-c5e2-4fe8-a99e-3010975735a0" alt="Users Recored" />
-        {" "}
-        <p className=" font-bold text-xl">Achievements</p>
+      <div className="AchievementsListHeader   mb-4 ">
+        <div className="flex  items-center space-x-2 justify-center text-3xl align-middle ">
+          <TbFriends className=" mr-2 w-max " />
+          <p className=" font-bold text-lg">Achievements List</p>
+        </div>
       </div>
-      <div className="card w-full  justify-center shadow-md">
+
+      <div className="card w-full  justify-center ">
         <OrderList
           value={userAchievements}
           itemTemplate={itemTemplate}
         ></OrderList>
       </div>
     </div>
-    <CreateGroupButton/>
-    </>
   );
 }
 

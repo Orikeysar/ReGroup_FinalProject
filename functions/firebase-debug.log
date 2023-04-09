@@ -1,0 +1,67 @@
+[debug] [2023-04-09T06:28:00.334Z] ----------------------------------------------------------------------
+[debug] [2023-04-09T06:28:00.339Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Ori\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js functions:shell
+[debug] [2023-04-09T06:28:00.340Z] CLI Version:   11.25.3
+[debug] [2023-04-09T06:28:00.340Z] Platform:      win32
+[debug] [2023-04-09T06:28:00.340Z] Node Version:  v19.4.0
+[debug] [2023-04-09T06:28:00.340Z] Time:          Sun Apr 09 2023 09:28:00 GMT+0300 (שעון ישראל (קיץ))
+[debug] [2023-04-09T06:28:00.341Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-04-09T06:28:00.521Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-04-09T06:28:00.522Z] > authorizing via signed-in user (naorori1212@gmail.com)
+[debug] [2023-04-09T06:28:00.522Z] [iam] checking project regroup-a4654 for permissions ["firebase.projects.get"]
+[debug] [2023-04-09T06:28:00.526Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/regroup-a4654:testIamPermissions [none]
+[debug] [2023-04-09T06:28:00.527Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/regroup-a4654:testIamPermissions x-goog-quota-user=projects/regroup-a4654
+[debug] [2023-04-09T06:28:00.527Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/regroup-a4654:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-04-09T06:28:01.646Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/regroup-a4654:testIamPermissions 200
+[debug] [2023-04-09T06:28:01.646Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/regroup-a4654:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-04-09T06:28:01.647Z] Found locator with mismatched version, ignoring: {"version":"11.25.2","origins":["http://127.0.0.1:4400","http://[::1]:4400"]}
+[debug] [2023-04-09T06:28:01.653Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-04-09T06:28:01.657Z] defaultcredentials: writing to file C:\Users\Ori\AppData\Roaming\firebase\naorori1212_gmail_com_application_default_credentials.json
+[debug] [2023-04-09T06:28:01.659Z] DEBUG: Setting GAC to C:\Users\Ori\AppData\Roaming\firebase\naorori1212_gmail_com_application_default_credentials.json
+[debug] [2023-04-09T06:28:01.659Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/regroup-a4654/adminSdkConfig [none]
+[debug] [2023-04-09T06:28:02.023Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/regroup-a4654/adminSdkConfig 200
+[debug] [2023-04-09T06:28:02.024Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/regroup-a4654/adminSdkConfig {"projectId":"regroup-a4654","databaseURL":"https://regroup-a4654-default-rtdb.europe-west1.firebasedatabase.app","storageBucket":"regroup-a4654.appspot.com","locationId":"europe-west"}
+[debug] [2023-04-09T06:28:02.040Z] [functions] Watching "C:\Users\Ori\OneDrive\מסמכים\GitHub\ReGroup_FinalProject\functions" for Cloud Functions...
+[debug] [2023-04-09T06:28:02.047Z] Validating nodejs source
+[debug] [2023-04-09T06:28:05.903Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "16"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.5.0",
+    "firebase-functions": "^4.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.0.0"
+  },
+  "private": true
+}
+[debug] [2023-04-09T06:28:05.903Z] Building nodejs source
+[debug] [2023-04-09T06:28:05.904Z] Failed to find version of module node: reached end of search path C:\Users\Ori\OneDrive\מסמכים\GitHub\ReGroup_FinalProject\functions\node_modules
+[warn] !  functions: Your requested "node" version "16" doesn't match your global version "19". Using node@19 from host. 
+[debug] [2023-04-09T06:28:05.910Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-04-09T06:28:05.927Z] Found firebase-functions binary at 'C:\Users\Ori\OneDrive\מסמכים\GitHub\ReGroup_FinalProject\node_modules\.bin\firebase-functions'
+[debug] [2023-04-09T06:28:06.672Z] Serving at port 8955
+
+[debug] [2023-04-09T06:28:07.653Z] Got response from /__/functions.yaml {"endpoints":{"scheduledFunction":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"0 0 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":null},"labels":{},"entryPoint":"scheduledFunction"},"onButtonClick":{"platform":"gcfv1","labels":{},"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"callableTrigger":{},"entryPoint":"onButtonClick"},"alertGroupAdded":{"platform":"gcfv1","labels":{},"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"callableTrigger":{},"entryPoint":"alertGroupAdded"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[debug] [2023-04-09T06:28:07.675Z] shutdown requested via /__/quitquitquit
+
+[debug] [2023-04-09T06:28:07.701Z] [functions] Loaded functions definitions from source: scheduledFunction, onButtonClick, alertGroupAdded.
+[debug] [2023-04-09T06:28:07.703Z] [functions[us-central1-scheduledFunction]] function ignored because the pubsub emulator does not exist or is not running.
+[debug] [2023-04-09T06:28:07.704Z] [functions[us-central1-onButtonClick]] http function initialized (http://127.0.0.1:5000/regroup-a4654/us-central1/onButtonClick).
+[debug] [2023-04-09T06:28:07.705Z] [functions[us-central1-alertGroupAdded]] http function initialized (http://127.0.0.1:5000/regroup-a4654/us-central1/alertGroupAdded).
+[info] i  functions: Loaded functions: scheduledFunction, onButtonClick, alertGroupAdded 
+[warn] !  functions: The following emulators are not running, calls to these services will affect production: firestore, database, pubsub, storage, eventarc 
