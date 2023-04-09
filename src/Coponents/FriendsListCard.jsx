@@ -6,7 +6,6 @@ import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "./UserProfileModal";
 import { Timestamp } from "firebase/firestore";
-import { async } from "@firebase/util";
 import NavBar from "../Coponents/NavBar";
 import CreateGroupButton from "../Coponents/CreateGroupButton";
 
@@ -54,18 +53,15 @@ function FriendsListCard() {
   const itemTemplate = (product) => {
     if (product === undefined) {
       return (
-        <div>
-          <p className="text-4xl">Cant find this friend!</p>
-        </div>
+        <>
+          <div>
+            <p className="text-4xl">Cant find this friend!</p>
+          </div>
+        </>
       );
-      <CreateGroupButton/>
-
     }
     return (
       <div className="col-12 mt-4">
-        <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
         <div className="grid grid-cols-4 gap-3 text-center ">
           <div className="flex-column">
             {" "}
@@ -115,8 +111,6 @@ function FriendsListCard() {
         )}
       </div>
     );
-    <CreateGroupButton/>
-
   };
 
   return (
@@ -140,12 +134,9 @@ function FriendsListCard() {
           filterBy="name"
         ></OrderList>
       </div>
-      <CreateGroupButton/>
-
+      <CreateGroupButton />
     </div>
-    
   );
-
 }
 
 export default FriendsListCard;
