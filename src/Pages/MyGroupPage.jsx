@@ -1,6 +1,6 @@
 import React from "react";
 import Map from "../Coponents/Map";
-import BottumNavigation from "../Coponents/BottumNavBar";
+
 import { useState, useEffect } from "react";
 import { db } from "../FirebaseSDK";
 import NavBar from "../Coponents/NavBar";
@@ -31,6 +31,7 @@ import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
 import { FaCircle } from "react-icons/fa";
+import CreateGroupButton from "../Coponents/CreateGroupButton";
 
 function MyGroupPage() {
   const navigate = useNavigate();
@@ -436,7 +437,7 @@ function MyGroupPage() {
     let groupId = null;
     let newParticipantsList = [];
     group.participants.map((participant) => {
-      if (participant.userRef != activeUser.userRef) {
+      if (participant.userRef !== activeUser.userRef) {
         newParticipantsList.push(participant);
       }
     });
@@ -492,13 +493,12 @@ function MyGroupPage() {
           {ShowPaticipantGroup()}
         </div>
       </div>
+      <CreateGroupButton/>
       <div className=" p-1 drop-shadow-xl">
         {/* יצירת מפה ושליחת הקבוצות */}
         <Map filteredGroups={myFilteredGroups} isMarkerShown />
       </div>
-      <div className="buttomNavBar w-full  sticky bottom-0 pb-4 ">
-        <BottumNavigation />
-      </div>
+     
     </div>
   );
 }

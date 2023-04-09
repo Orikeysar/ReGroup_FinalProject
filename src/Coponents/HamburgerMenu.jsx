@@ -3,7 +3,7 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
-import UserAchievemeant from "./UserAchievemeant";
+import UserAchievemeant from "../Pages/UserAchievemeant";
 import Top10Modal from "./Top10Modal";
 import Top10ModalCard from "./Top10ModalCard";
 
@@ -52,7 +52,7 @@ function HamburgerMenu() {
     navigate("/recentActivities");
   };
   const handleAchievementsNavButton = () => {
-    localStorage.setItem("componentChoosen", "RecentActivities");
+    localStorage.setItem("componentChoosen", "achievements");
     navigate("/achievements");
   };
   const onLogout = () => {

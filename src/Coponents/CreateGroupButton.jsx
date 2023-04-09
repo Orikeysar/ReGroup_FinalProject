@@ -17,14 +17,14 @@ const CreateGroupButton = () => {
   };
 
   return (
-    <a
+    <p
       href="#"
       className={`create-group-btn ${isClicked ? 'clicked' : ''}`}
       onClick={handleClick}
     >
       <FontAwesomeIcon icon={faPlus} className="icon" />
       CREATE GROUP
-    </a>
+    </p>
   );
 };
 

@@ -12,6 +12,9 @@ import FindGroups from "./Pages/FindGroups";
 import AddGroup from "./Pages/AddGroup";
 import MyGroupPage from "./Pages/MyGroupPage";
 import FriendsListCard from "./Coponents/FriendsListCard";
+import UserAchievemeant from "./Pages/UserAchievemeant";
+import RecentActivitiesCard from "./Pages/RecentActivitiesCard";
+import UserFriendsPage from "./Pages/UserFriendsPage";
 function App() {
   return (
     <>
@@ -25,7 +28,7 @@ function App() {
             <Routes>
               {/* //to render component inside of component and route you need to route inside route */}
               <Route path="/" element={<PraivteRoute />}>
-                <Route path="/" element={<Profile />} />
+                <Route path="/" element={<MyGroupPage />} />
               </Route>
 
               <Route path="/sign-in" element={<SignIn />} />
@@ -34,8 +37,9 @@ function App() {
               <Route path="/findGroups" element={<FindGroups />} />
               <Route path="/createGroups" element={<AddGroup />} />
               <Route path="/myGroups" element={<MyGroupPage />} />
-              <Route path="/myFriends" element={<FriendsListCard />} />
-              
+              <Route path="/myFriends" element={<UserFriendsPage />} />
+              <Route path="/achievements" element={<UserAchievemeant />} />
+              <Route path="/recentActivities" element={<RecentActivitiesCard />} />
             </Routes>
           </div>
 

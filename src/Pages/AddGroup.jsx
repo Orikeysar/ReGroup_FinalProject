@@ -18,7 +18,6 @@ import {
   getDocs,
 } from "firebase/firestore";
 import NavBar from "../Coponents/NavBar";
-import BottumNavigation from "../Coponents/BottumNavBar";
 import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
@@ -367,9 +366,7 @@ function AddGroup() {
         />
       </div>
 
-      <div className="buttomNavBar w-full  sticky bottom-0 pb-4 ">
-        <BottumNavigation />
-      </div>
+      
     </div>
   );
 }
