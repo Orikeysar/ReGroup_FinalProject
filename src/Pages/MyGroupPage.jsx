@@ -459,11 +459,7 @@ function MyGroupPage() {
     await updateDoc(docRef, {
       participants: newParticipantsList,
     });
-    UpdateRecentActivities(
-      group,
-      "JoinedGroup",
-      activeUser
-    );
+    UpdateRecentActivities(group, "JoinedGroup", activeUser);
     navigate("/");
   };
 
@@ -492,7 +488,7 @@ function MyGroupPage() {
           {ShowPaticipantGroup()}
         </div>
       </div>
-      <CreateGroupButton/>
+        <CreateGroupButton />
       <div className=" p-1 drop-shadow-xl">
         {/* יצירת מפה ושליחת הקבוצות */}
         <Map filteredGroups={myFilteredGroups} isMarkerShown />
