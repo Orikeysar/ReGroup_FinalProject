@@ -52,7 +52,7 @@ function HamburgerMenu() {
     navigate("/recentActivities");
   };
   const handleAchievementsNavButton = () => {
-    localStorage.setItem("componentChoosen", "RecentActivities");
+    localStorage.setItem("componentChoosen", "achievements");
     navigate("/achievements");
   };
   const onLogout = () => {
@@ -85,10 +85,12 @@ function HamburgerMenu() {
           isOpen ? "transform translate-x-0" : "transform -translate-x-full"
         }`}
       >
-        <ul className="p-4">
+        <ul className="p-4 mt-10">
           <li className="mb-2">
             <p
-              className="btn btn-ghost w-full"
+              className={`btn btn-ghost w-full ${
+                localStorage.getItem("componentChoosen") === "MyGroupsPage" ? "bg-gray-100" : ""
+              }`}
               value="MyGroupsPage"
               onClick={handleMyGroupNavButton}
             >
@@ -97,7 +99,31 @@ function HamburgerMenu() {
           </li>
           <li className="mb-2">
             <p
-              className="btn btn-ghost w-full"
+              className={`btn btn-ghost w-full ${
+                localStorage.getItem("componentChoosen") === "achievements" ? "bg-gray-100" : ""
+              }`}
+              value="achievements"
+              onClick={handleAchievementsNavButton}
+            >
+             My Achievements
+            </p>
+          </li>
+          <li className="mb-2">
+            <p
+              className={`btn btn-ghost w-full ${
+                localStorage.getItem("componentChoosen") === "FriendsList" ? "bg-gray-100" : ""
+              }`}
+              value="FriendsList"
+              onClick={handleFriendNavButton}
+            >
+              Friends List
+            </p>
+          </li>
+          <li className="mb-2">
+            <p
+              className={`btn btn-ghost w-full ${
+                localStorage.getItem("componentChoosen") === "groups" ? "bg-gray-100" : ""
+              }`}
               value="groups"
               onClick={handleGroupsNavButton}
             >
@@ -106,29 +132,13 @@ function HamburgerMenu() {
           </li>
           <li className="mb-2">
             <p
-              className="btn btn-ghost w-full"
+              className={`btn btn-ghost w-full ${
+                localStorage.getItem("componentChoosen") === "createGroups" ? "bg-gray-100" : ""
+              }`}
               onClick={handleCreateGroupNavButton}
               value="createGroups"
             >
               Create Group
-            </p>
-          </li>
-          <li className="mb-2">
-            <p
-              className="btn btn-ghost w-full"
-              value="achievements"
-              onClick={handleAchievementsNavButton}
-            >
-              Achievements
-            </p>
-          </li>
-          <li className="mb-2">
-            <p
-              className="btn btn-ghost w-full"
-              value="FriendsList"
-              onClick={handleFriendNavButton}
-            >
-              Friends List
             </p>
           </li>
           <li
@@ -136,7 +146,9 @@ function HamburgerMenu() {
             value="RecentActivities"
             onClick={handleRecentNavButton}
           >
-            <p className="btn btn-ghost w-full">Recent Activities</p>
+            <p className={`btn btn-ghost w-full ${
+                localStorage.getItem("componentChoosen") === "RecentActivities" ? "bg-gray-100" : ""
+              }`}>Recent Activities</p>
           </li>
           <li className="mb-2" onClick={onLogout}>
             <p className="btn btn-ghost w-full">Log Out</p>

@@ -174,7 +174,7 @@ function SignUp() {
   };
 
   return (
-    <div className="fixed shadow-md w-4/5 ">
+    <div className=" ">
       <header className=" mt-10 text-center">
         <p className=" text-2xl font-bold">Create an account</p>
         <p className=" text-xl ">let's get started</p>
@@ -248,9 +248,13 @@ function SignUp() {
       {/* Google Oauth Place */}
       <GoogleSign />
 
-      <Link to="/sign-in" className="registerLink link-primary underline">
-        Sign In Insted{" "}
-      </Link>
+      <div className="mt-4 ml-6 mr-6">
+        <button className=" rounded-full w-full  min-h-12 max-h-12 mt-2">
+          <Link to="/sign-in" className=" w-full register-link ">
+            Sign in now
+          </Link>
+        </button>
+      </div>
     </div>
   );
 }
