@@ -87,7 +87,7 @@ function UserAchievemeant() {
   };
   return (
     <>
-    <div className="topNavBar w-full mb-20">
+    <div className="topNavBar w-full mb-24">
         <NavBar />
       </div>
     <div className="AchievementsList  mt-4 mb-4">

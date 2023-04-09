@@ -86,7 +86,7 @@ function RecentActivitiesCard() {
   //הפונקציה מקבלת את המערך של הקבוצות ומרנדרת אובייקט אובייקט לתוך הרשימה
   const itemTemplateGroups = (item) => {
     return (
-      <div key={uuidv4()} className="grid grid-cols-6 w-full text-center mt-2 ">
+      <div key={uuidv4()} className="grid grid-cols-6 w-full text-center mt-20 ">
         <div className="col-span-2 self-center ">
           <div className=" font-extrabold">{item.course}</div>
           <div>
@@ -158,7 +158,7 @@ function RecentActivitiesCard() {
   if (type === "General") {
     return (
       <div>
-        <div className="topNavBar w-full mb-20">
+        <div className="topNavBar w-full mb-24">
         <NavBar />
       </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">

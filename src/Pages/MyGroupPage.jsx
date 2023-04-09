@@ -473,7 +473,7 @@ function MyGroupPage() {
   return (
     <div className="container">
       {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-20">
+      <div className="topNavBar w-full mb-24">
         <NavBar />
       </div>
       <div className="row userInfo">

@@ -268,20 +268,20 @@ function AddGroup() {
   };
 
   function handleSendEmail(invitedList) {
-    let data = {
-      name: "",
-      email: "",
-      message: "",
-    };
+    // let data = {
+    //   name: "",
+    //   email: "",
+    //   message: "",
+    // };
 
     if (invitedList.length > 0) {
       invitedList.map((friend) => {
         if (friend.userRef !== activeUser.userRef) {
-          data.name = friend.name;
-          data.email = friend.email;
-          data.message = `${activeUser.name} invite you to his group! click here to enter `;
+         let name = friend.name;
+          let email = friend.email;
+         let  message = `${activeUser.name} invite you to his group! click here to enter `;
 
-          sendEmail({ data })
+          sendEmail({name,email,message })
             .then((result) => {
               console.log(result.data.message);
             })
@@ -296,7 +296,7 @@ function AddGroup() {
   return (
     <div className="container  ">
       {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-2">
+      <div className="topNavBar w-full mb-24">
         <NavBar />
       </div>
       <div className=" flex items-center space-x-2 justify-center text-base align-middle mb-5">

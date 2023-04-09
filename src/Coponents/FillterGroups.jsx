@@ -131,12 +131,13 @@ const handleAvailableGroups=(groups)=>{
   }, [activeGroups, selectedCourse, selectedNumber, selectedSubjects]);
   
   return (
-    <div className=" grid justify-center my-4 ">
+    <div className=" grid justify-center w-full my-4 ">
         <Autocomplete
           onChange={handleCourseChange}
+          className="w-full"
           id="free-solo-demo"
           freeSolo
-          sx={{ width: 250, marginTop:5 }}
+          sx={{ width: '100%', marginTop:5 }}
           options={courses.map((option) => option.id)}
           renderInput={(params) => <TextField {...params} label="Course" />}
         />
@@ -144,7 +145,7 @@ const handleAvailableGroups=(groups)=>{
           className=" my-5 "
           onChange={handleSubjectsChange}
           multiple
-          sx={{ width: 250, marginTop:5 }}
+          sx={{ width: '100%', marginTop:5 }}
           id="tags-filled"
           options={subjectsOfCourses ? subjectsOfCourses : subjects}
           freeSolo
@@ -167,7 +168,7 @@ const handleAvailableGroups=(groups)=>{
           onChange={handleNumberChange}
           id="free-solo-demo"
           freeSolo
-          sx={{ width: 250, marginTop:2 }}
+          sx={{ width: '100%', marginTop:2 }}
           options={["2", "3", "4", "5"]}
           renderInput={(params) => <TextField {...params} label="Group size" />}
         />

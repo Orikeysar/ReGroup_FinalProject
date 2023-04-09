@@ -5,10 +5,10 @@ import CreateGroupButton from "../Coponents/CreateGroupButton";
 function UserFriendsPage() {
   return (
     <div>
-      <div className="topNavBar w-full mb-2">
+      <div className="topNavBar w-full mb-24">
         <NavBar />
       </div>
-<div><FriendsListCard/></div>
+<div className="mt-2"><FriendsListCard/></div>
 <CreateGroupButton/>
     </div>
   );
