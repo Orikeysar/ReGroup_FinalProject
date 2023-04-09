@@ -29,4 +29,4 @@ export const messaging = async () => await isSupported() && getMessaging(app);
 const functions = getFunctions(app);
 export const onButtonClick = httpsCallable(functions, 'onButtonClick');
 export const alertGroupAdded = httpsCallable(functions, 'alertGroupAdded');
-export const sendEmail = httpsCallable(functions,'sendEmail');
+export const sendMailOverHTTP  = httpsCallable(functions,'sendMailOverHTTP');

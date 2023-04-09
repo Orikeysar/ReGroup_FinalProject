@@ -4,7 +4,7 @@ import { RiGroup2Fill } from "react-icons/ri";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
-import { db, sendEmail } from "../FirebaseSDK";
+import { db, sendMailOverHTTP } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -281,7 +281,7 @@ function AddGroup() {
           let email = friend.email;
          let  message = `${activeUser.name} invite you to his group! click here to enter `;
 
-          sendEmail({name,email,message })
+         sendMailOverHTTP({name,email,message })
             .then((result) => {
               console.log(result.data.message);
             })
