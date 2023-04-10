@@ -44,8 +44,6 @@ function UserProfileModal({ id }) {
     return null;
   }
 
-  //בשביל התאריך בהרשמה כחבר
-
   //הוספת המשתמש לרשימה בדאטה
   const handleAddFriend = async () => {
     let now = Timestamp.now();
@@ -139,7 +137,7 @@ function UserProfileModal({ id }) {
           let newUserFriendsList = user.friendsList.filter(
             (item) => activeUser.userRef !== item.userRef
           );
-          user.friendsList = newFriendsList;
+          user.friendsList = newUserFriendsList;
           await updateDoc(userRef, {
             friendsList: user.friendsList,
           }).then(() => {

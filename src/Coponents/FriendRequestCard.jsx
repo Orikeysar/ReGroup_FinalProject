@@ -5,7 +5,7 @@ import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "./profileComponents/UserProfileModal";
-import { doc, updateDoc, Timestamp, getDoc } from "firebase/firestore";
+import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
 function FriendRequestCard() {
@@ -16,6 +16,21 @@ function FriendRequestCard() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+
+
+
+  onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+   let data = doc.data()
+    setactiveUser(data)
+    reaustFriends(data.friendsListToAccept)
+    localStorage.setItem("activeUser", JSON.stringify(data));
+});
+  
+
+
+
+
+
 
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
