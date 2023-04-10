@@ -31,3 +31,4 @@ export const onButtonClick = httpsCallable(functions, 'onButtonClick');
 export const alertGroupAdded = httpsCallable(functions, 'alertGroupAdded');
 export const sendMailOverHTTP  = httpsCallable(functions,'sendMailOverHTTP');
 export const alertGroupEdited = httpsCallable(functions, 'alertGroupEdited');
+

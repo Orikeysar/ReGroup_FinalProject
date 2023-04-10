@@ -55,6 +55,10 @@ function HamburgerMenu() {
     localStorage.setItem("componentChoosen", "achievements");
     navigate("/achievements");
   };
+  const handleRequestsToGroupsNavButton = () => {
+    localStorage.setItem("componentChoosen", "requestGroups");
+    navigate("/requestGroups");
+  };
   const onLogout = () => {
     auth.signOut();
     navigate("/sign-in");
@@ -86,74 +90,120 @@ function HamburgerMenu() {
         }`}
       >
         <ul className="p-4 mt-10">
-          <li className="mb-2">
-            <p
-              className={`btn btn-ghost w-full ${
-                localStorage.getItem("componentChoosen") === "MyGroupsPage" ? "bg-gray-100" : ""
-              }`}
-              value="MyGroupsPage"
-              onClick={handleMyGroupNavButton}
-            >
-              My Groups
-            </p>
-          </li>
-          <li className="mb-2">
-            <p
-              className={`btn btn-ghost w-full ${
-                localStorage.getItem("componentChoosen") === "achievements" ? "bg-gray-100" : ""
-              }`}
-              value="achievements"
-              onClick={handleAchievementsNavButton}
-            >
-             My Achievements
-            </p>
-          </li>
-          <li className="mb-2">
-            <p
-              className={`btn btn-ghost w-full ${
-                localStorage.getItem("componentChoosen") === "FriendsList" ? "bg-gray-100" : ""
-              }`}
-              value="FriendsList"
-              onClick={handleFriendNavButton}
-            >
-              Friends List
-            </p>
-          </li>
-          <li className="mb-2">
-            <p
-              className={`btn btn-ghost w-full ${
-                localStorage.getItem("componentChoosen") === "groups" ? "bg-gray-100" : ""
-              }`}
-              value="groups"
-              onClick={handleGroupsNavButton}
-            >
-              Find Groups
-            </p>
-          </li>
-          <li className="mb-2">
-            <p
-              className={`btn btn-ghost w-full ${
-                localStorage.getItem("componentChoosen") === "createGroups" ? "bg-gray-100" : ""
-              }`}
-              onClick={handleCreateGroupNavButton}
-              value="createGroups"
-            >
-              Create Group
-            </p>
-          </li>
-          <li
-            className="mb-2"
-            value="RecentActivities"
-            onClick={handleRecentNavButton}
-          >
-            <p className={`btn btn-ghost w-full ${
-                localStorage.getItem("componentChoosen") === "RecentActivities" ? "bg-gray-100" : ""
-              }`}>Recent Activities</p>
-          </li>
-          <li className="mb-2" onClick={onLogout}>
-            <p className="btn btn-ghost w-full">Log Out</p>
-          </li>
-        </ul>
+  <li>
+    <p className="font-semibold">Profile</p>
+    <ul>
+      <li>
+        <p
+          className={`btn btn-ghost w-full ${
+            localStorage.getItem("componentChoosen") === "MyGroupsPage"
+              ? "bg-gray-100"
+              : ""
+          }`}
+          value="MyGroupsPage"
+          onClick={handleMyGroupNavButton}
+        >
+          My Groups
+        </p>
+      </li>
+      <li>
+        <p
+          className={`btn btn-ghost w-full ${
+            localStorage.getItem("componentChoosen") === "achievements"
+              ? "bg-gray-100"
+              : ""
+          }`}
+          value="achievements"
+          onClick={handleAchievementsNavButton}
+        >
+          My Achievements
+        </p>
+      </li>
+      <li>
+        <p
+          className={`btn btn-ghost w-full ${
+            localStorage.getItem("componentChoosen") === "FriendsList"
+              ? "bg-gray-100"
+              : ""
+          }`}
+          value="FriendsList"
+          onClick={handleFriendNavButton}
+        >
+          My Friends
+        </p>
+      </li>
+      <li>
+        <p
+          className={`btn btn-ghost w-full ${
+            localStorage.getItem("componentChoosen") === "RecentActivities"
+              ? "bg-gray-100"
+              : ""
+          }`}
+          value="RecentActivities"
+          onClick={handleRecentNavButton}
+        >
+          Recent Activities
+        </p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p className="font-semibold border-t-2 border-gray-300 pt-5">Groups</p>
+    <ul>
+      <li>
+        <p
+          className={`btn btn-ghost w-full ${
+            localStorage.getItem("componentChoosen") === "groups"
+              ? "bg-gray-100"
+              : ""
+          }`}
+          value="groups"
+          onClick={handleGroupsNavButton}
+        >
+          Find Groups
+        </p>
+      </li>
+      <li>
+        <p
+          className={`btn btn-ghost w-full ${
+            localStorage.getItem("componentChoosen") === "createGroups"
+              ? "bg-gray-100"
+              : ""
+          }`}
+          onClick={handleCreateGroupNavButton}
+          value="createGroups"
+        >
+          Create Group
+        </p>
+      </li>
+      <li>
+  <div className="relative">
+    <p
+      className={`btn btn-ghost w-full ${
+        localStorage.getItem("componentChoosen") === "RequestsToGroups"
+          ? "bg-gray-100"
+          : activeUser.groupParticipantsToApproval.length>0?"animate-pulse":""
+      }`}
+      value="RequestsToGroups"
+      onClick={handleRequestsToGroupsNavButton}
+    >
+      Requests
+    </p>
+    {activeUser.groupParticipantsToApproval.length > 0 && (
+      <div className="mt-3 absolute top-0 right-0 bg-red-500 rounded-full h-6 w-6 flex items-center justify-center text-white text-xs">
+        {activeUser.groupParticipantsToApproval.length}
+      </div>
+    )}
+  </div>
+</li>
+
+    </ul>
+  </li>
+  <li className="mb-2" onClick={onLogout}>
+    <p className="btn btn-ghost w-full">Log Out</p>
+  </li>
+</ul>
+
       </div>
       
     </>

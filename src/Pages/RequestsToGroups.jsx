@@ -47,7 +47,7 @@ async function RequestsToGroups() {
         userImg: user.userImg,
         userRef: user.userRef,
       };
-      let docRefGroup = doc(db, "activeGroups",user.groupId );
+      let docRefGroup = doc(db, "activeGroups",user.groupRef );
       let docSnapGroup = await getDoc(docRefGroup);
       let data = docSnapGroup.data();
       let newParticipantsList=data.participants;
