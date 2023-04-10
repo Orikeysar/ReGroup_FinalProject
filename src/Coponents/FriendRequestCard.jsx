@@ -196,7 +196,7 @@ toast.success("delete from request list success")
       <div className="friendsListHeader   mb-4 ">
         <div className="flex  items-center space-x-2 justify-center text-3xl align-middle ">
           <TbFriends className=" mr-2 w-max " />
-          <p className=" font-bold text-lg">Friend List</p>
+          <p className=" font-bold text-lg">Friend request List</p>
         </div>
       </div>
 
