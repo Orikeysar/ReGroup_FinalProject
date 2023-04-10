@@ -106,6 +106,8 @@ function JoinGroupCard({ group }) {
       await updateDoc(docRef, {
         groupParticipantsToApproval: newRequest,
       });
+      activeUser.groupParticipantsToApproval=newRequest;
+      localStorage.setItem("activeUser",activeUser)
       const docRefToken = doc(db, "fcmTokens", group.managerRef);
       const docSnapToken = await getDoc(docRefToken);
       if (docSnapToken.exists()) {
@@ -143,6 +145,7 @@ function JoinGroupCard({ group }) {
           .then((data) => console.log(data))
           .then("Request sended")
           .catch((error) => console.error(error));
+
       }
     } else {
       toast.error("User not found. Please try again later");

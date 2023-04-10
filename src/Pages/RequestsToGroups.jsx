@@ -38,6 +38,8 @@ async function RequestsToGroups() {
     const user = requests.filter((item) => item.userRef === id);
     const updatedRequests = requests.filter((item) => item.userRef !== id);
     setRequests(updatedRequests);
+    activeUser.groupParticipantsToApproval=updatedRequests;
+      localStorage.setItem("activeUser",activeUser)
     await updateDoc(docRef, {
       groupParticipantsToApproval: requests,
     });
@@ -113,6 +115,8 @@ async function RequestsToGroups() {
     const user = requests.filter((item) => item.userRef === id);
     const updatedRequests = requests.filter((item) => item.userRef !== id);
     setRequests(updatedRequests);
+    activeUser.groupParticipantsToApproval=updatedRequests;
+      localStorage.setItem("activeUser",activeUser)
     await updateDoc(docRef, {
       groupParticipantsToApproval: requests,
     });
