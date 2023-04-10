@@ -12,20 +12,10 @@ import FindGroups from "./Pages/FindGroups";
 import AddGroup from "./Pages/AddGroup";
 import MyGroupPage from "./Pages/MyGroupPage";
 import FriendsListCard from "./Coponents/FriendsListCard";
-import { useEffect,useState } from "react";
-import { saveMessagingDeviceToken } from "./messaging";
-import RecentActivitiesCard from "./Coponents/RecentActivitiesCard";
-import UserAchievemeant from "./Coponents/UserAchievemeant";
+import UserAchievemeant from "./Pages/UserAchievemeant";
+import RecentActivitiesCard from "./Pages/RecentActivitiesCard";
+import UserFriendsPage from "./Pages/UserFriendsPage";
 function App() {
-
-  const [activeUser, setActiveUser] = useState(
-    JSON.parse(localStorage.getItem("activeUser"))
-  );
-  
-   useEffect(()=>{
-    saveMessagingDeviceToken(activeUser.userRef);
-  
-  },[]);
   return (
     <>
     <script
@@ -47,9 +37,9 @@ function App() {
               <Route path="/findGroups" element={<FindGroups />} />
               <Route path="/createGroups" element={<AddGroup />} />
               <Route path="/myGroups" element={<MyGroupPage />} />
-              <Route path="/myFriends" element={<FriendsListCard />} />
-              <Route path="/recentActivities" element={<RecentActivitiesCard />} />
+              <Route path="/myFriends" element={<UserFriendsPage />} />
               <Route path="/achievements" element={<UserAchievemeant />} />
+              <Route path="/recentActivities" element={<RecentActivitiesCard />} />
             </Routes>
           </div>
 

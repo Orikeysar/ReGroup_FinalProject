@@ -4,10 +4,9 @@ import { OrderList } from "primereact/orderlist";
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
-import UserProfileModal from "./UserProfileModal";
+import UserProfileModal from "./profileComponents/UserProfileModal";
 import { Timestamp } from "firebase/firestore";
-import NavBar from "../Coponents/NavBar";
-import CreateGroupButton from "../Coponents/CreateGroupButton";
+
 
 function FriendsListCard() {
   //array for frinds
@@ -53,11 +52,9 @@ function FriendsListCard() {
   const itemTemplate = (product) => {
     if (product === undefined) {
       return (
-        <>
-          <div>
-            <p className="text-4xl">Cant find this friend!</p>
-          </div>
-        </>
+        <div>
+          <p className="text-4xl">Cant find this friend!</p>
+        </div>
       );
     }
     return (
@@ -115,9 +112,7 @@ function FriendsListCard() {
 
   return (
     <div className="friendsList  mt-4 mb-4">
-      <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
+     
       <div className="friendsListHeader   mb-4 ">
         <div className="flex  items-center space-x-2 justify-center text-3xl align-middle ">
           <TbFriends className=" mr-2 w-max " />
@@ -134,7 +129,6 @@ function FriendsListCard() {
           filterBy="name"
         ></OrderList>
       </div>
-      <CreateGroupButton />
     </div>
   );
 }

@@ -4,11 +4,12 @@ import { RiGroup2Fill } from "react-icons/ri";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
-import { db } from "../FirebaseSDK";
+import { alertGroupEdited, db, sendMailOverHTTP } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   setDoc,
+  getDoc,
   doc,
   GeoPoint,
   Timestamp,
@@ -17,13 +18,13 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import NavBar from "../Coponents/NavBar";
-import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
+import NavBar from "../Coponents/navbars/NavBar";
+import MyAddGroupMapComponent from "../Coponents/GroupsComponents/MyAddGroupMapComponent ";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
-import FillterGroups from "../Coponents/FillterGroups";
+import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
-import SendAlertToUserForNewGroup from "../Coponents/SendAlertToUserForNewGroup";
+import SendAlertToUserForNewGroup from "../Coponents/GroupsComponents/SendAlertToUserForNewGroup";
 
 function AddGroup() {
   const navigate = useNavigate();
@@ -113,7 +114,7 @@ function AddGroup() {
     // //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
     // let { managerGroup, participantGroup } = useFindMyGroups();
     let groupId = null;
-    
+
     if (cordinates == null) {
       return toast.error("choose group location on the map");
     } else if (newGroup.timeStamp === "00:00:00") {
@@ -126,14 +127,14 @@ function AddGroup() {
       return toast.error("choose fillters for the group you create");
     } else if (newGroup.address === "" || newGroup.description === "") {
       return toast.error(
-        "fill adress and discription for the group you create"
+        "fill address and description for the group you want to create"
       );
     } else {
       newGroup.participants.push({
         name: activeUser.name,
         userImg: activeUser.userImg,
         userRef: activeUser.userRef,
-        email:activeUser.email
+        email: activeUser.email,
       });
 
       if (managerGroup != null) {
@@ -147,7 +148,17 @@ function AddGroup() {
           // doc.data() is never undefined for query doc snapshots
           setManagerGroupId(doc.id);
           groupId = doc.id;
-          console.log(doc.id, " => ", doc.data());
+          let dataGroup = doc.data();
+          dataGroup.participants.forEach((participant) => {
+            if (participant.userRef != activeUser.userRef) {
+              newGroup.participants.push({
+                name: participant.name,
+                userImg: participant.userImg,
+                userRef: participant.userRef,
+                email: participant.email,
+              });
+            }
+          });
         });
 
         if (
@@ -164,7 +175,7 @@ function AddGroup() {
       }
     }
   };
-  //פותח קבוצה חדשה עם מספר סידורי הישן 
+  //פותח קבוצה חדשה עם מספר סידורי הישן
   const UpdateEditedGroup = async (groupId) => {
     const now = new Date();
     const [hours, minutes] = newGroup.timeStamp.split(":");
@@ -192,9 +203,53 @@ function AddGroup() {
         )
       ),
     })
-      .then(() => {
+      //אם הצליח, זה יישלח רק למשתתפים שהם לא המנהל הודעה על שינוי.  במקרה והם לא אישרו קבלת הודעות פוש באפליקציה יישלח אליהם מייל
+      .then(async () => {
         toast.success("edit success");
-        navigate('/myGroups')
+        for (const item of newGroup.participants) {
+          if (item.userRef != activeUser.userRef) {
+            const docRef = doc(db, "fcmTokens", item.userRef);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              const token = data.fcmToken;
+              const title =
+                "The group you are registered to in " +
+                selectedCourse +
+                " as been edited.";
+              const message = " Please keep up to date with the changes ";
+              const alert = {
+                token: token,
+                title: title,
+                message: message,
+              };
+              console.log(alert);
+              alertGroupEdited(alert);
+            } else {
+              fetch(
+                "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    subject: `Your group as been edited !`,
+                    email: item.email,
+                    message:
+                      "The group you are registered to - " +
+                      selectedCourse +
+                      " as been edited. Please keep up to date with the changes. you can see here the changes in myGroups page : https://regroup-a4654.web.app/myGroups",
+                  }),
+                }
+              )
+                .then((response) => response.text())
+                .then((data) => console.log(data))
+                .catch((error) => console.error(error));
+            }
+          }
+        }
+        navigate("/myGroups");
       })
       .catch((error) => {
         toast.error("Bad Cardictionals details,try again");
@@ -230,19 +285,25 @@ function AddGroup() {
       ),
     })
       .then(() => {
-        let achiev=activeUser.userAchievements.filter(element=>element.name==="Opened Groups")
-        let item=achiev[0];
-        UserScoreCalculate(item,"CreatedGroups",activeUser)
+        let achiev = activeUser.userAchievements.filter(
+          (element) => element.name === "Opened Groups"
+        );
+        let item = achiev[0];
+        UserScoreCalculate(item, "CreatedGroups", activeUser);
         toast.success("create success");
-        //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה 
-        SendAlertToUserForNewGroup(selectedCourse,selectedSubjects);
-        navigate('/myGroups')
+        //שולח הזמנה לחברים שהוזמנו
+        handleSendEmail(newGroup.participants);
+        //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה
+
+        SendAlertToUserForNewGroup(selectedCourse, selectedSubjects);
+        navigate("/myGroups");
       })
       .catch((error) => {
         toast.error("Bad Cardictionals details,try again");
         console.log(error);
       });
   };
+  //בלחיצה על יצירת קבוצה הפונקציה בודקת האם יש קבוצות דומות שפתוחות
   const onSubmitForm = async (e) => {
     //במידה ויש קבוצה דומה המשתמש יקבל התראה לפני פתיחת הקבוצה
     if (filteredGroups.length > 0) {
@@ -261,10 +322,45 @@ function AddGroup() {
     }
   };
 
+  function handleSendEmail(invitedList) {
+    // let data = {
+    //   name: "",
+    //   email: "",
+    //   message: "",
+    // };
+
+    if (invitedList.length > 0) {
+      invitedList.map((friend) => {
+        if (friend.userRef !== activeUser.userRef) {
+          fetch(
+            "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                subject: `Group Invite!`,
+                email: friend.email,
+                message: `Group Invite!
+               you got a Group Invite from: ${
+                 friend.email
+               },for more detailes press here ${"https://regroup-a4654.web.app/myGroups"} `,
+              }),
+            }
+          )
+            .then((response) => response.text())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
+        }
+      });
+    }
+  }
+
   return (
     <div className="container  ">
       {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-20">
+      <div className="topNavBar w-full mb-24">
         <NavBar />
       </div>
       <div className=" flex items-center space-x-2 justify-center text-base align-middle mb-5">

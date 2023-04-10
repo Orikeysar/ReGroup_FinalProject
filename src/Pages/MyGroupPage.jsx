@@ -1,8 +1,8 @@
 import React from "react";
-import Map from "../Coponents/Map";
+import Map from "../Coponents/GroupsComponents/Map";
 import { useState, useEffect } from "react";
 import { db } from "../FirebaseSDK";
-import NavBar from "../Coponents/NavBar";
+import NavBar from "../Coponents/navbars/NavBar";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
 import {
@@ -23,14 +23,14 @@ import { BsFilePerson } from "react-icons/bs";
 import { FaAudioDescription } from "react-icons/fa";
 import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
-import FillterGroups from "../Coponents/FillterGroups";
+import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
-import UserProfileModal from "../Coponents/UserProfileModal";
+import UserProfileModal from "../Coponents/profileComponents/UserProfileModal";
 import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
 import { FaCircle } from "react-icons/fa";
-import CreateGroupButton from "../Coponents/CreateGroupButton";
+import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 import "animate.css/animate.min.css";
 
 function MyGroupPage() {
@@ -112,66 +112,49 @@ function MyGroupPage() {
       return "Yoy Dont have any group you manager in!";
     }
     return (
-      <div className="col-md-4 animated fadeIn ">
+      <div className="col-md-4 animated fadeIn">
         <div
           className="card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden"
           key={managerGroup.managerRef}
         >
-          <p className=" flex mt-1 justify-end ">
+          <p className="flex mt-1 justify-end">
             {handleGroupTime(managerGroup.timeStamp)}
           </p>
-          <div className=" flex flex-row">
-            <div className=" ml-2">
+          <div className="flex flex-row flex-wrap">
+            <div className="ml-2">
               <Avatar
                 image={managerGroup.groupImg}
                 size="xlarge"
                 shape="circle"
               />
             </div>
-            <div className="w-full">
-              <p className="ml-3 mt-2 justify-center font-bold text-xl">
+            <div className="w-full md:w-4/5 ml-3 mt-2">
+              <p className="mt-2 justify-center font-bold text-xl">
                 {managerGroup.groupTittle}
               </p>
-              <div className="ml-3 mt-2 justify-center text-lg ">
+              <div className="mt-2 justify-center text-lg flex flex-wrap">
                 {managerGroup.groupTags.map((sub, index) => {
-                  // Check if it's the last element in the array
                   let color = randomColor({
                     luminosity: "light",
                     hue: "random",
                   });
-                  if (index === managerGroup.groupTags.length - 1) {
-                    return (
-                      <Chip
-                        style={{
-                          backgroundColor: color,
-                        }}
-                        key={uuidv4()}
-                        className="mr-2 mt-2 font-bold"
-                        variant="outlined"
-                        label={sub}
-                      />
-                    );
-                  } else {
-                    return (
-                      <Chip
-                        style={{
-                          backgroundColor: color,
-                        }}
-                        key={uuidv4()}
-                        className="mr-2 mt-2 font-bold"
-                        variant="outlined"
-                        label={sub}
-                      />
-                    );
-                  }
+                  return (
+                    <Chip
+                      key={uuidv4()}
+                      style={{ backgroundColor: color }}
+                      className="mr-2 mt-2 font-bold"
+                      variant="outlined"
+                      label={sub}
+                    />
+                  );
                 })}
               </div>
-              <p className="flex flex-row ml-3 mt-2">
+              <p className="flex flex-row mt-2">
                 <BsFilePerson className="mr-1" />
                 {managerGroup.participants.length} / {managerGroup.groupSize}
                 {/* //see FREINDS */}
               </p>
-              <div className="flex flex-row ml-3">
+              <div className="flex flex-wrap mt-2">
                 {managerGroup.participants.map((participants) => {
                   return (
                     <Chip
@@ -211,33 +194,36 @@ function MyGroupPage() {
                   </div>
                 </div>
               )}
-              <div className=" flex flex-row ml-3 mt-2">
-                <FaAudioDescription className="mr-1 min-w-max" />
-                <div className="w-4/6 max-w-4/6 border rounded-xl mr-2 overflow-hidden">
-                  <p className="ml-3 mt-3 w-5/6 text-lg text-center break-words">
-                    {managerGroup.description}
-                  </p>
+              <div className="flex flex-col md:flex-row mt-2">
+                <div className="md:w-3/4">
+                  <FaAudioDescription className="mr-1 min-w-max" />
+                  <div className="border rounded-xl overflow-hidden">
+                    <p className="ml-3 mt-3 text-lg text-center break-words">
+                      {managerGroup.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="text-center grid grid-cols-1 w-4/5 ">
-                <button
-                  key={uuidv4()}
-                  className="editButton btn btn-xs text-sm mt-2"
-                  onClick={() => {
-                    handleEditManagerGroup(managerGroup);
-                  }}
-                >
-                  Edit Group
-                </button>
-                <button
-                  key={uuidv4()}
-                  className="editButton btn btn-xs text-sm mt-2 "
-                  onClick={() => {
-                    handleDeleteManagerGroup();
-                  }}
-                >
-                  Delete Group
-                </button>
+                <div className="text-center md:w-1/4 grid grid-cols-1">
+                  <button
+                    key={uuidv4()}
+                    className="editButton btn btn-xs text-sm mt-2"
+                    onClick={() => {
+                      handleEditManagerGroup(managerGroup);
+                    }}
+                  >
+                    Edit Group
+                  </button>
+
+                  <button
+                    key={uuidv4()}
+                    className="editButton btn btn-xs text-sm mt-2 "
+                    onClick={() => {
+                      handleDeleteManagerGroup();
+                    }}
+                  >
+                    Delete Group
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -252,16 +238,16 @@ function MyGroupPage() {
       return "Yoy Dont have any group you paticipant in!";
     }
     return (
-      <div className="col-md-4 animated fadeIn ">
+      <div className="col-lg-4 col-md-6 col-sm-12 animated fadeIn ">
         <div
-          className="card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden"
+          className="card w-full h-full m-2 p-2 border border-stone-400 overflow-hidden"
           key={participantGroup.managerRef}
         >
           <p className=" flex mt-1 justify-end ">
             {handleGroupTime(participantGroup.timeStamp)}
           </p>
-          <div className=" flex flex-row">
-            <div className=" ml-2">
+          <div className="flex flex-col lg:flex-row">
+            <div className="lg:mr-4 mb-4 lg:mb-0">
               <Avatar
                 image={participantGroup.groupImg}
                 size="xlarge"
@@ -272,70 +258,53 @@ function MyGroupPage() {
               <p className="ml-3 mt-2 justify-center font-bold text-xl">
                 {participantGroup.groupTittle}
               </p>
-              <div className="ml-3 mt-2 justify-center text-lg ">
-                {participantGroup.groupTags.map((sub, index) => {
-                  // Check if it's the last element in the array
-                  let color = randomColor({
+              <div className="ml-3 mt-2 justify-center text-lg flex flex-wrap">
+                {participantGroup.groupTags.map((sub) => {
+                  const color = randomColor({
                     luminosity: "light",
                     hue: "random",
                   });
-                  if (index === participantGroup.groupTags.length - 1) {
-                    return (
-                      <Chip
-                        style={{
-                          backgroundColor: color,
-                        }}
-                        key={uuidv4()}
-                        className="mr-2 mt-2 font-bold"
-                        variant="outlined"
-                        label={sub}
-                      />
-                    );
-                  } else {
-                    return (
-                      <Chip
-                        style={{
-                          backgroundColor: color,
-                        }}
-                        key={uuidv4()}
-                        className="mr-2 mt-2 font-bold"
-                        variant="outlined"
-                        label={sub}
-                      />
-                    );
-                  }
-                })}
-              </div>
-              <p className="flex flex-row w-full ml-3 mt-2">
-                <BsFilePerson className="mr-1" />
-                {participantGroup.participants.length} /{" "}
-                {participantGroup.groupSize}
-                {/* //see FREINDS */}
-              </p>
-              <div className="flex flex-row w-full ml-3">
-                {participantGroup.participants.map((participants) => {
                   return (
                     <Chip
+                      style={{
+                        backgroundColor: color,
+                      }}
                       key={uuidv4()}
-                      avatar={
-                        <Avatar
-                          size="small"
-                          shape="circle"
-                          image={participants.userImg}
-                        />
-                      }
-                      onClick={() => handleUserClick(participants.userRef)}
-                      color="success"
-                      className="mr-2 mt-2"
+                      className="mr-2 mt-2 font-bold"
                       variant="outlined"
-                      label={participants.name}
+                      label={sub}
                     />
                   );
                 })}
-              </div>{" "}
+              </div>
+              <div className="flex flex-row w-full ml-3 mt-2">
+                <BsFilePerson className="mr-1" />
+                <p>
+                  {participantGroup.participants.length} /{" "}
+                  {participantGroup.groupSize}
+                </p>
+              </div>
+              <div className="flex flex-wrap lg:flex-no-wrap lg:-mx-2 ml-3 mt-2">
+                {participantGroup.participants.map((participants) => (
+                  <Chip
+                    key={uuidv4()}
+                    avatar={
+                      <Avatar
+                        size="small"
+                        shape="circle"
+                        image={participants.userImg}
+                      />
+                    }
+                    onClick={() => handleUserClick(participants.userRef)}
+                    color="success"
+                    className="mr-2 mt-2 lg:mx-2"
+                    variant="outlined"
+                    label={participants.name}
+                  />
+                ))}
+              </div>
               {visible && (
                 <div>
-                  {/* המודל של המשתמש שנבחר */}
                   <div className="card flex justify-content-center">
                     <Dialog
                       header="User profile"
@@ -345,7 +314,6 @@ function MyGroupPage() {
                       breakpoints={{ "960px": "75vw", "641px": "100vw" }}
                     >
                       <div className="m-0">
-                        {/* הפרטים של המשתמש */}
                         <UserProfileModal id={selectedUserId} />
                       </div>
                     </Dialog>
@@ -473,7 +441,7 @@ function MyGroupPage() {
   return (
     <div className="container">
       {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-20">
+      <div className="topNavBar w-full mb-24">
         <NavBar />
       </div>
       <div className="row userInfo">
