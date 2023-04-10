@@ -83,7 +83,8 @@ function UserProfileModal({ id }) {
 
       //מכניס את הכבר לרשימת ההמתנה של המשתמש המחובר
       await updateDoc(activeUserRef, {
-        friendsWaitingToAcceptByAnotherUser:activeUser.friendsWaitingToAcceptByAnotherUser,
+        friendsWaitingToAcceptByAnotherUser:
+          activeUser.friendsWaitingToAcceptByAnotherUser,
       })
         .then(async () => {
           console.log(activeUser.friendsWaitingToAcceptByAnotherUser);
@@ -91,7 +92,6 @@ function UserProfileModal({ id }) {
           await updateDoc(userRef, {
             friendsListToAccept: user.friendsListToAccept,
           }).then(() => {
-           
             toast.success(
               "congrats ! you send " + newFriend.name + " friend requst"
             );
@@ -129,10 +129,18 @@ function UserProfileModal({ id }) {
       await updateDoc(activeUserRef, {
         friendsList: newFriendsList,
       })
-        .then(() => {
-          toast.success("Done successfully");
-          setBtnStatus(false);
-          localStorage.setItem("activeUser", JSON.stringify(activeUser));
+        .then(async () => {
+          let newUserFriendsList = activeUser.friendsList.filter(
+            (item) => activeUser.userRef !== item.userRef
+          );
+          user.friendsList = newFriendsList;
+          await updateDoc(userRef, {
+            friendsList: user.friendsList,
+          }).then(() => {
+            toast.success("Done successfully");
+            setBtnStatus(false);
+            localStorage.setItem("activeUser", JSON.stringify(activeUser));
+          });
         })
         .catch((error) => {
           toast.error("Bad Cardictionals details,try again");
