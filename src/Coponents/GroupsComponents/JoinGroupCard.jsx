@@ -328,3 +328,4 @@ function JoinGroupCard({ group }) {
 }
 
 export default JoinGroupCard;
+
