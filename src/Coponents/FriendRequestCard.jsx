@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 function FriendRequestCard() {
   //array for frinds
   const [reaustFriends, setReaustFriends] = useState([]);
-const [anotherUser, setAnotherUser] = useState(null);
+  const [anotherUser, setAnotherUser] = useState(null);
   const [activeUser, setactiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
@@ -39,66 +39,104 @@ const [anotherUser, setAnotherUser] = useState(null);
     setReaustFriends(activeUser.friendsListToAccept);
   }, []);
   function deleteObjectById(objectList, id) {
-    return objectList.filter(obj => obj.userRef !== id);
+    return objectList.filter((obj) => obj.userRef !== id);
   }
-//מושך את המשתמש המחובר מהדאטה
- 
-  const activeUserRef = doc(db, "users", activeUser.userRef);
- 
-  const handleUserAcceptClick = async(id) => {;
-   //מושך מהדאטה את המשתמש שאותו מאשרים או דוחים
-   const anotherUserRef = doc(db, "users", id); 
-     const docSnap = await getDoc(anotherUserRef);
-     if (docSnap.exists()) {
-       const data = docSnap.data();
-       setAnotherUser(data);
-//אוביקט חדש של חבר
-       let now = Timestamp.now();
-       let newFriend = {
-         email: anotherUser.email,
-         userRef: anotherUser.userRef,
-         name: anotherUser.name,
-         timeStamp: now,
-         userImg: anotherUser.userImg,
-       };
+  //מושך את המשתמש המחובר מהדאטה
 
-       
-  let activeUserFriendRequestList=activeUser.friendsListToAccept
-  let anotherUserFriendRequestList=anotherUser.friendsWaitingToAcceptByAnotherUser
+  const activeUserRef = doc(db, "users", activeUser.userRef);
+
+  const handleUserAcceptClick = async (id) => {
+    //מושך מהדאטה את המשתמש שאותו מאשרים או דוחים
+    const anotherUserRef = doc(db, "users", id);
+    const docSnap = await getDoc(anotherUserRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      setAnotherUser(data);
+      //אוביקט חדש של חבר
+      let now = Timestamp.now();
+      let newFriend = {
+        email: anotherUser.email,
+        userRef: anotherUser.userRef,
+        name: anotherUser.name,
+        timeStamp: now,
+        userImg: anotherUser.userImg,
+      };
+
+      let activeUserFriendRequestList = activeUser.friendsListToAccept;
+      let anotherUserFriendRequestList =
+        anotherUser.friendsWaitingToAcceptByAnotherUser;
+      //  יצירת רשימות חדשות לפני דחיפה לדאטה
+      activeUser.friendsListToAccept = deleteObjectById(
+        activeUserFriendRequestList,
+        id
+      );
+      activeUser.friendsList.push(newFriend);
+      anotherUser.friendsWaitingToAcceptByAnotherUser = deleteObjectById(
+        anotherUserFriendRequestList,
+        id
+      );
+      anotherUser.friendsList.push(newFriend);
+      //מכניס עדכון של המשתמש שאישר  את החברות
+      await updateDoc(activeUserRef, {
+        friendsList: activeUser.friendsList,
+        friendsListToAccept: activeUser.friendsListToAccept,
+      }).then(async () => {
+        //מכניס עדכון של החבר שאישרו לו את החברות
+        await updateDoc(anotherUserRef, {
+          friendsList: anotherUser.friendsList,
+          friendsWaitingToAcceptByAnotherUser:
+            anotherUser.friendsWaitingToAcceptByAnotherUser,
+        }).then(() => {
+          localStorage.setItem("activeUser", JSON.stringify(activeUser));
+          toast.success("you accept firend success")
+        });
+      });
+    } else {
+    }
+  };
+
+  const handleUserDeleteClick = async(id) => {
+  //מושך מהדאטה את המשתמש שאותו מאשרים או דוחים
+  const anotherUserRef = doc(db, "users", id); 
+  const docSnap = await getDoc(anotherUserRef);
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    setAnotherUser(data);
+ 
+let activeUserFriendRequestList=activeUser.friendsListToAccept
+let anotherUserFriendRequestList=anotherUser.friendsWaitingToAcceptByAnotherUser
 //  יצירת רשימות חדשות לפני דחיפה לדאטה
 activeUser.friendsListToAccept =deleteObjectById(activeUserFriendRequestList, id)
-  activeUser.friendsList.push(newFriend)
-  anotherUser.friendsWaitingToAcceptByAnotherUser = deleteObjectById(anotherUserFriendRequestList, id)
-  anotherUser.friendsList.push(newFriend)
-     //מכניס עדכון של המשתמש שאישר  את החברות
-  await updateDoc(activeUserRef, {
-    friendsList:activeUser.friendsList,
-    friendsListToAccept:activeUser.friendsListToAccept,
-  })
-    .then(async () => {
-      //מכניס עדכון של החבר שאישרו לו את החברות
-      await updateDoc(anotherUserRef, {
-        friendsList:anotherUser.friendsList,
-        friendsWaitingToAcceptByAnotherUser:anotherUser.friendsWaitingToAcceptByAnotherUser,
+anotherUser.friendsWaitingToAcceptByAnotherUser = deleteObjectById(anotherUserFriendRequestList, id)
 
-      }).then(() => {
-        localStorage.setItem("activeUser", JSON.stringify(activeUser));
+  //מכניס עדכון של המשתמש שאישר  את החברות
+await updateDoc(activeUserRef, {
+ friendsListToAccept:activeUser.friendsListToAccept,
+})
+ .then(async () => {
+   //מכניס עדכון של החבר שאישרו לו את החברות
+   await updateDoc(anotherUserRef, {
+     friendsWaitingToAcceptByAnotherUser:anotherUser.friendsWaitingToAcceptByAnotherUser,
+
+   }).then(() => {
+     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+toast.success("delete from request list success")
 
 
 
-
-      })
-    })
-       
+   })
+ })
+    
 
 
 }else{
 
-     }
-   
-    }
+  }
 
-  const handleUserDeleteClick = (id) => {};
+
+
+
+  };
 
   //render card of friend
   const itemTemplate = (product) => {
@@ -126,30 +164,29 @@ activeUser.friendsListToAccept =deleteObjectById(activeUserFriendRequestList, id
               <span className="font-semibold ">
                 {handleGroupTime(product.timeStamp)}
               </span>
-            </span></div>
+            </span>
           </div>
-          <div className="flex justify-end">
-            <div className=" m-2">
-        
-              <p
-                className="btn btn-xs border-gray-500 bg-gray-600 text-white  rounded-md m-2"
-                value={product.name}
-                onClick={() => handleUserDeleteClick(product.userRef)}
-              >
-                Delete
-              </p>
-            </div>
-            <div className="m-2 ">
+        </div>
+        <div className="flex justify-end">
+          <div className=" m-2">
             <p
-                className=" btn btn-xs bg-blue-500 text-white  rounded-md m-2"
-                value={product.name}
-                onClick={() => handleUserAcceptClick(product.userRef)}
-              >
-                Accept
-              </p>
-            </div>
+              className="btn btn-xs border-gray-500 bg-gray-600 text-white  rounded-md m-2"
+              value={product.name}
+              onClick={() => handleUserDeleteClick(product.userRef)}
+            >
+              Delete
+            </p>
           </div>
-        
+          <div className="m-2 ">
+            <p
+              className=" btn btn-xs bg-blue-500 text-white  rounded-md m-2"
+              value={product.name}
+              onClick={() => handleUserAcceptClick(product.userRef)}
+            >
+              Accept
+            </p>
+          </div>
+        </div>
       </div>
     );
   };
