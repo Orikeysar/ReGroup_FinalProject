@@ -63,8 +63,7 @@ function FriendRequestCard() {
       };
 
       let activeUserFriendRequestList = activeUser.friendsListToAccept;
-      let anotherUserFriendRequestList =
-        anotherUser.friendsWaitingToAcceptByAnotherUser;
+      let anotherUserFriendRequestList = anotherUser.friendsWaitingToAcceptByAnotherUser;
       //  יצירת רשימות חדשות לפני דחיפה לדאטה
       activeUser.friendsListToAccept = deleteObjectById(
         activeUserFriendRequestList,
@@ -88,55 +87,51 @@ function FriendRequestCard() {
             anotherUser.friendsWaitingToAcceptByAnotherUser,
         }).then(() => {
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
-          toast.success("you accept firend success")
-          window.location.reload()
+          toast.success("you accept firend success");
+          window.location.reload();
         });
       });
     } else {
     }
   };
 
-  const handleUserDeleteClick = async(id) => {
-  //מושך מהדאטה את המשתמש שאותו מאשרים או דוחים
-  const anotherUserRef = doc(db, "users", id); 
-  const docSnap = await getDoc(anotherUserRef);
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    setAnotherUser(data);
- 
-let activeUserFriendRequestList=activeUser.friendsListToAccept
-let anotherUserFriendRequestList=anotherUser.friendsWaitingToAcceptByAnotherUser
-//  יצירת רשימות חדשות לפני דחיפה לדאטה
-activeUser.friendsListToAccept =deleteObjectById(activeUserFriendRequestList, id)
-anotherUser.friendsWaitingToAcceptByAnotherUser = deleteObjectById(anotherUserFriendRequestList, id)
+  const handleUserDeleteClick = async (id) => {
+    //מושך מהדאטה את המשתמש שאותו מאשרים או דוחים
+    const anotherUserRef = doc(db, "users", id);
+    const docSnap = await getDoc(anotherUserRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      setAnotherUser(data);
 
-  //מכניס עדכון של המשתמש שאישר  את החברות
-await updateDoc(activeUserRef, {
- friendsListToAccept:activeUser.friendsListToAccept,
-})
- .then(async () => {
-   //מכניס עדכון של החבר שאישרו לו את החברות
-   await updateDoc(anotherUserRef, {
-     friendsWaitingToAcceptByAnotherUser:anotherUser.friendsWaitingToAcceptByAnotherUser,
+      let activeUserFriendRequestList = activeUser.friendsListToAccept;
+      let anotherUserFriendRequestList =
+        anotherUser.friendsWaitingToAcceptByAnotherUser;
+      //  יצירת רשימות חדשות לפני דחיפה לדאטה
+      activeUser.friendsListToAccept = deleteObjectById(
+        activeUserFriendRequestList,
+        id
+      );
+      anotherUser.friendsWaitingToAcceptByAnotherUser = deleteObjectById(
+        anotherUserFriendRequestList,
+        id
+      );
 
-   }).then(() => {
-     localStorage.setItem("activeUser", JSON.stringify(activeUser));
-toast.success("delete from request list success")
-window.location.reload()
-
-
-   })
- })
-    
-
-
-}else{
-
-  }
-
-
-
-
+      //מכניס עדכון של המשתמש שאישר  את החברות
+      await updateDoc(activeUserRef, {
+        friendsListToAccept: activeUser.friendsListToAccept,
+      }).then(async () => {
+        //מכניס עדכון של החבר שאישרו לו את החברות
+        await updateDoc(anotherUserRef, {
+          friendsWaitingToAcceptByAnotherUser:
+            anotherUser.friendsWaitingToAcceptByAnotherUser,
+        }).then(() => {
+          localStorage.setItem("activeUser", JSON.stringify(activeUser));
+          toast.success("delete from request list success");
+          window.location.reload();
+        });
+      });
+    } else {
+    }
   };
 
   //render card of friend

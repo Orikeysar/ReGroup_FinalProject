@@ -79,12 +79,18 @@ function UserProfileModal({ id }) {
       //הכנסת משתמש לרשימה שמחכה לאישור או דחיה אצל המשתמש המחובר
       activeUser.friendsWaitingToAcceptByAnotherUser.push(newFriend);
       //הכנסת משתמש לרשימה שמחכה לאישור או דחיה אצל המשתמש שנשלחה לו הבקשה(לא המחובר) ר
-      user.friendsListToAccept.push(newFriend);
+      let newActiveUserFriend = {
+        email: activeUser.email,
+        userRef: activeUser.userRef,
+        name: activeUser.name,
+        timeStamp: now,
+        userImg: activeUser.userImg,
+      };
+      user.friendsListToAccept.push(newActiveUserFriend);
 
       //מכניס את הכבר לרשימת ההמתנה של המשתמש המחובר
       await updateDoc(activeUserRef, {
-        friendsWaitingToAcceptByAnotherUser:
-          activeUser.friendsWaitingToAcceptByAnotherUser,
+        friendsWaitingToAcceptByAnotherUser:activeUser.friendsWaitingToAcceptByAnotherUser,
       })
         .then(async () => {
           console.log(activeUser.friendsWaitingToAcceptByAnotherUser);
@@ -130,7 +136,7 @@ function UserProfileModal({ id }) {
         friendsList: newFriendsList,
       })
         .then(async () => {
-          let newUserFriendsList = activeUser.friendsList.filter(
+          let newUserFriendsList = user.friendsList.filter(
             (item) => activeUser.userRef !== item.userRef
           );
           user.friendsList = newFriendsList;
