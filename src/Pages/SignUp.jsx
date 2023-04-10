@@ -38,6 +38,7 @@ function SignUp() {
     points: 0,
     recentActivities: [],
     friendsListToAccept:[],
+    friendsWaitingToAcceptByAnotherUser:[],
     userAchievements: [
       {
         name: "Joined Groups",

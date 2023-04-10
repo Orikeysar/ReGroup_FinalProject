@@ -53,7 +53,7 @@ function Top10ModalCard() {
             className={
               activeUser.email === item.email ? " bg-blue-300" : " bg-white"
             }
-            onClick={() => handleUserClick(item.id)}
+            onClick={() => handleUserClick(item.userRef)}
           >
             <div className="flex items-center space-x-3">
               <div className="avatar">

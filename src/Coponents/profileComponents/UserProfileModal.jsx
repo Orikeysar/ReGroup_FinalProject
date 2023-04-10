@@ -18,7 +18,7 @@ function UserProfileModal({ id }) {
   //בדיקה האם הם כבר חברים ושינוי הכפתור בהתאם
   const handleBtnStatus = () => {
     activeUser.friendsList.forEach((friend) => {
-      if (friend.id === id) {
+      if (friend.userRef === id) {
         setBtnStatus(true);
       }
     });
@@ -51,7 +51,7 @@ function UserProfileModal({ id }) {
     let now = Timestamp.now();
     let newFriend = {
       email: user.email,
-      id: user.userRef,
+      userRef: user.userRef,
       name: user.name,
       timeStamp: now,
       userImg: user.userImg,
@@ -59,50 +59,58 @@ function UserProfileModal({ id }) {
 
     let friendExists = false;
     for (let i = 0; i < activeUser.friendsListToAccept.length; i++) {
-      if (activeUser.friendsListToAccept[i].id === newFriend.id) {
+      if (activeUser.friendsListToAccept[i].userRef === newFriend.userRef) {
         friendExists = true;
         break;
       }
     }
 
- saveMessagingDeviceToken(activeUser.userRef);
+    if (friendExists) {
+      toast.error(`${newFriend.name} already get your request`);
+    } else {
+      //שולח הודעה למשתמש שיש לו בקשה ממתינה
+      saveMessagingDeviceToken(activeUser.userRef);
       const docRef = doc(db, "fcmTokens", id);
       const docSnap = await getDoc(docRef);
       const data = docSnap.data();
       const token = data.fcmToken;
-  
-
       onButtonClick(token);
-      //סיום
+      //שליחה סיום
+      //הכנסת משתמש לרשימה שמחכה לאישור או דחיה אצל המשתמש המחובר
+      activeUser.friendsWaitingToAcceptByAnotherUser.push(newFriend);
+      //הכנסת משתמש לרשימה שמחכה לאישור או דחיה אצל המשתמש שנשלחה לו הבקשה(לא המחובר) ר
+      user.friendsListToAccept.push(newFriend);
 
-    if (friendExists) {
-      toast.error(`${newFriend} already get your request`);
-    } else {
-     
-      activeUser.friendsListToAccept.push(newFriend);
-      console.log(activeUser.friendsListToAccept);
+      //מכניס את הכבר לרשימת ההמתנה של המשתמש המחובר
       await updateDoc(activeUserRef, {
-        friendsListToAccept: activeUser.friendsListToAccept,
+        friendsWaitingToAcceptByAnotherUser:activeUser.friendsWaitingToAcceptByAnotherUser,
       })
-        .then(() => {
-          toast.success(
-            "congrats ! you send " + newFriend.name + " friend requst"
-          );
-          // setBtnStatus(true)
-          UpdateRecentActivities(newFriend, "friend", activeUser);
-          let achiev = activeUser.userAchievements.filter(
-            (element) => element.name === "Community Member"
-          );
-          let item = achiev[0];
-          UserScoreCalculate(item, "friend", activeUser);
-          localStorage.setItem("activeUser", JSON.stringify(activeUser));
+        .then(async () => {
+          console.log(activeUser.friendsWaitingToAcceptByAnotherUser);
+          //מכניס לרשימת המתנה של החבר ששלחו לו את ההזמנה
+          await updateDoc(userRef, {
+            friendsListToAccept: user.friendsListToAccept,
+          }).then(() => {
+           
+            toast.success(
+              "congrats ! you send " + newFriend.name + " friend requst"
+            );
+            // setBtnStatus(true)
+            UpdateRecentActivities(newFriend, "friend", activeUser);
+            let achiev = activeUser.userAchievements.filter(
+              (element) => element.name === "Community Member"
+            );
+            let item = achiev[0];
+            UserScoreCalculate(item, "friend", activeUser);
+            localStorage.setItem("activeUser", JSON.stringify(activeUser));
+          });
         })
         .catch((error) => {
           toast.error("Bad Cardictionals details,try again");
           console.log(error);
         });
 
-      console.log(`Added ${newFriend} to the friendsListToAccept array`);
+      console.log(`Added ${newFriend.name} to the friendsListToAccept array`);
     }
   };
   //מחיקת המשתמש מהרשימה
@@ -115,7 +123,7 @@ function UserProfileModal({ id }) {
       ) === true
     ) {
       let newFriendsList = activeUser.friendsList.filter(
-        (item) => id !== item.id
+        (item) => id !== item.userRef
       );
       activeUser.friendsList = newFriendsList;
       await updateDoc(activeUserRef, {

@@ -81,7 +81,7 @@ function FriendsListCard() {
             <Button
               className=" btn-xs border-gray-500 bg-gray-600 text-white  rounded-md mb-2"
               value={product.name}
-              onClick={() => handleUserClick(product.id)}
+              onClick={() => handleUserClick(product.userRef)}
             >
               View
             </Button>
