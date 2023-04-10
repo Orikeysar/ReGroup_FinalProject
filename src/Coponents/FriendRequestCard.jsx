@@ -89,6 +89,7 @@ function FriendRequestCard() {
         }).then(() => {
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success("you accept firend success")
+          window.location.reload()
         });
       });
     } else {
@@ -121,7 +122,7 @@ await updateDoc(activeUserRef, {
    }).then(() => {
      localStorage.setItem("activeUser", JSON.stringify(activeUser));
 toast.success("delete from request list success")
-
+window.location.reload()
 
 
    })
