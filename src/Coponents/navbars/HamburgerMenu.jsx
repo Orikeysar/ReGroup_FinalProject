@@ -3,9 +3,9 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
-import UserAchievemeant from "../Pages/UserAchievemeant";
-import Top10Modal from "./Top10Modal";
-import Top10ModalCard from "./Top10ModalCard";
+import UserAchievemeant from "../../Pages/UserAchievemeant";
+import Top10Modal from "../top10Components/Top10Modal";
+import Top10ModalCard from "../top10Components/Top10ModalCard";
 
 function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false);

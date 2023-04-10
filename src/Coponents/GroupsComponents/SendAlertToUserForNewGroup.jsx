@@ -1,6 +1,6 @@
 import React from "react";
 import { getDocs,getDoc, doc, collection } from "firebase/firestore";
-import { db,alertGroupAdded } from "../FirebaseSDK";
+import { db,alertGroupAdded } from "../../FirebaseSDK";
 
 async function SendAlertToUserForNewGroup(selectedCourse, selectedSubjects) {
   //GETTING ALL COURSES USERS ALERTS

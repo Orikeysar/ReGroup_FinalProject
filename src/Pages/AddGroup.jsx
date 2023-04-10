@@ -17,13 +17,13 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import NavBar from "../Coponents/NavBar";
-import MyAddGroupMapComponent from "../Coponents/MyAddGroupMapComponent ";
+import NavBar from "../Coponents/navbars/NavBar";
+import MyAddGroupMapComponent from "../Coponents/GroupsComponents/MyAddGroupMapComponent ";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
-import FillterGroups from "../Coponents/FillterGroups";
+import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
-import SendAlertToUserForNewGroup from "../Coponents/SendAlertToUserForNewGroup";
+import SendAlertToUserForNewGroup from "../Coponents/GroupsComponents/SendAlertToUserForNewGroup";
 
 function AddGroup() {
   const navigate = useNavigate();
@@ -277,17 +277,24 @@ function AddGroup() {
     if (invitedList.length > 0) {
       invitedList.map((friend) => {
         if (friend.userRef !== activeUser.userRef) {
-         let name = friend.name;
-          let email = friend.email;
-         let  message = `${activeUser.name} invite you to his group! click here to enter `;
+  
 
-         sendMailOverHTTP({name,email,message })
-            .then((result) => {
-              console.log(result.data.message);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
+          fetch('https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            subject: `Group Invite!`,
+            email: friend.email,
+            message: `Group Invite!
+               you got a Group Invite from: ${friend.email},for more detailes press here ${ "https://regroup-a4654.web.app/myGroups"} `
+          })
+        })
+          .then(response => response.text())
+          .then(data => console.log(data))
+          .catch(error => console.error(error));
+        
         }
       });
     }

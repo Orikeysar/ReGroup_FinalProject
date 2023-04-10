@@ -1,11 +1,11 @@
 import React from "react";
-import Logo from "../asset/ReGroupIcon.png";
+import Logo from "../../asset/ReGroupIcon.png";
 import { useNavigate } from "react-router-dom";
-import Top10Modal from "./Top10Modal";
+import Top10Modal from "../top10Components/Top10Modal";
 import HamburgerMenu from "./HamburgerMenu";
 import { Dialog } from "primereact/dialog";
 import { useState, useEffect } from "react";
-import Profile from "../Pages/Profile"
+import Profile from "../../Pages/Profile"
 function NavBar() {
   const navigate = useNavigate();
   const [activeUser, setactiveUser] = useState(() => {

@@ -4,8 +4,8 @@ import { Avatar } from "primereact/avatar";
 import { ProgressBar } from "primereact/progressbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
-import NavBar from "../Coponents/NavBar";
-import CreateGroupButton from "../Coponents/CreateGroupButton";
+import NavBar from "../Coponents/navbars/NavBar";
+import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 
 
 function UserAchievemeant() {

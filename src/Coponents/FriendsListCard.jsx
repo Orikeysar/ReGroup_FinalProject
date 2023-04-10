@@ -4,9 +4,9 @@ import { OrderList } from "primereact/orderlist";
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
-import UserProfileModal from "./UserProfileModal";
+import UserProfileModal from "./profileComponents/UserProfileModal";
 import { Timestamp } from "firebase/firestore";
-import NavBar from "./NavBar";
+
 
 function FriendsListCard() {
   //array for frinds

@@ -1,7 +1,7 @@
 import React from "react";
-import NavBar from "../Coponents/NavBar";
+import NavBar from "../Coponents/navbars/NavBar";
 import FriendsListCard from "../Coponents/FriendsListCard";
-import CreateGroupButton from "../Coponents/CreateGroupButton";
+import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 function UserFriendsPage() {
   return (
     <div>

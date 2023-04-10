@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { GiBookmarklet } from "react-icons/gi";
-import MultiSelectCheckBox from "../Coponents/MultiSelectCheckBox.jsx";
+import MultiSelectCheckBox from "./MultiSelectCheckBox.jsx";
 import { FaTrash } from "react-icons/fa";
 import "primeicons/primeicons.css";
 import { doc, setDoc } from "firebase/firestore"; 
-import {db} from "../FirebaseSDK"
+import {db} from "../../FirebaseSDK.jsx"
 import { getAuth } from "firebase/auth";
 
 function CoursesList() {

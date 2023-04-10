@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { doc, updateDoc, Timestamp, getDoc } from "firebase/firestore";
-import { db } from "../FirebaseSDK";
+import { db } from "../../FirebaseSDK";
 import { Avatar } from "primereact/avatar";
 import { toast } from "react-toastify";
 import { uuidv4 } from "@firebase/util";
 import Rating from "@mui/material/Rating";
-import UpdateRecentActivities from "./UpdateRecentActivities";
-import UserScoreCalculate from "./UserScoreCalculate";
-import { saveMessagingDeviceToken } from "../messaging";
-import { onButtonClick } from "../FirebaseSDK";
+import UpdateRecentActivities from "../UpdateRecentActivities";
+import UserScoreCalculate from "../UserScoreCalculate";
+import { saveMessagingDeviceToken } from "../../messaging";
+import { onButtonClick } from "../../FirebaseSDK";
 function UserProfileModal({ id }) {
   const [activeUser, setActiveUser] = useState(
     JSON.parse(localStorage.getItem("activeUser"))

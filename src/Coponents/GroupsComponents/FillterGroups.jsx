@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { db } from "../FirebaseSDK";
+import { db } from "../../FirebaseSDK";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { uuidv4 } from "@firebase/util";

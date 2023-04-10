@@ -5,7 +5,7 @@ import {
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
-import Spinner from "./Spinner";
+import Spinner from "../Spinner";
 import { uuidv4 } from "@firebase/util";
 
 import JoinGroupCard from "./JoinGroupCard";

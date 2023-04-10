@@ -6,7 +6,7 @@ import {
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
-import useMoveMarker from "../Hooks/useMoveMarker";
+import useMoveMarker from "../../Hooks/useMoveMarker";
 import { GrLocationPin } from "react-icons/gr";
 import JoinGroupCard from "./JoinGroupCard";
 //פונקציית המפה  עצמה

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useState, useRef } from "react";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
-import { db } from "../FirebaseSDK";
+import { db } from "../../FirebaseSDK";
 import {
   doc,
   setDoc,
@@ -15,15 +15,15 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
-import UserProfileModal from "./UserProfileModal";
+import UserProfileModal from "../profileComponents/UserProfileModal";
 import { Dialog } from "primereact/dialog";
-import useFindMyGroups from "../Hooks/useFindMyGroups";
-import UpdateRecentActivities from "./UpdateRecentActivities";
+import useFindMyGroups from "../../Hooks/useFindMyGroups";
+import UpdateRecentActivities from "../UpdateRecentActivities";
 import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import { useNavigate } from "react-router-dom";
 import { TrendingUpRounded } from "@mui/icons-material";
-import UserScoreCalculate from "./UserScoreCalculate";
+import UserScoreCalculate from "../UserScoreCalculate";
 import { FaCircle } from "react-icons/fa";
 
 function JoinGroupCard({ group }) {

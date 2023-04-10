@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { getAuth } from "firebase/auth";
-import { db } from "../FirebaseSDK";
+import { db } from "../../FirebaseSDK";
 import {
   getStorage,
   ref,

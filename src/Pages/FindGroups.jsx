@@ -2,12 +2,12 @@ import React from "react";
 import { useState } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-import NavBar from "../Coponents/NavBar";
+import NavBar from "../Coponents/navbars/NavBar";
 
-import Map from "../Coponents/Map";
-import FillterGroups from "../Coponents/FillterGroups";
-import CoursesList from "../Coponents/CoursesList";
-import CreateGroupButton from "../Coponents/CreateGroupButton";
+import Map from "../Coponents/GroupsComponents/Map";
+import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
+import CoursesList from "../Coponents/GroupsComponents/CoursesList";
+import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 //מציאת קבוצה
 function FindGroups() {
   const navigate = useNavigate();

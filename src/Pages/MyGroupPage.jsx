@@ -1,8 +1,8 @@
 import React from "react";
-import Map from "../Coponents/Map";
+import Map from "../Coponents/GroupsComponents/Map";
 import { useState, useEffect } from "react";
 import { db } from "../FirebaseSDK";
-import NavBar from "../Coponents/NavBar";
+import NavBar from "../Coponents/navbars/NavBar";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
 import {
@@ -23,14 +23,14 @@ import { BsFilePerson } from "react-icons/bs";
 import { FaAudioDescription } from "react-icons/fa";
 import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
-import FillterGroups from "../Coponents/FillterGroups";
+import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
-import UserProfileModal from "../Coponents/UserProfileModal";
+import UserProfileModal from "../Coponents/profileComponents/UserProfileModal";
 import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
 import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
 import { FaCircle } from "react-icons/fa";
-import CreateGroupButton from "../Coponents/CreateGroupButton";
+import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 import "animate.css/animate.min.css";
 
 function MyGroupPage() {

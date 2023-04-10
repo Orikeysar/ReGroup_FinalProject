@@ -1,8 +1,6 @@
 import React from "react";
-import { FaFacebookF } from "react-icons/fa";
-import { uuidv4 } from "@firebase/util";
 import { useNavigate } from "react-router-dom";
-import { getAuth, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import {
   doc,
   setDoc,
@@ -11,18 +9,23 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
-import { db } from "../FirebaseSDK";
+import { db } from "../../FirebaseSDK";
 import { toast } from "react-toastify";
-function FacebookSign() {
+import { uuidv4 } from "@firebase/util";
+import { FaGoogle } from "react-icons/fa";
+import { saveMessagingDeviceToken } from "../../messaging";
+import GoogleButton from "react-google-button";
+
+function GoogleSign() {
   const navigate = useNavigate();
 
-  const onFaceBookClick = async () => {
+  const onGoogleClick = async () => {
     try {
       const auth = getAuth();
-      const provider = new FacebookAuthProvider();
+      const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       if (!result) {
-        toast.error("cound not signin to Facebook");
+        toast.error("cound not signin to google");
       }
       const user = result.user;
       //Check for user
@@ -36,41 +39,44 @@ function FacebookSign() {
           timeStamp: serverTimestamp(),
           userImg: user.photoURL,
           degree: "",
-          userRef:user.uid,
+          userRef: user.uid,
           friendsList: [],
           courses: [],
           alerts: [],
           points: 0,
           recentActivities: [],
+          friendsListToAccept: [],
           userAchievements: [
             {
               name: "Joined Groups",
               numberOfAchievementDoing: 0,
               activeLevel: 1,
-              achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fjoin.png?alt=media&token=4395691e-43bf-4f76-9dab-a5aae3841bec",
+              achievementImg:
+                "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fjoin.png?alt=media&token=4395691e-43bf-4f76-9dab-a5aae3841bec",
               topLevelOne: 100,
               topLeveTwo: 200,
               topLevelThree: 500,
               valuePerAction: 5,
-              actionsNumber:0
+              actionsNumber: 0,
             },
             {
               name: "Opened Groups",
               numberOfAchievementDoing: 0,
               activeLevel: 1,
-              achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fteamwork.png?alt=media&token=21523315-cbdc-42e3-b046-2fe14652b1b4",
+              achievementImg:
+                "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fteamwork.png?alt=media&token=21523315-cbdc-42e3-b046-2fe14652b1b4",
               topLevelOne: 40,
               topLeveTwo: 100,
               topLevelThree: 200,
               valuePerAction: 10,
-              actionsNumber:0
-      
+              actionsNumber: 0,
             },
             {
               name: "Helped Answered",
               numberOfAchievementDoing: 0,
               activeLevel: 1,
-              achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fhelp.png?alt=media&token=bf9b9c24-fd26-440b-893b-7a68437377fb",
+              achievementImg:
+                "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fhelp.png?alt=media&token=bf9b9c24-fd26-440b-893b-7a68437377fb",
               topLevelOne: 100,
               topLeveTwo: 200,
               topLevelThree: 500,
@@ -80,7 +86,8 @@ function FacebookSign() {
               name: "Like From Community",
               numberOfAchievementDoing: 0,
               activeLevel: 1,
-              achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fheart.png?alt=media&token=682793cd-cca9-4b4c-8615-d265a5bac2bb",
+              achievementImg:
+                "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fheart.png?alt=media&token=682793cd-cca9-4b4c-8615-d265a5bac2bb",
               topLevelOne: 200,
               topLeveTwo: 500,
               topLevelThree: 1000,
@@ -90,16 +97,23 @@ function FacebookSign() {
               name: "Community Member",
               numberOfAchievementDoing: 0,
               activeLevel: 1,
-              achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fpeople.png?alt=media&token=9b1c3358-d184-4397-89d8-5898044a3556",
+              achievementImg:
+                "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fpeople.png?alt=media&token=9b1c3358-d184-4397-89d8-5898044a3556",
               topLevelOne: 400,
               topLeveTwo: 1000,
               topLevelThree: 1800,
               valuePerAction: 5,
             },
           ],
-         
         });
-        toast.success("Build user with Facebook success");
+        //SET USER TOP10
+        await setDoc(doc(db, "top10", auth.currentUser.uid), {
+          name: user.displayName,
+          email: user.email,
+          points: 0,
+          userImg: user.photoURL,
+        });
+        toast.success("Build user with google success");
       }
 
       //Check if user exists,if not, create user
@@ -138,37 +152,33 @@ function FacebookSign() {
             JSON.stringify(achievementsTempList)
           );
         }
-         //SET USER TOP10 
-        await setDoc(doc(db, "top10",auth.currentUser.uid), {
-          name: user.displayName,
-          email: user.email,
-          points: 0,
-          userImg: user.photoURL,
-        });
         navigate("/");
         toast.success("Sign in Complete");
+        saveMessagingDeviceToken(auth.currentUser.uid);
       } else {
         toast.error("Could not get data from server");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Could not Authorize with Facebook");
+      toast.error("Could not Authorize with google");
     }
   };
-
   return (
-    <div className="socialLogin mb-3 mt-3 text-center w-full">
-      <button
-        className="socialIconDiv btn-primary w-full min-h-12 max-h-12 bg-blue-500"
-        onClick={onFaceBookClick}
-      >
-        <p className="text-center">
-          Sign in with Facebook
-          <FaFacebookF className=" relative left-1/2 w-6 h-6" />
-        </p>
-      </button>
+    <div className=" ml-6 mr-6">
+    <button
+      className="google-button rounded-full w-full mt-4"
+      onClick={onGoogleClick}
+
+    >
+      <img
+      className="w-8 h-8 rounded-full  "
+        src="https://developers.google.com/identity/images/g-logo.png"
+        alt="Sign in with Google"
+      />{" "}
+      Sign in with Google
+    </button>
     </div>
   );
 }
 
-export default FacebookSign;
+export default GoogleSign;

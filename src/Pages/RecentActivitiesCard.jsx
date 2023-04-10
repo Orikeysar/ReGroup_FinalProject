@@ -6,8 +6,8 @@ import { RxCounterClockwiseClock } from "react-icons/rx";
 import { Avatar } from "primereact/avatar";
 import { OrderList } from "primereact/orderlist";
 import { Timestamp } from "firebase/firestore";
-import NavBar from "../Coponents/NavBar";
-import CreateGroupButton from "../Coponents/CreateGroupButton";
+import NavBar from "../Coponents/navbars/NavBar";
+import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 
 function RecentActivitiesCard() {
   const navigate = useNavigate();

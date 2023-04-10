@@ -1,12 +1,12 @@
 import React from "react";
 import { useState } from "react";
-import { db } from "../FirebaseSDK";
+import { db } from "../../FirebaseSDK";
 import { toast } from "react-toastify";
 import { getAuth } from "firebase/auth";
 import { async } from "@firebase/util";
 import { onSnapshot, doc, collection, getDocs, orderBy,query } from "firebase/firestore";
 import { Dialog } from "primereact/dialog";
-import UserProfileModal from "./UserProfileModal";
+import UserProfileModal from "../profileComponents/UserProfileModal";
 
 function Top10ModalCard() {
   const [activeUser, setActiveUser] = useState(() => {
