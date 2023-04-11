@@ -150,3 +150,23 @@ exports.sendMailOverHTTP = functions.https.onRequest((req, res) => {
     );
   });
 });
+
+exports.sendMailOverHTTP = functions.https.onRequest((req, res) => {
+  console.log("req.body.data:"+req.body.data);
+  console.log("req.body.data.email:"+req.body.data.email);
+  const {email, message, subject} = req.body;
+  console.log("email: "+email+"| message:"+ message+"| subject:"+ subject);
+  const mailOptions = {
+    from: "regroup.info.emails@gmail.com",
+    to: email,
+    subject: subject,
+    html: message,
+  };
+  return transporter.sendMail(mailOptions, (error, data) => {
+    if (error) {
+      return res.send(error.toString());
+    }
+    const data1 = JSON.stringify(data);
+    return res.send(`Sent! ${data1}`);
+  });
+});

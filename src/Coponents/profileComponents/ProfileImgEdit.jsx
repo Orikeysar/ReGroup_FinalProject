@@ -108,7 +108,7 @@ function ProfileImgEdit() {
     try {
        UpdateFriendsListImg(friend, downloadURL);
     } catch (error) {
-      console.log(`Error updating friend ${friend.id}: ${error}`);
+      console.log(`Error updating friend ${friend.userRef}: ${error}`);
     }
   });
               }
@@ -124,8 +124,8 @@ function ProfileImgEdit() {
   const UpdateFriendsListImg = async (friend, downloadURL) => {
     if (downloadURL != null || downloadURL != undefined) {
       try {
-        console.log("Updating friend with ID:", friend.id);
-        const fRef = doc(db, "users", friend.id)
+        console.log("Updating friend with ID:", friend.userRef);
+        const fRef = doc(db, "users", friend.userRef)
         // Get the friend's document snapshot
         const docSnapfriend = await getDoc(fRef);
         console.log("docSnapfriend:", docSnapfriend);
@@ -137,13 +137,13 @@ function ProfileImgEdit() {
   
           // Update the image for the current user in the friend's list of friends
           myFriendFriendsList.forEach((friendToFriend) => {
-            if (friendToFriend.id === activeUser.userRef) {
+            if (friendToFriend.userRef === activeUser.userRef) {
               friendToFriend.ImgRef = downloadURL;
             }
           });
   
           // Update the friend's document with the updated friends list
-          await updateDoc(doc(db, "users", friend.id), {
+          await updateDoc(doc(db, "users", friend.userRef), {
             friendsList: myFriendFriendsList,
           });
   
@@ -152,7 +152,7 @@ function ProfileImgEdit() {
           console.log("No such friend!");
         }
       } catch (error) {
-        console.log(`Error updating friend ${friend.id}: ${error}`);
+        console.log(`Error updating friend ${friend.userRef}: ${error}`);
         throw error; // rethrow the error so the calling function can handle it
       }
     }

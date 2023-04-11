@@ -3,8 +3,7 @@ import { useState } from "react";
 import { db } from "../../FirebaseSDK";
 import { toast } from "react-toastify";
 import { getAuth } from "firebase/auth";
-import { async } from "@firebase/util";
-import { onSnapshot, doc, collection, getDocs, orderBy,query } from "firebase/firestore";
+import { onSnapshot, collection, orderBy,query } from "firebase/firestore";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "../profileComponents/UserProfileModal";
 
@@ -24,7 +23,7 @@ function Top10ModalCard() {
   onSnapshot(q, (snapshot) => {
     let newTop10list = [];
     snapshot.docs.forEach((doc,index) => {
-      newTop10list.push({ ...doc.data(), id: doc.id, index });
+      newTop10list.push({ ...doc.data(), userRef: doc.id, index });
     });
     if (JSON.stringify(newTop10list) !== JSON.stringify(top10list)) {
       setTop10list(newTop10list);
@@ -53,7 +52,7 @@ function Top10ModalCard() {
             className={
               activeUser.email === item.email ? " bg-blue-300" : " bg-white"
             }
-            onClick={() => handleUserClick(item.id)}
+            onClick={() => handleUserClick(item.userRef)}
           >
             <div className="flex items-center space-x-3">
               <div className="avatar">

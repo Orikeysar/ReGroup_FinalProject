@@ -57,16 +57,24 @@ function RecentActivitiesCard() {
         { groups: [], general: [] }
       );
       // Sort the arrays by the timestamp property in descending order
-    groups.sort((a, b) => {
-      const aTimestamp = new Date(a.timeStamp.seconds * 1000 + a.timeStamp.nanoseconds / 1000000);
-      const bTimestamp = new Date(b.timeStamp.seconds * 1000 + b.timeStamp.nanoseconds / 1000000);
-      return bTimestamp - aTimestamp;
-    });
-    general.sort((a, b) => {
-      const aTimestamp = new Date(a.timeStamp.seconds * 1000 + a.timeStamp.nanoseconds / 1000000);
-      const bTimestamp = new Date(b.timeStamp.seconds * 1000 + b.timeStamp.nanoseconds / 1000000);
-      return bTimestamp - aTimestamp;
-    });
+      groups.sort((a, b) => {
+        const aTimestamp = new Date(
+          a.timeStamp.seconds * 1000 + a.timeStamp.nanoseconds / 1000000
+        );
+        const bTimestamp = new Date(
+          b.timeStamp.seconds * 1000 + b.timeStamp.nanoseconds / 1000000
+        );
+        return bTimestamp - aTimestamp;
+      });
+      general.sort((a, b) => {
+        const aTimestamp = new Date(
+          a.timeStamp.seconds * 1000 + a.timeStamp.nanoseconds / 1000000
+        );
+        const bTimestamp = new Date(
+          b.timeStamp.seconds * 1000 + b.timeStamp.nanoseconds / 1000000
+        );
+        return bTimestamp - aTimestamp;
+      });
       setActivitiesTypeGroups(groups);
       setActivitiesTypeGeneral(general);
     }
@@ -86,7 +94,10 @@ function RecentActivitiesCard() {
   //הפונקציה מקבלת את המערך של הקבוצות ומרנדרת אובייקט אובייקט לתוך הרשימה
   const itemTemplateGroups = (item) => {
     return (
-      <div key={uuidv4()} className="grid grid-cols-6 w-full text-center mt-20 ">
+      <div
+        key={uuidv4()}
+        className="grid grid-cols-6 w-full text-center mt-20 "
+      >
         <div className="col-span-2 self-center ">
           <div className=" font-extrabold">{item.course}</div>
           <div>
@@ -128,8 +139,8 @@ function RecentActivitiesCard() {
     return (
       <div>
         <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
+          <NavBar />
+        </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
           {" "}
           <RxCounterClockwiseClock className=" mr-2 w-max " />
@@ -149,8 +160,7 @@ function RecentActivitiesCard() {
             There are no recent activities yet
           </p>
         </div>
-        <CreateGroupButton/>
-
+        <CreateGroupButton />
       </div>
     );
   }
@@ -159,8 +169,8 @@ function RecentActivitiesCard() {
     return (
       <div>
         <div className="topNavBar w-full mb-24">
-        <NavBar />
-      </div>
+          <NavBar />
+        </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
           {" "}
           <RxCounterClockwiseClock className=" mr-2 w-max " />
@@ -193,16 +203,15 @@ function RecentActivitiesCard() {
             </div>
           </div>
         </div>
-        <CreateGroupButton/>
-
+        <CreateGroupButton />
       </div>
     );
   } else {
     return (
       <div>
         <div className="topNavBar w-full mb-20">
-        <NavBar />
-      </div>
+          <NavBar />
+        </div>
         <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
           {" "}
           <RxCounterClockwiseClock className=" mr-2 w-max " />
@@ -233,8 +242,7 @@ function RecentActivitiesCard() {
             </div>
           </div>
         </div>
-        <CreateGroupButton/>
-
+        <CreateGroupButton />
       </div>
     );
   }
