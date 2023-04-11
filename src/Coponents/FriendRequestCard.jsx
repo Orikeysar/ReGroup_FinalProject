@@ -19,14 +19,14 @@ function FriendRequestCard() {
 
 
 
-  onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+  const unsub= onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
    let data = doc.data()
     setactiveUser(data)
     reaustFriends(data.friendsListToAccept)
     localStorage.setItem("activeUser", JSON.stringify(data));
 });
   
-
+unsub()
 
 
 

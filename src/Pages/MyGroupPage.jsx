@@ -75,7 +75,7 @@ function MyGroupPage() {
         ? (time = "start at " + hours + ": 0" + minutes)
         : (time = hours + ":" + minutes);
       //יציג עיגול ירוק עם כיתוב של פתוח עם הזמן הגיע
-      console.log(date.getHours());
+     
       if (hours > date.getHours()) {
         return time;
       } else if (hours === date.getHours() && minutes > date.getMinutes()) {
@@ -417,7 +417,7 @@ function MyGroupPage() {
             timeStamp: now,
           };
           // activeUser.recentActivities.push(newGroupActiviteis);
-          console.log(activeUser.recentActivities);
+         
           //updat recent activites
           UpdateRecentActivities(
             newGroupActiviteis,

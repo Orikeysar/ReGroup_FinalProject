@@ -5,6 +5,7 @@ import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "./profileComponents/UserProfileModal";
+import { db } from "../FirebaseSDK";
 import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
 
 function FriendsListCard() {
@@ -16,13 +17,14 @@ function FriendsListCard() {
     return user;
   });
 
-  onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+  const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
     let data = doc.data()
      setactiveUser(data)
      setFriends(data.friendsList)
      localStorage.setItem("activeUser", JSON.stringify(data));
+     
  });
-
+ unsub()
 
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
@@ -107,7 +109,7 @@ function FriendsListCard() {
               >
                 <div className="m-0">
                   {/* הפרטים של המשתמש */}
-                  <UserProfileModal id={selectedUserId} />
+                  <UserProfileModal id={product.userRef} />
                 </div>
               </Dialog>
             </div>

@@ -185,7 +185,7 @@ function JoinGroupCard({ group }) {
     let groupId = null;
     let newParticipantsList = [];
     group.participants.map((participant) => {
-      if (participant.userRef != activeUser.userRef) {
+      if (participant.userRef !== activeUser.userRef) {
         newParticipantsList.push(participant);
       }
     });
