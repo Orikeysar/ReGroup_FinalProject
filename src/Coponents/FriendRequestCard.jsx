@@ -76,7 +76,13 @@ unsub()
         timeStamp: now,
         userImg: anotherUser.userImg,
       };
-
+      let activeUserFriend = {
+        email: activeUser.email,
+        userRef: activeUser.userRef,
+        name: activeUser.name,
+        timeStamp: now,
+        userImg: activeUser.userImg,
+      };
       let activeUserFriendRequestList = activeUser.friendsListToAccept;
       let anotherUserFriendRequestList = anotherUser.friendsWaitingToAcceptByAnotherUser;
       //  יצירת רשימות חדשות לפני דחיפה לדאטה
@@ -87,9 +93,9 @@ unsub()
       activeUser.friendsList.push(newFriend);
       anotherUser.friendsWaitingToAcceptByAnotherUser = deleteObjectById(
         anotherUserFriendRequestList,
-        id
+        activeUser.userRef
       );
-      anotherUser.friendsList.push(newFriend);
+      anotherUser.friendsList.push(activeUserFriend);
       //מכניס עדכון של המשתמש שאישר  את החברות
       await updateDoc(activeUserRef, {
         friendsList: activeUser.friendsList,
@@ -101,6 +107,11 @@ unsub()
           friendsWaitingToAcceptByAnotherUser:
             anotherUser.friendsWaitingToAcceptByAnotherUser,
         }).then(() => {
+
+
+
+
+
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success("you accept firend success");
           window.location.reload();
