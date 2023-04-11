@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import { useState, useRef } from "react";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
-import { db } from "../../FirebaseSDK";
+import { db, alertGroupEdited } from "../../FirebaseSDK";
 import {
   doc,
   setDoc,
+  getDoc,
   updateDoc,
   GeoPoint,
   Timestamp,
@@ -80,62 +81,6 @@ function JoinGroupCard({ group }) {
     );
     setBtnStatus(isParticipant);
   }, [group.participants, activeUser.userRef]);
-  
-
-  // //יצירת הדרופדאון של המשתתפים
-  // const handleGroupParticipants = (participants) => {
-  //   return (
-  //     <div className="dropdown">
-  //       <label
-  //         onClick={handleDropdownClick}
-  //         tabIndex={0}
-  //         className="btn btn-xs m-1"
-  //       >
-  //         participants
-  //       </label>
-  //       {showDropdown && (
-  //         <ul
-  //           ref={dropdownRef}
-  //           tabIndex={0}
-  //           className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-  //         >
-  //           {participants.map((user) => {
-  //             return (
-  //               <li
-  //                 key={uuidv4()}
-  //                 className="flex flex-row"
-  //                 onClick={() => handleUserClick(user.userRef)}
-  //               >
-  //                 <Avatar image={user.userImg} size="large" shape="circle" />
-  //                 <label className=" text-md font-bold">{user.name}</label>
-  //               </li>
-  //             );
-  //           })}
-  //           ,
-  //         </ul>
-  //       )}
-  //       {visible && (
-  //         <div>
-  //           {/* המודל של המשתמש שנבחר */}
-  //           <div className="card flex justify-content-center">
-  //             <Dialog
-  //               header="User profile"
-  //               visible={visible}
-  //               onHide={() => setVisible(false)}
-  //               style={{ width: "50vw" }}
-  //               breakpoints={{ "960px": "75vw", "641px": "100vw" }}
-  //             >
-  //               <div className="m-0">
-  //                 {/* הפרטים של המשתמש */}
-  //                 <UserProfileModal id={selectedUserId} />
-  //               </div>
-  //             </Dialog>
-  //           </div>
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // };
 
   //הצטרפות לקבוצה - רעיון לתת מעבר לעמוד הקבוצה
   const handleJoinGroup = async (group) => {
@@ -144,52 +89,78 @@ function JoinGroupCard({ group }) {
         "you already participant in group!,evry user can join only one group at time!"
       );
     }
-    console.log(group);
-    let user = {
-      name: activeUser.name,
-      userImg: activeUser.userImg,
-      userRef: activeUser.userRef,
+    localStorage.setItem("isSend", group.managerRef);
+    const user = {
+      email: user.email,
+      name: user.name,
+      userImg: user.userImg,
+      userRef: user.userRef,
+      groupRef: group.id,
     };
-    group.participants.push(user);
-    console.log(group);
-    await setDoc(doc(db, "activeGroups", group.id), {
-      description: group.description,
-      groupImg: group.groupImg,
-      groupTags: group.groupTags,
-      groupTittle: group.groupTittle,
-      groupSize: group.groupSize,
-      isActive: group.isActive,
-      location: group.location,
-      managerRef: group.managerRef,
-      participants: group.participants,
-      timeStamp: group.timeStamp,
-    })
-      .then(() => {
-        let achiev = activeUser.userAchievements.filter(
-          (element) => element.name === "Joined Groups"
-        );
-        let item = achiev[0];
-        UserScoreCalculate(item, "JoinedGroup", activeUser);
-        toast.success("Join successfully!");
-        setBtnStatus(true);
-      })
-      .catch((error) => {
-        toast.error("An error occurred. Please try again.");
+    const docRef = doc(db, "users", group.managerRef);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      let data = docSnap.data();
+      let newRequest = data.groupParticipantsToApproval;
+      newRequest.push(user);
+      await updateDoc(docRef, {
+        groupParticipantsToApproval: newRequest,
       });
-    localStorage.setItem("componentChoosen", "MyGroupsPage");
-    navigate("/myGroups");
-    //אם הצליח לתת הודעה
+      activeUser.groupParticipantsToApproval=newRequest;
+      localStorage.setItem("activeUser",activeUser)
+      const docRefToken = doc(db, "fcmTokens", group.managerRef);
+      const docSnapToken = await getDoc(docRefToken);
+      if (docSnapToken.exists()) {
+        const data = docSnap.data();
+        const token = data.fcmToken;
+        const title = "Group Request  !";
+        const message =
+          " You got group request accepted from " + activeUser.name;
+        const alert = {
+          token: token,
+          title: title,
+          message: message,
+        };
+        console.log(alert);
+        alertGroupEdited(alert);
+      } else {
+        fetch(
+          "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              subject: `Group Request !`,
+              email: user.email,
+              message:
+                " You got group request accepted from " +
+                activeUser.name +
+                ". you can accept or reject it here : https://regroup-a4654.web.app/requestGroups",
+            }),
+          }
+        )
+          .then((response) => response.text())
+          .then((data) => console.log(data))
+          .then("Request sended")
+          .catch((error) => console.error(error));
+
+      }
+    } else {
+      toast.error("User not found. Please try again later");
+    }
   };
 
   const handleLeaveGroup = async (group) => {
     let groupId = null;
     let newParticipantsList = [];
     group.participants.map((participant) => {
-      if (participant.userRef !== activeUser.userRef) {
+      if (participant.userRef != activeUser.userRef) {
         newParticipantsList.push(participant);
       }
     });
-    group.participants=newParticipantsList;
+    group.participants = newParticipantsList;
 
     //בדיקה מה המספר סידורי של הקבוצה בה הוא משתתף
     const q = query(
@@ -214,111 +185,100 @@ function JoinGroupCard({ group }) {
 
   let btn2 = false;
   return (
-    <div className=" w-auto h-46 m-2">
+    <div className=" w-auto h-46 m-2 max-w-full">
       <p className=" flex mt-1 justify-end ">
         {handleGroupTime(group.timeStamp)}
       </p>
-      <div className=" flex flex-row">
-        <div className=" ml-2">
-          <div className="grid grid-cols-6 ">
+      <div className="flex flex-col lg:flex-row">
+        <div className="lg:ml-2">
+          <div className="grid grid-cols-6 gap-2">
             <div className="col-span-2">
               <Avatar image={group.groupImg} size="xlarge" shape="circle" />
             </div>
-            <div className="col-span-4 mt-1 font-bold text-lg ">
-              <p className="col-span-4 mt-1 font-bold text-lg ">
-                {group.groupTittle}{" "}
-              </p>
+            <div className="col-span-4 mt-1 font-bold text-lg">
+              <p className="mt-3 ml-3">{group.groupTittle}</p>
             </div>
           </div>
-          <div className="ml-3 mt-2 justify-center text-sm ">
+          <div className="ml-3 mt-2 flex flex-wrap justify-center text-sm">
             {group.groupTags.map((sub, index) => {
-              // Check if it's the last element in the array
               let color = randomColor({
                 luminosity: "light",
                 hue: "random",
               });
-              if (index === group.groupTags.length - 1) {
-                return (
-                  <Chip
-                    style={{
-                      backgroundColor: color,
-                    }}
-                    key={uuidv4()}
-                    className="mr-2 mt-2 font-bold"
-                    variant="outlined"
-                    label={sub}
-                  />
-                );
-              } else {
-                return (
-                  <Chip
-                    style={{
-                      backgroundColor: color,
-                    }}
-                    key={uuidv4()}
-                    className="mr-2 mt-2 font-bold"
-                    variant="outlined"
-                    label={sub}
-                  />
-                );
-              }
+              return (
+                <Chip
+                  key={uuidv4()}
+                  style={{ backgroundColor: color }}
+                  className="mr-2 mt-2 font-bold"
+                  variant="outlined"
+                  label={sub}
+                />
+              );
             })}
           </div>
         </div>
-      </div>
-
-      <div className=" ml-3 mt-3  border rounded-lg ">
-        <p className=" ml-3 mt-3 text-sm underline ">discreption:</p>
-        <p className=" ml-3 mt-3 text-lg text-center ">{group.description}</p>
-        {/* /* <p>time: {formatRelative(selectedMarker.time, new Date())}</p> */}
-      </div>
-      <div className="w-full">
-        <div className="flex flex-row mt-2">
-          {group.participants.map((participant) => {
-            {
+        <div className="lg:ml-3 mt-3 lg:mt-0 lg:border lg:rounded-lg lg:w-1/3">
+          <p className="ml-3 mt-3 text-sm underline">Description:</p>
+          <p className="ml-3 mt-3 text-lg text-center">{group.description}</p>
+        </div>
+        <div className="w-full lg:w-1/3 mt-3 lg:mt-0 lg:ml-3">
+          <div className="flex flex-wrap lg:flex-nowrap">
+            {group.participants.map((participant) => {
               if (participant.userRef === activeUser.userRef) {
                 btn2 = true;
               }
-            }
-            return (
-              <Chip
-                key={uuidv4()}
-                avatar={
-                  <Avatar
-                    size="small"
-                    shape="circle"
-                    image={participant.userImg}
-                  />
-                }
-                onClick={() => handleUserClick(participant.userRef)}
-                color="success"
-                className="ml-2"
-                variant="outlined"
-                label={participant.name}
-              />
-            );
-          })}
+              return (
+                <Chip
+                  key={uuidv4()}
+                  avatar={
+                    <Avatar
+                      size="small"
+                      shape="circle"
+                      image={participant.userImg}
+                    />
+                  }
+                  onClick={() => handleUserClick(participant.userRef)}
+                  color="success"
+                  className="mr-2 mb-2 lg:mr-0 lg:mb-0"
+                  variant="outlined"
+                  label={participant.name}
+                />
+              );
+            })}
+          </div>
+        </div>
+        <div className="ml-auto mt-3 lg:mt-0">
+          {localStorage.setItem("isSend", group.managerRef) ===
+          group.managerRef ? (
+            <div className=" justify-center">
+              <button disabled={true} className="btn btn-sm ml-auto">
+                Sended
+              </button>
+            </div>
+          ) : group.managerRef === activeUser.userRef ? (
+            <div className=" justify-center">
+              <button disabled={true} className="btn btn-sm ml-auto">
+                You are the manager
+              </button>
+            </div>
+          ) : btnStatus ? (
+            <button
+              onClick={() => handleLeaveGroup(group)}
+              className="btn btn-sm bg-red-600 ml-auto"
+            >
+              Leave
+            </button>
+          ) : (
+            <button
+              onClick={() => handleJoinGroup(group)}
+              className="btn btn-sm ml-auto"
+            >
+              Join
+            </button>
+          )}
         </div>
       </div>
-      <div className=" ml-auto grid grid-cols-1 text-center">
-        {group.managerRef === activeUser.userRef ? (
-          <p className="underline font-bold mt-2">you are the manager</p>
-        ) : btnStatus ? (
-          <button
-            onClick={() => handleLeaveGroup(group)}
-            className="btn btn-sm  bg-red-600  ml-auto mt-3"
-          >
-            Leave
-          </button>
-        ) : (
-          <button
-            onClick={() => handleJoinGroup(group)}
-            className="btn btn-sm  ml-auto mt-3"
-          >
-            Join
-          </button>
-        )}
-      </div>
+
       {visible && (
         <div>
           {/* המודל של המשתמש שנבחר */}

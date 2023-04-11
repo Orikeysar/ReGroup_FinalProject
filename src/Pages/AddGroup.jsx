@@ -4,11 +4,12 @@ import { RiGroup2Fill } from "react-icons/ri";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
-import { db, sendMailOverHTTP } from "../FirebaseSDK";
+import { alertGroupEdited, db, sendMailOverHTTP } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   setDoc,
+  getDoc,
   doc,
   GeoPoint,
   Timestamp,
@@ -126,7 +127,7 @@ function AddGroup() {
       return toast.error("choose fillters for the group you create");
     } else if (newGroup.address === "" || newGroup.description === "") {
       return toast.error(
-        "fill adress and discription for the group you create"
+        "fill address and description for the group you want to create"
       );
     } else {
       newGroup.participants.push({
@@ -147,7 +148,17 @@ function AddGroup() {
           // doc.data() is never undefined for query doc snapshots
           setManagerGroupId(doc.id);
           groupId = doc.id;
-          console.log(doc.id, " => ", doc.data());
+          let dataGroup = doc.data();
+          dataGroup.participants.forEach((participant) => {
+            if (participant.userRef != activeUser.userRef) {
+              newGroup.participants.push({
+                name: participant.name,
+                userImg: participant.userImg,
+                userRef: participant.userRef,
+                email: participant.email,
+              });
+            }
+          });
         });
 
         if (
@@ -192,8 +203,52 @@ function AddGroup() {
         )
       ),
     })
-      .then(() => {
+      //אם הצליח, זה יישלח רק למשתתפים שהם לא המנהל הודעה על שינוי.  במקרה והם לא אישרו קבלת הודעות פוש באפליקציה יישלח אליהם מייל
+      .then(async () => {
         toast.success("edit success");
+        for (const item of newGroup.participants) {
+          if (item.userRef != activeUser.userRef) {
+            const docRef = doc(db, "fcmTokens", item.userRef);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              const token = data.fcmToken;
+              const title =
+                "The group you are registered to in " +
+                selectedCourse +
+                " as been edited.";
+              const message = " Please keep up to date with the changes ";
+              const alert = {
+                token: token,
+                title: title,
+                message: message,
+              };
+              console.log(alert);
+              alertGroupEdited(alert);
+            } else {
+              fetch(
+                "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    subject: `Your group as been edited !`,
+                    email: item.email,
+                    message:
+                      "The group you are registered to - " +
+                      selectedCourse +
+                      " as been edited. Please keep up to date with the changes. you can see here the changes in myGroups page : https://regroup-a4654.web.app/myGroups",
+                  }),
+                }
+              )
+                .then((response) => response.text())
+                .then((data) => console.log(data))
+                .catch((error) => console.error(error));
+            }
+          }
+        }
         navigate("/myGroups");
       })
       .catch((error) => {
@@ -277,24 +332,26 @@ function AddGroup() {
     if (invitedList.length > 0) {
       invitedList.map((friend) => {
         if (friend.userRef !== activeUser.userRef) {
-  
-
-          fetch('https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            subject: `Group Invite!`,
-            email: friend.email,
-            message: `Group Invite!
-               you got a Group Invite from: ${friend.email},for more detailes press here ${ "https://regroup-a4654.web.app/myGroups"} `
-          })
-        })
-          .then(response => response.text())
-          .then(data => console.log(data))
-          .catch(error => console.error(error));
-        
+          fetch(
+            "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                subject: `Group Invite!`,
+                email: friend.email,
+                message: `Group Invite!
+               you got a Group Invite from: ${
+                 friend.email
+               },for more detailes press here ${"https://regroup-a4654.web.app/myGroups"} `,
+              }),
+            }
+          )
+            .then((response) => response.text())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
         }
       });
     }

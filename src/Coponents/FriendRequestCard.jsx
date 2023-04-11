@@ -17,8 +17,6 @@ function FriendRequestCard() {
     return user;
   });
 
-
-
   const unsub= onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
    let data = doc.data()
     setactiveUser(data)
@@ -26,12 +24,6 @@ function FriendRequestCard() {
     localStorage.setItem("activeUser", JSON.stringify(data));
 });
   
-
-
-
-
-
-
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
       const firestoreTimestamp = new Timestamp(

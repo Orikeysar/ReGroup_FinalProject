@@ -15,6 +15,7 @@ import FriendsListCard from "./Coponents/FriendsListCard";
 import UserAchievemeant from "./Pages/UserAchievemeant";
 import RecentActivitiesCard from "./Pages/RecentActivitiesCard";
 import UserFriendsPage from "./Pages/UserFriendsPage";
+import RequestsToGroups from "./Pages/RequestsToGroups";
 function App() {
   return (
     <>
@@ -40,6 +41,7 @@ function App() {
               <Route path="/myFriends" element={<UserFriendsPage />} />
               <Route path="/achievements" element={<UserAchievemeant />} />
               <Route path="/recentActivities" element={<RecentActivitiesCard />} />
+              <Route path="/requestGroups" element={<RequestsToGroups />} />
             </Routes>
           </div>
 
