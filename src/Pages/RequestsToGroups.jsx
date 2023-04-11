@@ -21,7 +21,7 @@ function RequestsToGroups() {
   console.log(activeUser)
   let requests=activeUser.groupParticipantsToApproval;
     
-
+//בודקת עידכון בזמן אמת במשתמש ומעדכנת את הלוקאל אם יש
   useEffect(() => {
     const docRef = doc(db, "users", activeUser.userRef);
     const unsubscribe = onSnapshot(docRef, (doc) => {
@@ -76,6 +76,7 @@ function RequestsToGroups() {
       .catch((error) => {
         toast.error("An error occurred. Please try again.");
       });
+      //שולח הודעת פוש ואם אין אישור אז מייל
     const docRefToken = doc(db, "fcmTokens", id);
     const docSnapToken = await getDoc(docRefToken);
     if (docSnapToken.exists()) {
@@ -128,6 +129,7 @@ function RequestsToGroups() {
     await updateDoc(docRef, {
       groupParticipantsToApproval: requests,
     });
+          //שולח הודעת פוש ואם אין אישור אז מייל
     const docRefToken = doc(db, "fcmTokens", id);
     const docSnapToken = await getDoc(docRefToken);
     if (docSnapToken.exists()) {
