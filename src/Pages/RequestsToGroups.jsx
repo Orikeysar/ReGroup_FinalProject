@@ -2,69 +2,82 @@ import React from "react";
 import NavBar from "../Coponents/navbars/NavBar";
 import { useState } from "react";
 import UserProfileModal from "../Coponents/profileComponents/UserProfileModal";
-import { db,alertGroupEdited } from "../FirebaseSDK";
-import {
-  doc,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { db, alertGroupEdited } from "../FirebaseSDK";
+import { doc, getDoc, updateDoc,onSnapshot } from "firebase/firestore";
 import { toast } from "react-toastify";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
+import { uuidv4 } from "@firebase/util";
 
- function RequestsToGroups() {
+function RequestsToGroups() {
   const [activeUser, setactiveUser] = useState(() => {
-    const user = JSON.parse(localStorage.getItem("activeUser"));
-    return user;
+    try {
+      const user = JSON.parse(localStorage.getItem("activeUser"));
+      return user;
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+      return null; // or some default value
+    }
   });
-  const [requests, setRequests] = useState(activeUser.groupParticipantsToApproval);
+  console.log(activeUser)
+  let requests=activeUser.groupParticipantsToApproval;
+    
+//   const unsub= onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+//     let data = doc.data()
+//      setactiveUser(data)
+//      localStorage.setItem("activeUser", JSON.stringify(data));
+//      setRequests(activeUser.groupParticipantsToApproval)
+//  });
+
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
   const handleAccept = async (id) => {
     const user = requests.filter((item) => item.userRef === id);
     const updatedRequests = requests.filter((item) => item.userRef !== id);
-    setRequests(updatedRequests);
-    activeUser.groupParticipantsToApproval=updatedRequests;
-      localStorage.setItem("activeUser",activeUser)
-      const docRef = doc(db, "users", activeUser.userRef);
+    requests=updatedRequests;
+    activeUser.groupParticipantsToApproval = updatedRequests;
+    setactiveUser(activeUser);
+    console.log(activeUser)
+    localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    const docRef = doc(db, "users", activeUser.userRef);
 
     await updateDoc(docRef, {
       groupParticipantsToApproval: requests,
     });
     let updateUser = {
-        email: user.email,
-        name: user.name,
-        userImg: user.userImg,
-        userRef: user.userRef,
-      };
-      let docRefGroup = doc(db, "activeGroups",user.groupRef );
-      let docSnapGroup = await getDoc(docRefGroup);
-      let data = docSnapGroup.data();
-      let newParticipantsList=data.participants;
-      newParticipantsList.push(updateUser);
-      await updateDoc(docRef, {
-        participants: newParticipantsList,
+      email: user[0].email,
+      name: user[0].name,
+      userImg: user[0].userImg,
+      userRef: user[0].userRef,
+    };
+    let docRefGroup = doc(db, "activeGroups", user[0].groupRef);
+    let docSnapGroup = await getDoc(docRefGroup);
+    let data = docSnapGroup.data();
+    console.log(data)
+    data.participants.push(updateUser);
+    await updateDoc(docRefGroup, {
+      participants: data.participants,
+    })
+      .then(async () => {
+        const docRef2 = doc(db, "users", id);
+        const docSnap2 = await getDoc(docRef2);
+        const userAchiev = docSnap2.data();
+        let achiev = userAchiev.userAchievements.filter(
+          (element) => element.name === "Joined Groups"
+        );
+        let item = achiev[0];
+        UserScoreCalculate(item, "JoinedGroup", userAchiev);
+        toast.success("Join successfully!");
       })
-      .then(async() => {
-            const docRef2 = doc(db, "users", id);
-            const docSnap2 = await getDoc(docRef2);
-            const userAchiev=docSnap2.data()
-            let achiev = userAchiev.userAchievements.filter(
-              (element) => element.name === "Joined Groups"
-            );
-            let item = achiev[0];
-            UserScoreCalculate(item, "JoinedGroup", userAchiev);
-            toast.success("Join successfully!");
-          })
       .catch((error) => {
-            toast.error("An error occurred. Please try again.");
-          });
-        const docRefToken = doc(db, "fcmTokens", id);
-         const docSnapToken = await getDoc(docRefToken);
-         if (docSnapToken.exists()) {
-          const data = docSnapToken.data();
-          const token = data.fcmToken;
-         const title ="Group Request Accepted !"
-         const message = " You requeste to join to the group accepted ";
-       const alert = {
+        toast.error("An error occurred. Please try again.");
+      });
+    const docRefToken = doc(db, "fcmTokens", id);
+    const docSnapToken = await getDoc(docRefToken);
+    if (docSnapToken.exists()) {
+      const data = docSnapToken.data();
+      const token = data.fcmToken;
+      const title = "Group Request Accepted !";
+      const message = " You requeste to join to the group accepted ";
+      const alert = {
         token: token,
         title: title,
         message: message,
@@ -81,29 +94,31 @@ import UserScoreCalculate from "../Coponents/UserScoreCalculate";
           },
           body: JSON.stringify({
             subject: `Group Request Accepted !`,
-            email: user.email,
+            email: user[0].email,
             message:
-            " Your requeste to join to the group was accepted by "+activeUser.name+". you can see here the details here : https://regroup-a4654.web.app/myGroups",
+              " Your request to join to the group was accepted by " +
+              activeUser.name +
+              ". you can see here the details here : https://regroup-a4654.web.app/myGroups",
           }),
         }
       )
         .then((response) => response.text())
-        .then(localStorage.setItem("isSend",""))
+        .then(localStorage.setItem("isSend", ""))
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
-  
-
   };
-    //הפונקציה מוחקת את הבקשה של היוזר מהדאטה
+  //הפונקציה מוחקת את הבקשה של היוזר מהדאטה
 
   const handleReject = async (id) => {
     const user = requests.filter((item) => item.userRef === id);
     const updatedRequests = requests.filter((item) => item.userRef !== id);
-    setRequests(updatedRequests);
-    activeUser.groupParticipantsToApproval=updatedRequests;
-      localStorage.setItem("activeUser",activeUser)
-      const docRef = doc(db, "users", activeUser.userRef);
+    requests=updatedRequests;
+    activeUser.groupParticipantsToApproval = updatedRequests;
+    setactiveUser(activeUser);
+    console.log(activeUser)
+    localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    const docRef = doc(db, "users", activeUser.userRef);
     await updateDoc(docRef, {
       groupParticipantsToApproval: requests,
     });
@@ -112,7 +127,7 @@ import UserScoreCalculate from "../Coponents/UserScoreCalculate";
     if (docSnapToken.exists()) {
       const data = docSnapToken.data();
       const token = data.fcmToken;
-      const title ="Rejected"
+      const title = "Rejected";
       const message = " Your requeste to join to the group rejected ";
       const alert = {
         token: token,
@@ -131,52 +146,17 @@ import UserScoreCalculate from "../Coponents/UserScoreCalculate";
           },
           body: JSON.stringify({
             subject: `Rejected`,
-            email: user.email,
-            message:
-            " You requested to join to the group rejected",
+            email: user[0].email,
+            message: " Your request to join to the group rejected",
           }),
         }
       )
         .then((response) => response.text())
-        .then(localStorage.setItem("isSend",""))
+        .then(localStorage.setItem("isSend", ""))
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
-  
-
   };
-
-  // await updateDoc(docRefToManager, {
-  //         groupParticipantsToApproval: newRequests,
-  //       });
-  
-  // group.participants.push(user);
-  // await setDoc(doc(db, "activeGroups", group.id), {
-  //   description: group.description,
-  //   groupImg: group.groupImg,
-  //   groupTags: group.groupTags,
-  //   groupTittle: group.groupTittle,
-  //   groupSize: group.groupSize,
-  //   isActive: group.isActive,
-  //   location: group.location,
-  //   managerRef: group.managerRef,
-  //   participants: group.participants,
-  //   timeStamp: group.timeStamp,
-  // })
-  //   .then(() => {
-  //     let achiev = activeUser.userAchievements.filter(
-  //       (element) => element.name === "Joined Groups"
-  //     );
-  //     let item = achiev[0];
-  //     UserScoreCalculate(item, "JoinedGroup", activeUser);
-  //     toast.success("Join successfully!");
-  //     setBtnStatus(true);
-  //   })
-  //   .catch((error) => {
-  //     toast.error("An error occurred. Please try again.");
-  //   });
-  // localStorage.setItem("componentChoosen", "MyGroupsPage");
-  // navigate("/myGroups");
   return (
     <div>
       <div className="topNavBar w-full mb-24">
@@ -186,16 +166,22 @@ import UserScoreCalculate from "../Coponents/UserScoreCalculate";
         {requests.length === 0 ? (
           <h2>Sorry.. You do not have requests pending approval</h2>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="">
             {requests.map((item) => (
-              <div className="flex justify-between items-center border p-4">
+              <div key={uuidv4()} className=" ">
                 <UserProfileModal id={item.userRef} />
-                <div>
-                  <button onClick={()=>handleAccept(item.userRef)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                    Accept
-                  </button>
-                  <button onClick={()=>handleReject(item.userRef)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                <div className="d-flex justify-content-end  mt-3 ">
+                  <button
+                    onClick={() => handleReject(item.userRef)}
+                    className=" btn btn-sm bg-red-500 hover:bg-red-700 text-white  mr-4"
+                  >
                     Reject
+                  </button>
+                  <button
+                    onClick={() => handleAccept(item.userRef)}
+                    className=" btn btn-sm bg-green-500 hover:bg-green-700 text-white "
+                  >
+                    Accept
                   </button>
                 </div>
               </div>
@@ -208,5 +194,3 @@ import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 }
 
 export default RequestsToGroups;
-
-

@@ -88,7 +88,8 @@ function UserProfileModal({ id }) {
 
       //מכניס את הכבר לרשימת ההמתנה של המשתמש המחובר
       await updateDoc(activeUserRef, {
-        friendsWaitingToAcceptByAnotherUser:activeUser.friendsWaitingToAcceptByAnotherUser,
+        friendsWaitingToAcceptByAnotherUser:
+          activeUser.friendsWaitingToAcceptByAnotherUser,
       })
         .then(async () => {
           console.log(activeUser.friendsWaitingToAcceptByAnotherUser);
@@ -166,24 +167,6 @@ function UserProfileModal({ id }) {
           <div className="text-lg font-semibold">{user.email}</div>
           <div className="text-lg font-semibold">{user.degree}</div>
         </div>
-        <div className=" ml-auto justify-end col-span-1 mt-4">
-          {btnStatus ? (
-            <button
-              onClick={handleRemoveFriend}
-              className="btn btn-sm  bg-red-600  ml-auto mt-3"
-            >
-              Remove friend
-            </button>
-          ) : (
-            <button
-              onClick={handleAddFriend}
-              className="btn btn-sm  ml-auto mt-3"
-              disabled={id === activeUser.userRef ? true : false}
-            >
-              send request
-            </button>
-          )}
-        </div>
       </div>
       <div className=" mt-1">
         <div className="flex flex-wrap">
@@ -207,6 +190,24 @@ function UserProfileModal({ id }) {
               </label>
             </div>
           ))}
+          <div className=" ml-auto justify-end col-span-1 mt-4">
+          {btnStatus ? (
+            <button
+              onClick={handleRemoveFriend}
+              className="btn btn-sm bg-red-600 mt-3 justify-self-end"
+            >
+              Remove friend
+            </button>
+          ) : (
+            <button
+              onClick={handleAddFriend}
+              className="btn btn-sm mt-3 justify-self-end"
+              disabled={id === activeUser.userRef ? true : false}
+            >
+              send request
+            </button>
+          )}
+        </div>
         </div>
       </div>
     </div>
