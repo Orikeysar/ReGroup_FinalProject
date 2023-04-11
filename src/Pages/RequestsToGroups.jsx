@@ -1,6 +1,6 @@
 import React from "react";
 import NavBar from "../Coponents/navbars/NavBar";
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import UserProfileModal from "../Coponents/profileComponents/UserProfileModal";
 import { db, alertGroupEdited } from "../FirebaseSDK";
 import { doc, getDoc, updateDoc,onSnapshot } from "firebase/firestore";
@@ -21,13 +21,19 @@ function RequestsToGroups() {
   console.log(activeUser)
   let requests=activeUser.groupParticipantsToApproval;
     
-//   const unsub= onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
-//     let data = doc.data()
-//      setactiveUser(data)
-//      localStorage.setItem("activeUser", JSON.stringify(data));
-//      setRequests(activeUser.groupParticipantsToApproval)
-//  });
 
+  useEffect(() => {
+    const docRef = doc(db, "users", activeUser.userRef);
+    const unsubscribe = onSnapshot(docRef, (doc) => {
+      const userData = doc.data();
+      // Update the activeUser state and localStorage with the new data
+      setactiveUser(userData);
+      localStorage.setItem("activeUser", JSON.stringify(userData));
+    });
+    // Unsubscribe from the snapshot listener when the component unmounts
+    return unsubscribe;
+  }, []);
+  
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
   const handleAccept = async (id) => {
     const user = requests.filter((item) => item.userRef === id);
