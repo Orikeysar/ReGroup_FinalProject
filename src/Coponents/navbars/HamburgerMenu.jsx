@@ -180,11 +180,11 @@ function HamburgerMenu() {
   <div className="relative">
     <p
       className={`btn btn-ghost w-full ${
-        localStorage.getItem("componentChoosen") === "RequestsToGroups"
+        localStorage.getItem("componentChoosen") === "requestsGroups"
           ? "bg-gray-100"
           : activeUser.groupParticipantsToApproval.length>0?"animate-pulse":""
       }`}
-      value="RequestsToGroups"
+      value="requestsGroups"
       onClick={handleRequestsToGroupsNavButton}
     >
       Requests

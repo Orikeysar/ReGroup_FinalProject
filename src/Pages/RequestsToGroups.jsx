@@ -6,33 +6,17 @@ import { db,alertGroupEdited } from "../FirebaseSDK";
 import {
   doc,
   getDoc,
-  setDoc,
   updateDoc,
-  GeoPoint,
-  Timestamp,
-  collection,
-  query,
-  where,
-  getDocs,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 
-async function RequestsToGroups() {
+ function RequestsToGroups() {
   const [activeUser, setactiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  const [requests, setRequests] = useState(null);
-  const docRef = doc(db, "users", activeUser.userRef);
-  const docSnap = await getDoc(docRef);
-  //Check if user exists
-  if (docSnap.exists()) {
-    let data = docSnap.data();
-    setRequests(data.groupParticipantsToApproval);
-  } else {
-    toast.error("Please try again by reload the page");
-  }
+  const [requests, setRequests] = useState(activeUser.groupParticipantsToApproval);
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
   const handleAccept = async (id) => {
     const user = requests.filter((item) => item.userRef === id);
@@ -40,6 +24,8 @@ async function RequestsToGroups() {
     setRequests(updatedRequests);
     activeUser.groupParticipantsToApproval=updatedRequests;
       localStorage.setItem("activeUser",activeUser)
+      const docRef = doc(db, "users", activeUser.userRef);
+
     await updateDoc(docRef, {
       groupParticipantsToApproval: requests,
     });
@@ -74,7 +60,7 @@ async function RequestsToGroups() {
         const docRefToken = doc(db, "fcmTokens", id);
          const docSnapToken = await getDoc(docRefToken);
          if (docSnapToken.exists()) {
-          const data = docSnap.data();
+          const data = docSnapToken.data();
           const token = data.fcmToken;
          const title ="Group Request Accepted !"
          const message = " You requeste to join to the group accepted ";
@@ -117,13 +103,14 @@ async function RequestsToGroups() {
     setRequests(updatedRequests);
     activeUser.groupParticipantsToApproval=updatedRequests;
       localStorage.setItem("activeUser",activeUser)
+      const docRef = doc(db, "users", activeUser.userRef);
     await updateDoc(docRef, {
       groupParticipantsToApproval: requests,
     });
     const docRefToken = doc(db, "fcmTokens", id);
     const docSnapToken = await getDoc(docRefToken);
     if (docSnapToken.exists()) {
-      const data = docSnap.data();
+      const data = docSnapToken.data();
       const token = data.fcmToken;
       const title ="Rejected"
       const message = " Your requeste to join to the group rejected ";
@@ -151,9 +138,6 @@ async function RequestsToGroups() {
         }
       )
         .then((response) => response.text())
-        .then(toast.success(
-          "A request sent to the group manager. Upon approval, you will receive a message."
-        ))
         .then(localStorage.setItem("isSend",""))
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
@@ -199,9 +183,6 @@ async function RequestsToGroups() {
         <NavBar />
       </div>
       <div className="card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
-        <h1 className="col-md-4 animate__animated animate__fadeIn animate__slow">
-          Requests are awaiting approval
-        </h1>
         {requests.length === 0 ? (
           <h2>Sorry.. You do not have requests pending approval</h2>
         ) : (
