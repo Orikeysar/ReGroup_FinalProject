@@ -139,7 +139,7 @@ function FriendRequestCard() {
       );
       anotherUser.friendsWaitingToAcceptByAnotherUser = deleteObjectById(
         anotherUserFriendRequestList,
-        id
+        activeUser.userRef
       );
 
       //מכניס עדכון של המשתמש שאישר  את החברות
