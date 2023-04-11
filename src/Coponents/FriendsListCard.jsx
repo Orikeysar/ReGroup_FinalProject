@@ -24,7 +24,7 @@ function FriendsListCard() {
      localStorage.setItem("activeUser", JSON.stringify(data));
      
  });
- unsub()
+
 
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
