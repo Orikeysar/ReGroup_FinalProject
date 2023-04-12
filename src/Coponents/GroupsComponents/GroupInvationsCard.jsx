@@ -27,7 +27,7 @@ import { TrendingUpRounded } from "@mui/icons-material";
 import UserScoreCalculate from "../UserScoreCalculate";
 import { FaCircle } from "react-icons/fa";
 
-function JoinGroupCard({ group }) {
+function GroupInvationsCard({ group }) {
   const navigate = useNavigate();
   const date = new Date();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -183,7 +183,7 @@ function JoinGroupCard({ group }) {
 
   let btn2 = false;
   return (
-    <div className=" w-auto shadow-md card h-46 m-2 p-2 border border-stone-400 overflow-hidden max-w-full">
+    <div className=" w-auto h-46 m-2 max-w-full">
       <p className=" flex mt-1 justify-end ">
         {handleGroupTime(group.timeStamp)}
       </p>
@@ -245,36 +245,6 @@ function JoinGroupCard({ group }) {
             })}
           </div>
         </div>
-        <div className="ml-auto mt-3 lg:mt-0">
-          {localStorage.getItem("isSend") ===group.managerRef?
-            (
-            <div className=" justify-center">
-              <button disabled={true} className="btn btn-sm ml-auto">
-                Sended
-              </button>
-            </div>
-          ) : group.managerRef === activeUser.userRef ? (
-            <div className=" justify-center">
-              <button disabled={true} className="btn btn-sm ml-auto">
-                You are the manager
-              </button>
-            </div>
-          ) : btnStatus ? (
-            <button
-              onClick={() => handleLeaveGroup(group)}
-              className="btn btn-sm bg-red-600 ml-auto"
-            >
-              Leave
-            </button>
-          ) : (
-            <button
-              onClick={() => handleJoinGroup(group)}
-              className="btn btn-sm ml-auto"
-            >
-              Join
-            </button>
-          )}
-        </div>
       </div>
 
       {visible && (
@@ -300,4 +270,4 @@ function JoinGroupCard({ group }) {
   );
 }
 
-export default JoinGroupCard;
+export default GroupInvationsCard;

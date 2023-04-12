@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   setDoc,
-  getDoc,
+  getDoc, 
   doc,
   GeoPoint,
   Timestamp,
@@ -43,13 +43,14 @@ function AddGroup() {
   const [managerGroupId, setManagerGroupId] = useState("");
   const [fillteredGroupShow, setFillteredGroupShow] = useState(false);
   const [cordinates, setCordinates] = useState(null);
+  const [friendsInvited, setFriendsInvited] = useState([]);
   const [newGroup, setNewGroup] = useState({
     address: "",
     groupTittle: "",
     groupImg: activeUser.userImg,
     groupTags: [],
     groupSize: 0,
-    userRef: activeUser.userRef,
+    managerRef: activeUser.userRef,
     location: { lat: 0, lng: 0 },
     description: "",
     participants: [],
@@ -103,12 +104,36 @@ function AddGroup() {
   };
 
   //handle added
-  const handleInviteFriendChange = (event, value) => {
-    setNewGroup({
-      ...newGroup,
-      participants: [...value],
-    });
+  const handleInviteFriendChange = async (event, value) => {
+    setFriendsInvited({...friendsInvited,value})
+    }
+  
+  //מקבלת את רשימת החברים ומעדכנת בדאטה שלהם את הבקשה 
+  const handleFriendRequests = async () => {
+    for (const friend of friendsInvited) {
+      const docRef = doc(db, "users", friend.userRef);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        let data = docSnap.data();
+        let participant = {
+          name: friend.name,
+          userImg: friend.userImg,
+          userRef: friend.userRef,
+          email: friend.email,
+          managerRef: newGroup.managerRef,
+          type: "invite"
+        };
+        data.groupParticipantsToApproval.push(participant);
+        await setDoc(doc(db, "users", friend.userRef), data);
+      } else{
+        toast.info("user"+friend.name+" not found ")
+      }
+    } 
+    handleSendEmail(friendsInvited);
   };
+  
+
+
   //הפונקציה בודקת את הקבוצה לדאטה בייס
   const CheckBeforeCreateNewGroup = async () => {
     // //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
@@ -130,12 +155,12 @@ function AddGroup() {
         "fill address and description for the group you want to create"
       );
     } else {
-      newGroup.participants.push({
-        name: activeUser.name,
-        userImg: activeUser.userImg,
-        userRef: activeUser.userRef,
-        email: activeUser.email,
-      });
+      // newGroup.participants.push({
+      //   name: activeUser.name,
+      //   userImg: activeUser.userImg,
+      //   userRef: activeUser.userRef,
+      //   email: activeUser.email,
+      // });
 
       if (managerGroup != null) {
         // idבדיקה בדאטה האם למשתמש קיים קבוצה שיצר במידה וכן יחזיר id
@@ -148,17 +173,17 @@ function AddGroup() {
           // doc.data() is never undefined for query doc snapshots
           setManagerGroupId(doc.id);
           groupId = doc.id;
-          let dataGroup = doc.data();
-          dataGroup.participants.forEach((participant) => {
-            if (participant.userRef != activeUser.userRef) {
-              newGroup.participants.push({
-                name: participant.name,
-                userImg: participant.userImg,
-                userRef: participant.userRef,
-                email: participant.email,
-              });
-            }
-          });
+          // let dataGroup = doc.data();
+          // dataGroup.participants.forEach((participant) => {
+          //   if (participant.userRef != activeUser.userRef) {
+          //     newGroup.participants.push({
+          //       name: participant.name,
+          //       userImg: participant.userImg,
+          //       userRef: participant.userRef,
+          //       email: participant.email,
+          //     });
+          //   }
+          // });
         });
 
         if (
@@ -263,7 +288,7 @@ function AddGroup() {
     const [hours, minutes] = newGroup.timeStamp.split(":");
     now.setHours(hours, minutes, 0, 0);
     const geoPoint = new GeoPoint(cordinates.lat, cordinates.lng);
-    let groupParticipants = []
+    let groupParticipants = [];
     groupParticipants.push({
       name: activeUser.name,
       userImg: activeUser.userImg,
@@ -300,8 +325,7 @@ function AddGroup() {
         let item = achiev[0];
         UserScoreCalculate(item, "CreatedGroups", activeUser);
         toast.success("create success");
-        //שולח הזמנה לחברים שהוזמנו
-        handleSendEmail(newGroup.participants);
+        handleFriendRequests()
         //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה
 
         SendAlertToUserForNewGroup(selectedCourse, selectedSubjects);
@@ -331,40 +355,47 @@ function AddGroup() {
     }
   };
 
-  function handleSendEmail(invitedList) {
-    // let data = {
-    //   name: "",
-    //   email: "",
-    //   message: "",
-    // };
-
-    if (invitedList.length > 0) {
-      invitedList.map((friend) => {
-        if (friend.userRef !== activeUser.userRef) {
-          fetch(
-            "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                subject: `Group Invite!`,
-                email: friend.email,
-                message: `Group Invite!
-               you got a Group Invite from: ${
-                 friend.email
-               },for more detailes press here ${"https://regroup-a4654.web.app/myGroups"} `,
-              }),
-            }
-          )
-            .then((response) => response.text())
-            .then((data) => console.log(data))
-            .catch((error) => console.error(error));
+    const handleSendEmail=async(invitedList) =>{
+      for (const friend of invitedList) {
+      const docRefToken = doc(db, "fcmTokens", friend.userRef);
+      const docSnapToken = await getDoc(docRefToken);
+      if (docSnapToken.exists()) {
+        const data = docSnapToken.data();
+        const token = data.fcmToken;
+        const title = "Group Request  !";
+        const message = activeUser.name+" send you a request to join the group"
+        const alert = {
+          token: token,
+          title: title,
+          message: message,
+        };
+        console.log(alert);
+        alertGroupEdited(alert);
+      } else {
+        fetch(
+          "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              subject: `Group Request !`,
+              email: friend.email,
+              message:
+              activeUser.name+" send you a request to join the group . For more details : https://regroup-a4654.web.app/requestGroups",
+            }),
+          }
+        )
+          .then((response) => response.text())
+          .then((data) => console.log(data))
+          .catch((error) => console.error(error));
         }
-      });
-    }
-  }
+      } 
+      toast.success("Messages have been sent to users")
+    } 
+     
+  
 
   return (
     <div className="container  ">
@@ -471,6 +502,7 @@ function AddGroup() {
       </div>
     </div>
   );
+              
 }
 
 export default AddGroup;

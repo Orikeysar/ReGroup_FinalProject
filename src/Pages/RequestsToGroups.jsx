@@ -1,12 +1,23 @@
 import React from "react";
 import NavBar from "../Coponents/navbars/NavBar";
-import { useState ,useEffect} from "react";
+import { useState, useEffect } from "react";
 import UserProfileModal from "../Coponents/profileComponents/UserProfileModal";
 import { db, alertGroupEdited } from "../FirebaseSDK";
-import { doc, getDoc, updateDoc,onSnapshot } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  onSnapshot,
+  collection,
+  setDoc,
+  query,
+  getDocs,
+  where,
+} from "firebase/firestore";
 import { toast } from "react-toastify";
 import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 import { uuidv4 } from "@firebase/util";
+import GroupInvationsCard from "../Coponents/GroupsComponents/GroupInvationsCard";
 
 function RequestsToGroups() {
   const [activeUser, setActiveUser] = useState(() => {
@@ -18,10 +29,29 @@ function RequestsToGroups() {
       return null; // or some default value
     }
   });
-  console.log(activeUser)
-  let requests=activeUser.groupParticipantsToApproval;
-    
-//בודקת עידכון בזמן אמת במשתמש ומעדכנת את הלוקאל אם יש
+  console.log(activeUser);
+  let requests = activeUser.groupParticipantsToApproval;
+  //צביעת כפתורים של הניווט
+  const [btnColorRequest, setBtnColorRequest] = useState(
+    "btn m-2 text-sm shadow-md"
+  );
+  const [btnColorInvite, setBtnColorInvite] = useState(
+    "btn m-2 text-sm  text-black glass shadow-md"
+  );
+  //ברירת מחדל יופיעו הכללי קודם
+  const [type, setType] = useState("request");
+  //משנה את הצבע בחירה ומעביר אותך למערך הרלוונטי
+  const handleClickRequest = () => {
+    setBtnColorInvite("btn m-2 text-sm glass text-black shadow-md");
+    setBtnColorRequest("btn m-2 shadow-md");
+    setType("request");
+  };
+  const handleClickInvite = () => {
+    setBtnColorInvite("btn m-2 shadow-md");
+    setBtnColorRequest("btn m-2 text-sm glass text-black shadow-md");
+    setType("invite");
+  };
+  //בודקת עידכון בזמן אמת במשתמש ומעדכנת את הלוקאל אם יש
   useEffect(() => {
     const docRef = doc(db, "users", activeUser.userRef);
     const unsubscribe = onSnapshot(docRef, (doc) => {
@@ -33,15 +63,15 @@ function RequestsToGroups() {
     // Unsubscribe from the snapshot listener when the component unmounts
     return unsubscribe;
   }, []);
-  
+
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
   const handleAccept = async (id) => {
     const user = requests.filter((item) => item.userRef === id);
     const updatedRequests = requests.filter((item) => item.userRef !== id);
-    requests=updatedRequests;
+    requests = updatedRequests;
     activeUser.groupParticipantsToApproval = updatedRequests;
     setActiveUser(activeUser);
-    console.log(activeUser)
+    console.log(activeUser);
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
     const docRef = doc(db, "users", activeUser.userRef);
 
@@ -54,14 +84,18 @@ function RequestsToGroups() {
       userImg: user[0].userImg,
       userRef: user[0].userRef,
     };
-    let docRefGroup = doc(db, "activeGroups", user[0].groupRef);
-    let docSnapGroup = await getDoc(docRefGroup);
-    let data = docSnapGroup.data();
-    console.log(data)
-    data.participants.push(updateUser);
-    await updateDoc(docRefGroup, {
-      participants: data.participants,
-    })
+    const q = query(
+      collection(db, "activeGroups"),
+      where("managerRef", "==", activeUser.userRef)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot
+      .forEach(async (doc) => {
+        let data = doc.data();
+        data.participants.push(updateUser);
+        await setDoc(doc(db, "activeGroups", doc.id), data);
+      })
+
       .then(async () => {
         const docRef2 = doc(db, "users", id);
         const docSnap2 = await getDoc(docRef2);
@@ -76,7 +110,7 @@ function RequestsToGroups() {
       .catch((error) => {
         toast.error("An error occurred. Please try again.");
       });
-      //שולח הודעת פוש ואם אין אישור אז מייל
+    //שולח הודעת פוש ואם אין אישור אז מייל
     const docRefToken = doc(db, "fcmTokens", id);
     const docSnapToken = await getDoc(docRefToken);
     if (docSnapToken.exists()) {
@@ -120,16 +154,16 @@ function RequestsToGroups() {
   const handleReject = async (id) => {
     const user = requests.filter((item) => item.userRef === id);
     const updatedRequests = requests.filter((item) => item.userRef !== id);
-    requests=updatedRequests;
+    requests = updatedRequests;
     activeUser.groupParticipantsToApproval = updatedRequests;
     setActiveUser(activeUser);
-    console.log(activeUser)
+    console.log(activeUser);
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
     const docRef = doc(db, "users", activeUser.userRef);
     await updateDoc(docRef, {
       groupParticipantsToApproval: requests,
     });
-          //שולח הודעת פוש ואם אין אישור אז מייל
+    //שולח הודעת פוש ואם אין אישור אז מייל
     const docRefToken = doc(db, "fcmTokens", id);
     const docSnapToken = await getDoc(docRefToken);
     if (docSnapToken.exists()) {
@@ -165,38 +199,129 @@ function RequestsToGroups() {
         .catch((error) => console.error(error));
     }
   };
+  const handleRequestList = async () => {
+    {
+      requests.map((item) =>
+        item.type === "request" ? (
+          <div key={uuidv4()} className=" ">
+            <UserProfileModal id={item.userRef} />
+            <div className="d-flex justify-content-end  mt-3 ">
+              <button
+                onClick={() => handleReject(item.userRef)}
+                className=" btn btn-sm bg-red-500 hover:bg-red-700 text-white  mr-4"
+              >
+                Reject
+              </button>
+              <button
+                onClick={() => handleAccept(item.userRef)}
+                className=" btn btn-sm bg-green-500 hover:bg-green-700 text-white "
+              >
+                Accept
+              </button>
+            </div>
+          </div>
+        ) : null
+      );
+    }
+  };
+  const handleInvitationsList = async () => {
+    {
+      requests.map((item) =>
+        item.type === "invite" ? (
+          <div key={uuidv4()} className=" ">
+           { renderGroupInvation(item.managerRef)}
+            <div className="d-flex justify-content-end  mt-3 ">
+              <button
+                onClick={() => handleReject(item.userRef)}
+                className=" btn btn-sm bg-red-500 hover:bg-red-700 text-white  mr-4"
+              >
+                Reject
+              </button>
+              <button
+                onClick={() => handleAccept(item.userRef)}
+                className=" btn btn-sm bg-green-500 hover:bg-green-700 text-white "
+              >
+                Accept
+              </button>
+            </div>
+          </div>
+        ) : null
+      );
+    }
+  };
+  const renderGroupInvation=async(managerRef)=>{
+    const q = query(
+      collection(db, "activeGroups"),
+       where("managerRef", "==", managerRef)
+     );
+     const querySnapshot = await getDocs(q);
+     querySnapshot
+     .forEach(async (doc) => {
+       let data = doc.data();
+       <GroupInvationsCard group={data} />
+      })
+  }
   return (
     <div>
-      <div className="topNavBar w-full mb-24">
-        <NavBar />
-      </div>
-      <div className="card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
-        {requests.length === 0 ? (
-          <h2>Sorry.. You do not have requests pending approval</h2>
-        ) : (
-          <div className="">
-            {requests.map((item) => (
-              <div key={uuidv4()} className=" ">
-                <UserProfileModal id={item.userRef} />
-                <div className="d-flex justify-content-end  mt-3 ">
-                  <button
-                    onClick={() => handleReject(item.userRef)}
-                    className=" btn btn-sm bg-red-500 hover:bg-red-700 text-white  mr-4"
-                  >
-                    Reject
-                  </button>
-                  <button
-                    onClick={() => handleAccept(item.userRef)}
-                    className=" btn btn-sm bg-green-500 hover:bg-green-700 text-white "
-                  >
-                    Accept
-                  </button>
-                </div>
-              </div>
-            ))}
+      {requests.length === 0 ? (
+        <div>
+          <div className="topNavBar w-full mb-24">
+            <NavBar />
           </div>
-        )}
-      </div>
+          <div className="flex justify-center m-2">
+            <button onClick={handleClickRequest} className={btnColorRequest}>
+              Requests
+            </button>
+            <button onClick={handleClickInvite} className={btnColorInvite}>
+              Invitations
+            </button>
+          </div>
+          <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
+            <h2>
+              Sorry.. You do not have requests or invitations pending approval
+            </h2>
+          </div>
+        </div>
+      ) : type === "request" ? (
+        <div>
+          <div className="topNavBar w-full mb-24">
+            <NavBar />
+          </div>
+          <div className="flex justify-center m-2">
+            <button onClick={handleClickRequest} className={btnColorRequest}>
+              Requests
+            </button>
+            <button onClick={handleClickInvite} className={btnColorInvite}>
+              Invitations
+            </button>
+          </div>
+          <div className="card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
+            <h2>
+              You have requests to join the group you manage from the following
+              users:{" "}
+            </h2>
+            {handleRequestList}
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div className="topNavBar w-full mb-24">
+            <NavBar />
+          </div>
+          <div className="flex justify-center m-2">
+            <button onClick={handleClickRequest} className={btnColorRequest}>
+              Requests
+            </button>
+            <button onClick={handleClickInvite} className={btnColorInvite}>
+              Invitations
+            </button>
+          </div>
+          <div className="card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
+            <h2>Groups whose admin asked you to join them: </h2>
+            {handleInvitationsList}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

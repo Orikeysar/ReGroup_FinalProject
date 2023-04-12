@@ -125,12 +125,16 @@ function MyGroupPage() {
   const ShowManagerGroup = () => {
     let { managerGroup, participantGroup } = useFindMyGroups();
     if (managerGroup == null) {
-      return "Yoy Dont have any group you manager in!";
+      return (
+        <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
+            <h2>Sorry... you are not managing a group right now. You can create a group and invite people to get started.</h2>
+          </div>
+      )
     }
     return (
-      <div className="col-md-4 animated fadeIn">
+      <div className=" col-md-4 animated fadeIn">
         <div
-          className="card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden"
+          className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden"
           key={managerGroup.managerRef}
         >
           <p className="flex mt-1 justify-end">
@@ -251,10 +255,14 @@ function MyGroupPage() {
   const ShowParticipantGroup = () => {
     let { managerGroup, participantGroup } = useFindMyGroups();
     if (participantGroup == null) {
-      return "Yoy Dont have any group you paticipant in!";
+      return (
+        <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
+            <h2>Sorry... you don't participate in groups. You can send a request to join or create a group and share with others.</h2>
+          </div>
+      )
     }
     return (
-      <div className="col-lg-4 col-md-6 col-sm-12 animated fadeIn ">
+      <div className="shadow-md col-lg-4 col-md-6 col-sm-12 animated fadeIn ">
         <div
           className="card w-full h-full m-2 p-2 border border-stone-400 overflow-hidden"
           key={participantGroup.managerRef}

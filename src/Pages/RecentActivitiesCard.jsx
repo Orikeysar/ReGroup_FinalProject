@@ -19,9 +19,9 @@ function RecentActivitiesCard() {
   //מערכים להפרדה בין מה שבטייפ כללי ומה שבטייפ קבוצות והצבעים של הכפתורים
   const [activitiesTypeGroups, setActivitiesTypeGroups] = useState([]);
   const [activitiesTypeGeneral, setActivitiesTypeGeneral] = useState([]);
-  const [btnColorGeneral, setBtnColorGeneral] = useState("btn m-2 text-sm ");
+  const [btnColorGeneral, setBtnColorGeneral] = useState("btn m-2 text-sm shadow-md");
   const [btnColorGroups, setBtnColorGroups] = useState(
-    "btn m-2 text-sm  text-black glass"
+    "btn m-2 text-sm  text-black glass shadow-md"
   );
   //ברירת מחדל יופיעו הכללי קודם
   const [type, setType] = useState("General");
@@ -82,13 +82,13 @@ function RecentActivitiesCard() {
 
   //משנה את הצבע בחירה ומעביר אותך למערך הרלוונטי
   const handleClickGeneral = () => {
-    setBtnColorGroups("btn m-2 text-sm glass text-black");
-    setBtnColorGeneral("btn m-2");
+    setBtnColorGroups("btn m-2 text-sm glass text-black shadow-md");
+    setBtnColorGeneral("btn m-2 shadow-md");
     setType("General");
   };
   const handleClickGroups = () => {
-    setBtnColorGroups("btn m-2 ");
-    setBtnColorGeneral("btn m-2 text-sm glass text-black");
+    setBtnColorGroups("btn m-2 shadow-md");
+    setBtnColorGeneral("btn m-2 text-sm glass text-black shadow-md");
     setType("Groups");
   };
   //הפונקציה מקבלת את המערך של הקבוצות ומרנדרת אובייקט אובייקט לתוך הרשימה
@@ -155,10 +155,9 @@ function RecentActivitiesCard() {
           </button>
         </div>
         <div className=" justify-center m-10">
-          <p className=" font-bold text-xl">
-            {" "}
-            There are no recent activities yet
-          </p>
+        <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
+            <h2>Hello! You currently have no recent activities, you are welcome to start creating groups or participate and here you can see the history of all your actions.</h2>
+          </div>
         </div>
         <CreateGroupButton />
       </div>
