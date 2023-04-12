@@ -91,23 +91,18 @@ function JoinGroupCard({ group }) {
     }
     localStorage.setItem("isSend", group.managerRef);
     const user = {
-      email: user.email,
-      name: user.name,
-      userImg: user.userImg,
-      userRef: user.userRef,
+      email: activeUser.email,
+      name: activeUser.name,
+      userImg: activeUser.userImg,
+      userRef: activeUser.userRef,
       groupRef: group.id,
     };
     const docRef = doc(db, "users", group.managerRef);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       let data = docSnap.data();
-      let newRequest = data.groupParticipantsToApproval;
-      newRequest.push(user);
-      await updateDoc(docRef, {
-        groupParticipantsToApproval: newRequest,
-      });
-      activeUser.groupParticipantsToApproval=newRequest;
-      localStorage.setItem("activeUser",activeUser)
+      data.groupParticipantsToApproval.push(user);
+      await setDoc(doc(db, "users", group.managerRef), data);
       const docRefToken = doc(db, "fcmTokens", group.managerRef);
       const docSnapToken = await getDoc(docRefToken);
       if (docSnapToken.exists()) {
@@ -150,6 +145,8 @@ function JoinGroupCard({ group }) {
     } else {
       toast.error("User not found. Please try again later");
     }
+    toast.success("Request was sended to the manager")
+    setBtnStatus(true);
   };
 
   const handleLeaveGroup = async (group) => {
@@ -248,8 +245,8 @@ function JoinGroupCard({ group }) {
           </div>
         </div>
         <div className="ml-auto mt-3 lg:mt-0">
-          {localStorage.setItem("isSend", group.managerRef) ===
-          group.managerRef ? (
+          {localStorage.getItem("isSend") ===group.managerRef?
+            (
             <div className=" justify-center">
               <button disabled={true} className="btn btn-sm ml-auto">
                 Sended

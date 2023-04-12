@@ -9,7 +9,7 @@ import UserScoreCalculate from "../Coponents/UserScoreCalculate";
 import { uuidv4 } from "@firebase/util";
 
 function RequestsToGroups() {
-  const [activeUser, setactiveUser] = useState(() => {
+  const [activeUser, setActiveUser] = useState(() => {
     try {
       const user = JSON.parse(localStorage.getItem("activeUser"));
       return user;
@@ -27,7 +27,7 @@ function RequestsToGroups() {
     const unsubscribe = onSnapshot(docRef, (doc) => {
       const userData = doc.data();
       // Update the activeUser state and localStorage with the new data
-      setactiveUser(userData);
+      setActiveUser(userData);
       localStorage.setItem("activeUser", JSON.stringify(userData));
     });
     // Unsubscribe from the snapshot listener when the component unmounts
@@ -40,7 +40,7 @@ function RequestsToGroups() {
     const updatedRequests = requests.filter((item) => item.userRef !== id);
     requests=updatedRequests;
     activeUser.groupParticipantsToApproval = updatedRequests;
-    setactiveUser(activeUser);
+    setActiveUser(activeUser);
     console.log(activeUser)
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
     const docRef = doc(db, "users", activeUser.userRef);
@@ -122,7 +122,7 @@ function RequestsToGroups() {
     const updatedRequests = requests.filter((item) => item.userRef !== id);
     requests=updatedRequests;
     activeUser.groupParticipantsToApproval = updatedRequests;
-    setactiveUser(activeUser);
+    setActiveUser(activeUser);
     console.log(activeUser)
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
     const docRef = doc(db, "users", activeUser.userRef);

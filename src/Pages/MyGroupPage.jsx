@@ -14,6 +14,7 @@ import {
   collection,
   query,
   where,
+  onSnapshot,
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
@@ -47,6 +48,18 @@ function MyGroupPage() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+  //בודקת עידכון בזמן אמת במשתמש ומעדכנת את הלוקאל אם יש
+  useEffect(() => {
+    const docRef = doc(db, "users", activeUser.userRef);
+    const unsubscribe = onSnapshot(docRef, (doc) => {
+      const userData = doc.data();
+      // Update the activeUser state and localStorage with the new data
+      setActiveUser(userData);
+      localStorage.setItem("activeUser", JSON.stringify(userData));
+    });
+    // Unsubscribe from the snapshot listener when the component unmounts
+    return unsubscribe;
+  }, []);
   //מאתחל משתנים שקשורים למודל בעת לחיצה על משתתף בקבוצה
   const [visible, setVisible] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
