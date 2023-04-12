@@ -30,7 +30,6 @@ function UserProfileModal({ id }) {
         setBtnStatus("add");
       }
     });
-
   };
   //משיכת המשתמש מהדאטה
 
@@ -109,8 +108,8 @@ function UserProfileModal({ id }) {
             toast.success(
               "congrats ! you send " + newFriend.name + " friend requst"
             );
-            setBtnStatus("wait")
-            
+            setBtnStatus("wait");
+
             localStorage.setItem("activeUser", JSON.stringify(activeUser));
           });
         })
@@ -195,31 +194,30 @@ function UserProfileModal({ id }) {
             </div>
           ))}
           <div className=" ml-auto justify-end col-span-1 mt-4">
-          {btnStatus==="remove" ? (
-            <button
-              onClick={handleRemoveFriend}
-              className="btn btn-sm bg-red-600 mt-3 justify-self-end"
-            >
-              Remove friend
-            </button>
-          ) :btnStatus==="add" ? (
-            <button
-              onClick={handleAddFriend}
-              className="btn btn-sm mt-3 justify-self-end"
-              disabled={id === activeUser.userRef ? true : false}
-            >
-              send request
-            </button>
-          ):btnStatus==="wait"(
-<button
-              className="btn btn-sm mt-3 justify-self-end"
-              disabled={true}
-            >
-              request send
-            </button>
-          )
-          }
-        </div>
+            {btnStatus === "remove" ? (
+              <button
+                onClick={handleRemoveFriend}
+                className="btn btn-sm bg-red-600 mt-3 justify-self-end"
+              >
+                Remove friend
+              </button>
+            ) : btnStatus === "add" ? (
+              <button
+                onClick={handleAddFriend}
+                className="btn btn-sm mt-3 justify-self-end"
+                disabled={id === activeUser.userRef ? true : false}
+              >
+                send request
+              </button>
+            ) : (
+              <button
+                className="btn btn-sm mt-3 justify-self-end"
+                disabled={true}
+              >
+                request sended
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

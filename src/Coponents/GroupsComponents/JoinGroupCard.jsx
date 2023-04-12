@@ -183,7 +183,7 @@ function JoinGroupCard({ group }) {
 
   let btn2 = false;
   return (
-    <div className=" w-auto shadow-md card h-46 m-2 p-2 border border-stone-400 overflow-hidden max-w-full">
+    <div className=" w-auto  card h-46 m-2 p-2  overflow-hidden max-w-full">
       <p className=" flex mt-1 justify-end ">
         {handleGroupTime(group.timeStamp)}
       </p>
