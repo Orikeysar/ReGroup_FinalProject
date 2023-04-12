@@ -30,7 +30,6 @@ function UserProfileModal({ id }) {
         setBtnStatus("add");
       }
     });
-
   };
   //משיכת המשתמש מהדאטה
 
@@ -109,8 +108,8 @@ function UserProfileModal({ id }) {
             toast.success(
               "congrats ! you send " + newFriend.name + " friend requst"
             );
-            setBtnStatus("wait")
-            
+            setBtnStatus("wait");
+
             localStorage.setItem("activeUser", JSON.stringify(activeUser));
           });
         })
@@ -195,6 +194,7 @@ function UserProfileModal({ id }) {
             </div>
           ))}
           <div className=" ml-auto justify-end col-span-1 mt-4">
+
           {btnStatus==="remove" ? (
             <button
               onClick={handleRemoveFriend}
@@ -220,6 +220,7 @@ function UserProfileModal({ id }) {
           )
           }
         </div>
+
         </div>
       </div>
     </div>
