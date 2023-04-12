@@ -109,8 +109,8 @@ function AddGroup() {
       participants: [...value],
     });
   };
-  //הפונקציה מכניסה את הקבוצה לדאטה בייס
-  const CreateNewGroup = async () => {
+  //הפונקציה בודקת את הקבוצה לדאטה בייס
+  const CheckBeforeCreateNewGroup = async () => {
     // //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
     // let { managerGroup, participantGroup } = useFindMyGroups();
     let groupId = null;
@@ -171,7 +171,8 @@ function AddGroup() {
           navigate("/myGroups");
         }
       } else {
-        CreateNewEditedGroup();
+        //במידה ואין למשתמש קבוצה שהוא מנהל
+        CreateNewGroup();
       }
     }
   };
@@ -257,11 +258,19 @@ function AddGroup() {
       });
   };
   //פותח קבוצה חדשה עם מספר סידור חדש
-  const CreateNewEditedGroup = async () => {
+  const CreateNewGroup = async () => {
     const now = new Date();
     const [hours, minutes] = newGroup.timeStamp.split(":");
     now.setHours(hours, minutes, 0, 0);
     const geoPoint = new GeoPoint(cordinates.lat, cordinates.lng);
+    let groupParticipants = []
+    groupParticipants.push({
+      name: activeUser.name,
+      userImg: activeUser.userImg,
+      userRef: activeUser.userRef,
+      email: activeUser.email,
+    });
+
     //SET USER new group
     await setDoc(doc(db, "activeGroups", uuidv4()), {
       groupTittle: selectedCourse,
@@ -273,7 +282,7 @@ function AddGroup() {
       managerRef: activeUser.userRef,
       address: newGroup.address,
       description: newGroup.description,
-      participants: newGroup.participants,
+      participants: groupParticipants,
       timeStamp: Timestamp.fromDate(
         new Date(
           now.getFullYear(),
@@ -315,10 +324,10 @@ function AddGroup() {
         setFillteredGroupShow(true);
       } else {
         setFillteredGroupShow(false);
-        CreateNewGroup();
+        CheckBeforeCreateNewGroup();
       }
     } else {
-      CreateNewGroup();
+      CheckBeforeCreateNewGroup();
     }
   };
 

@@ -5,8 +5,6 @@ import { Avatar } from "primereact/avatar";
 import { toast } from "react-toastify";
 import { uuidv4 } from "@firebase/util";
 import Rating from "@mui/material/Rating";
-import UpdateRecentActivities from "../UpdateRecentActivities";
-import UserScoreCalculate from "../UserScoreCalculate";
 import { saveMessagingDeviceToken } from "../../messaging";
 import { onButtonClick } from "../../FirebaseSDK";
 function UserProfileModal({ id }) {
@@ -14,14 +12,25 @@ function UserProfileModal({ id }) {
     JSON.parse(localStorage.getItem("activeUser"))
   );
 
-  const [btnStatus, setBtnStatus] = useState(false);
+  const [btnStatus, setBtnStatus] = useState("add");
   //בדיקה האם הם כבר חברים ושינוי הכפתור בהתאם
   const handleBtnStatus = () => {
     activeUser.friendsList.forEach((friend) => {
       if (friend.userRef === id) {
-        setBtnStatus(true);
+        setBtnStatus("remove");
       }
     });
+    activeUser.friendsWaitingToAcceptByAnotherUser.forEach((friend) => {
+      if (friend.userRef === id) {
+        setBtnStatus("wait");
+      }
+    });
+    activeUser.friendsListToAccept.forEach((friend) => {
+      if (friend.userRef === id) {
+        setBtnStatus("add");
+      }
+    });
+
   };
   //משיכת המשתמש מהדאטה
 
@@ -100,13 +109,8 @@ function UserProfileModal({ id }) {
             toast.success(
               "congrats ! you send " + newFriend.name + " friend requst"
             );
-            // setBtnStatus(true)
-            UpdateRecentActivities(newFriend, "friend", activeUser);
-            let achiev = activeUser.userAchievements.filter(
-              (element) => element.name === "Community Member"
-            );
-            let item = achiev[0];
-            UserScoreCalculate(item, "friend", activeUser);
+            setBtnStatus("wait")
+            
             localStorage.setItem("activeUser", JSON.stringify(activeUser));
           });
         })
@@ -143,7 +147,7 @@ function UserProfileModal({ id }) {
             friendsList: user.friendsList,
           }).then(() => {
             toast.success("Done successfully");
-            setBtnStatus(false);
+            setBtnStatus("add");
             localStorage.setItem("activeUser", JSON.stringify(activeUser));
           });
         })
@@ -191,14 +195,14 @@ function UserProfileModal({ id }) {
             </div>
           ))}
           <div className=" ml-auto justify-end col-span-1 mt-4">
-          {btnStatus ? (
+          {btnStatus==="remove" ? (
             <button
               onClick={handleRemoveFriend}
               className="btn btn-sm bg-red-600 mt-3 justify-self-end"
             >
               Remove friend
             </button>
-          ) : (
+          ) :btnStatus==="add" ? (
             <button
               onClick={handleAddFriend}
               className="btn btn-sm mt-3 justify-self-end"
@@ -206,7 +210,15 @@ function UserProfileModal({ id }) {
             >
               send request
             </button>
-          )}
+          ):btnStatus==="wait"(
+<button
+              className="btn btn-sm mt-3 justify-self-end"
+              disabled={true}
+            >
+              request send
+            </button>
+          )
+          }
         </div>
         </div>
       </div>

@@ -8,7 +8,11 @@ import UserProfileModal from "./profileComponents/UserProfileModal";
 import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import UpdateRecentActivities from "./UpdateRecentActivities";
+import UserScoreCalculate from "./UserScoreCalculate";
 function FriendRequestCard() {
+  const navigate = useNavigate();
   //array for frinds
   const [reaustFriends, setReaustFriends] = useState([]);
   const [anotherUser, setAnotherUser] = useState(null);
@@ -99,14 +103,18 @@ function FriendRequestCard() {
           friendsWaitingToAcceptByAnotherUser:
             anotherUser.friendsWaitingToAcceptByAnotherUser,
         }).then(() => {
-
-
-
-
-
+          UpdateRecentActivities(newFriend, "friend", activeUser);
+          UpdateRecentActivities(newFriend, "friend", id);
+          let achiev = activeUser.userAchievements.filter(
+            (element) => element.name === "Community Member"
+          );
+          let item = achiev[0];
+          UserScoreCalculate(item, "friend", activeUser);
+          UserScoreCalculate(item, "friend", id);
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success("you accept firend success");
           window.location.reload();
+          navigate("/myFriends")
         });
       });
     } else {
@@ -146,6 +154,7 @@ function FriendRequestCard() {
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success("delete from request list success");
           window.location.reload();
+           navigate("/myFriends")
         });
       });
     } else {

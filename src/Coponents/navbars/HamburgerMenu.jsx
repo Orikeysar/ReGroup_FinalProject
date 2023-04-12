@@ -199,11 +199,11 @@ function HamburgerMenu() {
 
     </ul>
   </li>
-  <li className="mb-2" onClick={onLogout}>
+  <li className="mb-1" onClick={onLogout}>
     <p className="btn btn-ghost w-full">Log Out</p>
   </li>
 </ul>
-
+<p className="border-t-2 border-gray-300"> &copy; Ori Keysar & Gal Binyamin {new Date().getFullYear()}</p>
       </div>
       
     </>
