@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
-import { Dialog } from "primereact/dialog";
-import UserAchievemeant from "../../Pages/UserAchievemeant";
-import Top10Modal from "../top10Components/Top10Modal";
-import Top10ModalCard from "../top10Components/Top10ModalCard";
-
+import Logo from "../../asset/ReGroupIcon.png";
 function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeUser, setactiveUser] = useState(() => {
@@ -17,7 +13,11 @@ function HamburgerMenu() {
   const handleClick = () => {
     setIsOpen(!isOpen);
   };
-
+  //לחיצה על הלוגו
+  const handleLogoClick = () => {
+    localStorage.setItem("componentChoosen", "UserAchievemeant");
+    navigate("/");
+  };
   //navigate
   const auth = getAuth();
   const [value, setValue] = useState(localStorage.getItem("componentChoosen"));
@@ -89,7 +89,16 @@ function HamburgerMenu() {
           isOpen ? "transform translate-x-0" : "transform -translate-x-full"
         }`}
       >
-        <ul className="p-4 mt-10">
+        <ul className="p-4 mt-4">
+          <li className="mb-2 border-b-2 border-gray-300">
+          <div className="navbar-center"><img
+            src={Logo}
+            alt=""
+            className="btn btn-ghost left-0 normal-case w-40   "
+            onClick={handleLogoClick}
+          ></img>
+          </div>
+          </li>
   <li>
     <p className="font-semibold">Profile</p>
     <ul>
@@ -148,7 +157,7 @@ function HamburgerMenu() {
     </ul>
   </li>
   <li>
-    <p className="font-semibold border-t-2 border-gray-300 pt-5">Groups</p>
+    <p className="font-semibold border-t-2 border-gray-300 pt-3">Groups</p>
     <ul>
       <li>
         <p
@@ -199,8 +208,8 @@ function HamburgerMenu() {
 
     </ul>
   </li>
-  <li className="mb-1" onClick={onLogout}>
-    <p className="btn btn-ghost w-full">Log Out</p>
+  <li className="mb-1 border-t-2 border-gray-300" onClick={onLogout}>
+    <p className="btn btn-ghost w-full bg-red-100 mt-2">Log Out</p>
   </li>
 </ul>
 <p className="border-t-2 border-gray-300"> &copy; Ori Keysar & Gal Binyamin {new Date().getFullYear()}</p>
