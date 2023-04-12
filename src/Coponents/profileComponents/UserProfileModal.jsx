@@ -210,12 +210,12 @@ function UserProfileModal({ id }) {
             >
               send request
             </button>
-          ):btnStatus==="wait"(
+          ):(
 <button
               className="btn btn-sm mt-3 justify-self-end"
               disabled={true}
             >
-              request send
+              request sended
             </button>
           )
           }
