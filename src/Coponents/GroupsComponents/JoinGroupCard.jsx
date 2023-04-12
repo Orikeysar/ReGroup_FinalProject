@@ -96,7 +96,7 @@ function JoinGroupCard({ group }) {
       userImg: activeUser.userImg,
       userRef: activeUser.userRef,
       managerRef: group.managerRef,
-      tye: "request"
+      type: "request"
     };
     const docRef = doc(db, "users", group.managerRef);
     const docSnap = await getDoc(docRef);

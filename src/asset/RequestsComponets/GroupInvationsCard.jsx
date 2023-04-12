@@ -16,15 +16,15 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
-import UserProfileModal from "../profileComponents/UserProfileModal";
+import UserProfileModal from "../../Coponents/profileComponents/UserProfileModal";
 import { Dialog } from "primereact/dialog";
 import useFindMyGroups from "../../Hooks/useFindMyGroups";
-import UpdateRecentActivities from "../UpdateRecentActivities";
+import UpdateRecentActivities from "../../Coponents/UpdateRecentActivities";
 import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import { useNavigate } from "react-router-dom";
 import { TrendingUpRounded } from "@mui/icons-material";
-import UserScoreCalculate from "../UserScoreCalculate";
+import UserScoreCalculate from "../../Coponents/UserScoreCalculate";
 import { FaCircle } from "react-icons/fa";
 
 function GroupInvationsCard({ group }) {
@@ -96,7 +96,7 @@ function GroupInvationsCard({ group }) {
       userImg: activeUser.userImg,
       userRef: activeUser.userRef,
       managerRef: group.managerRef,
-      tye: "request"
+      tye: "request",
     };
     const docRef = doc(db, "users", group.managerRef);
     const docSnap = await getDoc(docRef);
@@ -141,12 +141,11 @@ function GroupInvationsCard({ group }) {
           .then((data) => console.log(data))
           .then("Request sended")
           .catch((error) => console.error(error));
-
       }
     } else {
       toast.error("User not found. Please try again later");
     }
-    toast.success("Request was sended to the manager")
+    toast.success("Request was sended to the manager");
     setBtnStatus(true);
   };
 
