@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
+const fetch = require("node-fetch");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
 const express = require("express");
@@ -152,48 +153,89 @@ exports.sendMailOverHTTP = functions.https.onRequest((req, res) => {
 });
 // send messages 5 min before start group
 const db = admin.firestore();
-exports.sendFCMNotification = functions.pubsub.schedule("every 3 minutes")
+exports.FCMNotification5MinGroup = functions.pubsub.schedule("every 3 minutes")
     .onRun(async (context) => {
       const activeGroupsRef = db.collection("activeGroups");
+      // בודק את הזמן עכשיו ובעוד 5 דק
       const now = new Date();
       const fiveMinutesLater = new Date(now.getTime() + 5 * 60 * 1000);
       const activeGroupsSnapshot = await activeGroupsRef.get();
-      console.log("fiveMinutesLater: "+fiveMinutesLater);
-      console.log("now: "+now);
       activeGroupsSnapshot.forEach(async (doc) => {
-        console.log("doc.data(): "+JSON.stringify(doc.data()));
         const group = doc.data();
         const timeStamp = doc.data().timeStamp;
         const timestampDate = new Date(
             timeStamp._seconds * 1000 + timeStamp._nanoseconds / 1000000);
-        console.log("timestampDate: "+timestampDate);
+        // בודק אם הקבוצה נמצאת בטווח 5 דק מעכשיו
         if (timestampDate >= now && timestampDate < fiveMinutesLater) {
           const participants = doc.data().participants;
-          console.log("participants: "+ JSON.stringify(participants));
           for (const participant of participants) {
-            console.log("participant: "+ JSON.stringify(participant));
             const docRefToken = db.doc(`fcmTokens/${participant.userRef}`);
             const docSnapToken = await docRefToken.get();
             const data = docSnapToken.data();
+            // אם קיים שולח למנהל הודעה שונה מהשאר
             if (data) {
-              const token = data.fcmToken;
-              console.log("token: "+token);
-              const title = "Reminder";
-              const message = "In a few minutes we start to learn "+group;
-              const payload = {
-                token,
-                notification: {
-                  title: title,
-                  body: message,
-                },
-              };
-              admin.messaging().send(payload).then((response) => {
-                // Response is a message ID string.
-                functions.logger.log("Successfully sent message: ", response);
-              }).catch((error) => {
-                functions.logger.log("error: ", error);
-              });
-              // Call alertGroupEdited Cloud Function
+              if (participant.userRef===group.managerRef) {
+                const token = data.fcmToken;
+                const title = "Reminder";
+                const message = "In a few minutes your "+
+                JSON.stringify(group.groupTittle)+
+                " group is meat up"+
+                ". If you participate in another group,"+
+                " you will be removed.";
+                const payload = {
+                  token,
+                  notification: {
+                    title: title,
+                    body: message,
+                  },
+                };
+                admin.messaging().send(payload).then((response) => {
+                  functions.logger.log("Successfully sent message: ", response);
+                }).catch((error) => {
+                  functions.logger.log("error: ", error);
+                });
+              } else {
+                const token = data.fcmToken;
+                const title = "Reminder";
+                const message = "In a few minutes we start to learn "+
+                JSON.stringify(group.groupTittle);
+                const payload = {
+                  token,
+                  notification: {
+                    title: title,
+                    body: message,
+                  },
+                };
+                admin.messaging().send(payload).then((response) => {
+                  functions.logger.log("Successfully sent message: ", response);
+                }).catch((error) => {
+                  functions.logger.log("error: ", error);
+                });
+              }
+            }
+            if (participant.userRef===group.managerRef) {
+              fetch(
+                  "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      subject: `Reminder`,
+                      email: JSON.stringify(participant.email),
+                      message: "In a few minutes your "+
+                      JSON.stringify(group.groupTittle)+
+                      " group is meat up"+
+                      ". If you participate as a member of another group,"+
+                      " you will be removed. "+
+                      ". you can see here the details here : https://regroup-a4654.web.app/myGroups",
+                    }),
+                  },
+              )
+                  .then((response) => response.text())
+                  .then((data) => console.log(data))
+                  .catch((error) => console.error(error));
             } else {
               fetch(
                   "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
@@ -203,9 +245,10 @@ exports.sendFCMNotification = functions.pubsub.schedule("every 3 minutes")
                       "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                      subject: `ReGroup`,
-                      email: participant.email,
-                      message: "In a few minutes we start to learn "+group+
+                      subject: `Reminder`,
+                      email: JSON.stringify(participant.email),
+                      message: "In a few minutes we start to learn "+
+                      JSON.stringify(group.groupTittle)+
                       ". you can see here the details here : https://regroup-a4654.web.app/myGroups",
                     }),
                   },
