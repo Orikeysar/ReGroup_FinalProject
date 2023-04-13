@@ -32,8 +32,7 @@ function RequestList({ requestList }) {
   });
 
   let { managerGroup, participantGroup } = useFindMyGroups();
-  if (managerGroup) {
-  }
+
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
   const handleAccept = async (anotherUserRef) => {
     //שולף מהרשימה את המשתמש שאישרתי
@@ -111,7 +110,7 @@ function RequestList({ requestList }) {
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
-    navigate("/myGroups");
+    window.location.reload();
   };
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה
 
@@ -164,6 +163,8 @@ function RequestList({ requestList }) {
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
+    window.location.reload();
+
   };
   return (
     <div>
@@ -203,6 +204,7 @@ function RequestList({ requestList }) {
         </div>
       ))}
     </div>
+
   );
 }
 

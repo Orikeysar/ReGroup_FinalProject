@@ -17,8 +17,12 @@ import { toast } from "react-toastify";
 import UserScoreCalculate from "../../Coponents/UserScoreCalculate";
 import { uuidv4 } from "@firebase/util";
 import GroupInvationsCard from "./GroupInvationsCard";
+import { useNavigate } from "react-router-dom";
+import { useFindMyGroups } from "../../Hooks/useFindMyGroups";
 
-function InvitationList({invitationList}) {
+function InvitationList({ invitationList }) {
+  const navigate = useNavigate();
+
   const [activeUser, setActiveUser] = useState(() => {
     try {
       const active = JSON.parse(localStorage.getItem("activeUser"));
@@ -28,63 +32,56 @@ function InvitationList({invitationList}) {
       return null; // or some default value
     }
   });
+
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
-  const handleAccept = async (id) => {
-    const user = invitationList.filter((item) => item.userRef === id);
+  const handleAccept = async (anotherUser) => {
     const updatedinvitationList = invitationList.filter(
-      (item) => item.userRef !== id
+      (item) => item.userRef !== anotherUser.userRef
     );
     invitationList = updatedinvitationList;
     activeUser.groupParticipantsToApproval = updatedinvitationList;
-    setActiveUser(activeUser);
-    console.log(activeUser);
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
     const docRef = doc(db, "users", activeUser.userRef);
-
     await updateDoc(docRef, {
-      groupParticipantsToApproval: invitationList,
+      groupParticipantsToApproval: activeUser.groupParticipantsToApproval,
     });
     let updateUser = {
-      email: user[0].email,
-      name: user[0].name,
-      userImg: user[0].userImg,
-      userRef: user[0].userRef,
+      email: activeUser.email,
+      name: activeUser.name,
+      userImg: activeUser.userImg,
+      userRef: activeUser.userRef,
     };
-    const q = query(
-      collection(db, "activeGroups"),
-      where("managerRef", "==", activeUser.userRef)
-    );
-    const querySnapshot = await getDocs(q);
-    querySnapshot
-      .forEach(async (doc) => {
-        let data = doc.data();
-        data.participants.push(updateUser);
-        await setDoc(doc(db, "activeGroups", doc.id), data);
-      })
+    const docGroupRef = doc(db, "activeGroups", anotherUser.groupRef);
+    const docGroupSnap = await getDoc(docGroupRef);
+    if (docGroupSnap.exists()) {
+      let data = docGroupSnap.data();
+      data.participants.push(updateUser);
+      await setDoc(doc(db, "activeGroups", anotherUser.groupRef), data)
+      //מעדכן את ההישגים של המשתמש שהצטרף
+        .then(async () => {
+          const docRef2 = doc(db, "users", activeUser.userRef);
+          const docSnap2 = await getDoc(docRef2);
+          const userAchiev = docSnap2.data();
+          let achiev = userAchiev.userAchievements.filter(
+            (element) => element.name === "Joined Groups"
+          );
+          let item = achiev[0];
+          UserScoreCalculate(item, "JoinedGroup", userAchiev);
+          toast.success("Join successfully!");
+        })
+        .catch((error) => {
+          toast.error("An error occurred. Please try again.");
+        });
+    }
 
-      .then(async () => {
-        const docRef2 = doc(db, "users", id);
-        const docSnap2 = await getDoc(docRef2);
-        const userAchiev = docSnap2.data();
-        let achiev = userAchiev.userAchievements.filter(
-          (element) => element.name === "Joined Groups"
-        );
-        let item = achiev[0];
-        UserScoreCalculate(item, "JoinedGroup", userAchiev);
-        toast.success("Join successfully!");
-        localStorage.setItem("isSend", "");
-      })
-      .catch((error) => {
-        toast.error("An error occurred. Please try again.");
-      });
     //שולח הודעת פוש ואם אין אישור אז מייל
-    const docRefToken = doc(db, "fcmTokens", id);
+    const docRefToken = doc(db, "fcmTokens", anotherUser.userRef);
     const docSnapToken = await getDoc(docRefToken);
     if (docSnapToken.exists()) {
       const data = docSnapToken.data();
       const token = data.fcmToken;
-      const title = "Group Request Accepted !";
-      const message = " You requeste to join to the group accepted ";
+      const title = "Group invitantion Accepted !";
+      const message = " Your invitation to the group has been confirmed by "+activeUser.name;
       const alert = {
         token: token,
         title: title,
@@ -101,10 +98,10 @@ function InvitationList({invitationList}) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            subject: `Group Request Accepted !`,
-            email: user[0].email,
+            subject: `Group invitantion Accepted !`,
+            email: anotherUser.email,
             message:
-              " Your request to join to the group was accepted by " +
+              " Your invitation to the group has been confirmed by " +
               activeUser.name +
               ". you can see here the details here : https://regroup-a4654.web.app/myGroups",
           }),
@@ -114,26 +111,23 @@ function InvitationList({invitationList}) {
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
+    window.location.reload();
   };
-  //הפונקציה מוחקת את הבקשה של היוזר מהדאטה
 
-  const handleReject = async (id) => {
-    const user = invitationList.filter((item) => item.userRef === id);
+  //הפונקציה מוחקת את הבקשה של היוזר מהדאטה
+  const handleReject = async (anotherUser) => {
     const updatedinvitationList = invitationList.filter(
-      (item) => item.userRef !== id
+      (item) => item.userRef !== anotherUser.userRef
     );
     invitationList = updatedinvitationList;
     activeUser.groupParticipantsToApproval = updatedinvitationList;
-    setActiveUser(activeUser);
-    console.log(activeUser);
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
     const docRef = doc(db, "users", activeUser.userRef);
     await updateDoc(docRef, {
       groupParticipantsToApproval: invitationList,
     });
-    localStorage.setItem("isSend", "");
     //שולח הודעת פוש ואם אין אישור אז מייל
-    const docRefToken = doc(db, "fcmTokens", id);
+    const docRefToken = doc(db, "fcmTokens", anotherUser.userRef);
     const docSnapToken = await getDoc(docRefToken);
     if (docSnapToken.exists()) {
       const data = docSnapToken.data();
@@ -157,7 +151,7 @@ function InvitationList({invitationList}) {
           },
           body: JSON.stringify({
             subject: `Rejected`,
-            email: user[0].email,
+            email: anotherUser.email,
             message: " Your request to join to the group rejected",
           }),
         }
@@ -167,32 +161,30 @@ function InvitationList({invitationList}) {
         .catch((error) => console.error(error));
     }
   };
-  const renderGroupInvation = async (managerRef) => {
-    const q = query(
-      collection(db, "activeGroups"),
-      where("managerRef", "==", managerRef)
-    );
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(async (doc) => {
-      let data = doc.data();
+  //מרנדר את הקבוצה שהמנהל שלה רוצה שתצטרף אלייה
+  const renderGroupInvation = async (groupRef) => {
+    const docGroupRef = doc(db, "activeGroups", groupRef);
+    const docGroupSnap = await getDoc(docGroupRef);
+    if (docGroupSnap.exists()) {
+      let data = docGroupSnap.data();
       return <GroupInvationsCard group={data} />;
-    });
+    }
   };
   return (
     <>
       {invitationList.map((item) =>
         item.type === "invite" ? (
           <div key={uuidv4()} className=" ">
-            {renderGroupInvation(item.managerRef)}
+            {renderGroupInvation(item.groupRef)}
             <div className="d-flex justify-content-end  mt-3 ">
               <button
-                onClick={() => handleReject(item.userRef)}
+                onClick={() => handleReject(item)}
                 className=" btn btn-sm bg-red-500 hover:bg-red-700 text-white  mr-4"
               >
                 Reject
               </button>
               <button
-                onClick={() => handleAccept(item.userRef)}
+                onClick={() => handleAccept(item)}
                 className=" btn btn-sm bg-green-500 hover:bg-green-700 text-white "
               >
                 Accept

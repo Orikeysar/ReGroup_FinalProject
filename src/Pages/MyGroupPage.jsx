@@ -260,9 +260,9 @@ function MyGroupPage() {
       )
     }
     return (
-      <div className="shadow-md col-lg-4 col-md-6 col-sm-12 animated fadeIn ">
+      <div className="col-lg-4 col-md-6 col-sm-12 animated fadeIn ">
         <div
-          className="card w-full h-full m-2 p-2 border border-stone-400 overflow-hidden"
+          className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden"
           key={participantGroup.managerRef}
         >
           <p className=" flex mt-1 justify-end ">
