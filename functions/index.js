@@ -150,3 +150,71 @@ exports.sendMailOverHTTP = functions.https.onRequest((req, res) => {
     );
   });
 });
+// send messages 5 min before start group
+const db = admin.firestore();
+exports.sendFCMNotification = functions.pubsub.schedule("every 3 minutes")
+    .onRun(async (context) => {
+      const activeGroupsRef = db.collection("activeGroups");
+      const now = new Date();
+      const fiveMinutesLater = new Date(now.getTime() + 5 * 60 * 1000);
+      const activeGroupsSnapshot = await activeGroupsRef.get();
+      console.log("fiveMinutesLater: "+fiveMinutesLater);
+      console.log("now: "+now);
+      activeGroupsSnapshot.forEach(async (doc) => {
+        console.log("doc.data(): "+JSON.stringify(doc.data()));
+        const group = doc.data();
+        const timeStamp = doc.data().timeStamp;
+        const timestampDate = new Date(
+            timeStamp._seconds * 1000 + timeStamp._nanoseconds / 1000000);
+        console.log("timestampDate: "+timestampDate);
+        if (timestampDate >= now && timestampDate < fiveMinutesLater) {
+          const participants = doc.data().participants;
+          console.log("participants: "+ JSON.stringify(participants));
+          for (const participant of participants) {
+            console.log("participant: "+ JSON.stringify(participant));
+            const docRefToken = db.doc(`fcmTokens/${participant.userRef}`);
+            const docSnapToken = await docRefToken.get();
+            const data = docSnapToken.data();
+            if (data) {
+              const token = data.fcmToken;
+              console.log("token: "+token);
+              const title = "Reminder";
+              const message = "In a few minutes we start to learn "+group;
+              const payload = {
+                token,
+                notification: {
+                  title: title,
+                  body: message,
+                },
+              };
+              admin.messaging().send(payload).then((response) => {
+                // Response is a message ID string.
+                functions.logger.log("Successfully sent message: ", response);
+              }).catch((error) => {
+                functions.logger.log("error: ", error);
+              });
+              // Call alertGroupEdited Cloud Function
+            } else {
+              fetch(
+                  "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      subject: `ReGroup`,
+                      email: participant.email,
+                      message: "In a few minutes we start to learn "+group+
+                      ". you can see here the details here : https://regroup-a4654.web.app/myGroups",
+                    }),
+                  },
+              )
+                  .then((response) => response.text())
+                  .then((data) => console.log(data))
+                  .catch((error) => console.error(error));
+            }
+          }
+        }
+      });
+    });
