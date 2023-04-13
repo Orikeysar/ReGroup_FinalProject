@@ -144,7 +144,7 @@ function HamburgerMenu() {
                     My Friends
                   </p>
                   {activeUser.friendsListToAccept.length > 0 && (
-                    <div className="mt-3 absolute top-0 right-0 bg-red-500 rounded-full h-6 w-6 flex items-center justify-start text-white text-xs">
+                    <div className="mt-3 absolute top-0 right-0 bg-red-500 rounded-full h-6 w-6 flex items-center justify-center text-white text-xs">
                       {activeUser.friendsListToAccept.length}
                     </div>
                   )}
@@ -215,7 +215,7 @@ function HamburgerMenu() {
                    Requests
                   </p>
                   {activeUser.groupParticipantsToApproval.length > 0 && (
-                    <div className="mt-3 absolute top-0 right-0 bg-red-500 rounded-full h-6 w-6 flex items-center justify-start text-white text-xs">
+                    <div className="mt-3 absolute top-0 right-0 bg-red-500 rounded-full h-6 w-6 flex items-center justify-center text-white text-xs">
                       {activeUser.groupParticipantsToApproval.length}
                     </div>
                   )}
