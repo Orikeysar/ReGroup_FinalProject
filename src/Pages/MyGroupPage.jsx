@@ -32,13 +32,14 @@ import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
 import { FaCircle } from "react-icons/fa";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
+import IconButton from "@mui/material/IconButton";
+import CancelIcon from "@mui/icons-material/Cancel";
 import "animate.css/animate.min.css";
 
 function MyGroupPage() {
   const navigate = useNavigate();
   const date = new Date();
 
- 
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
   //מושך מהלוקל את פרטי המשתמש המחובר
@@ -89,7 +90,7 @@ function MyGroupPage() {
         ? (time = "start at " + hours + ": 0" + minutes)
         : (time = hours + ":" + minutes);
       //יציג עיגול ירוק עם כיתוב של פתוח עם הזמן הגיע
-     
+
       if (hours > date.getHours()) {
         return time;
       } else if (hours === date.getHours() && minutes > date.getMinutes()) {
@@ -119,15 +120,54 @@ function MyGroupPage() {
     //מסנן את הקבוצות שלי לתוך המפה
     setFilteredGroups(filteredGroups);
   };
+
+  //מהנהל הקבוצה מוחק משתתף בקבוצה
+  const handlePaticipantDeleteFromManagerGroup = async (id) => {
+    console.log("delet participant", id);
+
+    let groupId = null;
+    let newParticipantsList = [];
+    managerGroup.participants.map((participant) => {
+      if (participant.userRef !== id) {
+        newParticipantsList.push(participant);
+      }
+    });
+
+    //בדיקה מה המספר סידורי של הקבוצה בה הוא משתתף
+    const q = query(
+      collection(db, "activeGroups"),
+      where("managerRef", "==", managerGroup.managerRef)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+
+      groupId = doc.id;
+      console.log(doc.id, " => ", doc.data());
+    });
+    //מעדכן את המשתתפים בקבוצה
+    const docRef = doc(db, "activeGroups", groupId);
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(docRef, {
+      participants: newParticipantsList,
+    });
+
+    navigate("/myGroups");
+    toast.success("paticipant delete from group");
+  };
+
   //הצגת הקבוצה בה המשתמש מנהל כרגע
   const ShowManagerGroup = () => {
     let { managerGroup, participantGroup } = useFindMyGroups();
     if (managerGroup == null) {
       return (
         <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
-            <h2>Sorry... you are not managing a group right now. You can create a group and invite people to get started.</h2>
-          </div>
-      )
+          <h2>
+            Sorry... you are not managing a group right now. You can create a
+            group and invite people to get started.
+          </h2>
+        </div>
+      );
     }
     return (
       <div className=" col-md-4 animated fadeIn">
@@ -174,23 +214,60 @@ function MyGroupPage() {
               </p>
               <div className="flex flex-wrap mt-2">
                 {managerGroup.participants.map((participants) => {
-                  return (
-                    <Chip
-                      key={uuidv4()}
-                      avatar={
-                        <Avatar
-                          size="small"
-                          shape="circle"
-                          image={participants.userImg}
-                        />
-                      }
-                      onClick={() => handleUserClick(participants.userRef)}
-                      color="success"
-                      className="mr-2 mt-2"
-                      variant="outlined"
-                      label={participants.name}
-                    />
-                  );
+                  if (participants.userRef === managerGroup.managerRef) {
+                    return (
+                      <Chip
+                        key={uuidv4()}
+                        avatar={
+                          <Avatar
+                            size="small"
+                            shape="circle"
+                            image={participants.userImg}
+                          />
+                        }
+                        onClick={() => handleUserClick(participants.userRef)}
+                        color="success"
+                        className="mr-2 mt-2"
+                        variant="outlined"
+                        label={participants.name}
+                      />
+                    );
+                  } else {
+                    return (
+                      <Chip
+                        key={uuidv4()}
+                        avatar={
+                          <Avatar
+                            size="small"
+                            shape="circle"
+                            image={participants.userImg}
+                            onClick={() =>
+                              handleUserClick(participants.userRef)
+                            }
+                          />
+                        }
+                        color="success"
+                        className="mr-2 mt-2"
+                        variant="outlined"
+                        label={participants.name}
+                        deleteIcon={
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            <CancelIcon fontSize="small" />
+                          </IconButton>
+                        }
+                        onDelete={() => {
+                          handlePaticipantDeleteFromManagerGroup(
+                            participants.userRef
+                          );
+                        }}
+                      />
+                    );
+                  }
                 })}
               </div>{" "}
               {visible && (
@@ -255,9 +332,12 @@ function MyGroupPage() {
     if (participantGroup == null) {
       return (
         <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
-            <h2>Sorry... you don't participate in groups. You can send a request to join or create a group and share with others.</h2>
-          </div>
-      )
+          <h2>
+            Sorry... you don't participate in groups. You can send a request to
+            join or create a group and share with others.
+          </h2>
+        </div>
+      );
     }
     return (
       <div className="col-lg-4 col-md-6 col-sm-12 animated fadeIn ">
@@ -407,7 +487,7 @@ function MyGroupPage() {
             timeStamp: now,
           };
           // activeUser.recentActivities.push(newGroupActiviteis);
-         
+
           //updat recent activites
           UpdateRecentActivities(
             newGroupActiviteis,

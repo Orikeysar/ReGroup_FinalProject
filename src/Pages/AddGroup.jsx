@@ -421,8 +421,7 @@ let groupDataTemp = {
       toast.success("Messages have been sent to users")
     } 
      
-  
-
+ 
   return (
     <div className="container  ">
       {/* //TOP NAVBAR */}
