@@ -223,11 +223,11 @@ function HamburgerMenu() {
               </li>
             </ul>
           </li>
-          <li className="mb-1 border-t-2 border-gray-300" onClick={onLogout}>
-            <p className="btn btn-ghost w-full bg-red-100 mt-2">Log Out</p>
+          <li className="mb-1 border-t-2 border-gray-300 justify-start" onClick={onLogout}>
+            <p className="btn btn-ghost w-full bg-red-100 mt-2 justify-start">Log Out</p>
           </li>
         </ul>
-        <p className="border-t-2 border-gray-300">
+        <p className="border-t-2 border-gray-300 justify-start">
           {" "}
           &copy; Ori Keysar & Gal Binyamin {new Date().getFullYear()}
         </p>

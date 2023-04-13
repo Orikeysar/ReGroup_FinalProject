@@ -106,7 +106,7 @@ function AddGroup() {
 
   //handle added
   const handleInviteFriendChange =  (event, value) => {
-    setFriendsInvited([...friendsInvited,value])
+    setFriendsInvited(value)
     }
   
   //מקבלת את רשימת החברים ומעדכנת בדאטה שלהם את הבקשה 
@@ -122,6 +122,7 @@ function AddGroup() {
           userRef: activeUser.userRef,
           email: activeUser.email,
           groupRef: groupRef,
+          gorupData: newGroup,
           type: "invite"
         };
         data.groupParticipantsToApproval.push(participant);

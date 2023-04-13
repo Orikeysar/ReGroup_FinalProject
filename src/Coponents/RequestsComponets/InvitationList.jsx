@@ -162,20 +162,13 @@ function InvitationList({ invitationList }) {
     }
   };
   //מרנדר את הקבוצה שהמנהל שלה רוצה שתצטרף אלייה
-  const renderGroupInvation = async (groupRef) => {
-    const docGroupRef = doc(db, "activeGroups", groupRef);
-    const docGroupSnap = await getDoc(docGroupRef);
-    if (docGroupSnap.exists()) {
-      let data = docGroupSnap.data();
-      return <GroupInvationsCard group={data} />;
-    }
-  };
+ 
   return (
     <>
       {invitationList.map((item) =>
         item.type === "invite" ? (
           <div key={uuidv4()} className=" ">
-            {renderGroupInvation(item.groupRef)}
+           <GroupInvationsCard groupData={item.groupData} />
             <div className="d-flex justify-content-end  mt-3 ">
               <button
                 onClick={() => handleReject(item)}

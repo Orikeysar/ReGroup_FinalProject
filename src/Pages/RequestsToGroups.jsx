@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { db } from "../FirebaseSDK";
 import { doc, onSnapshot } from "firebase/firestore";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
-import RequestList from "../asset/RequestsComponets/RequestList";
-import InvitationList from "../asset/RequestsComponets/InvitationList";
+import RequestList from "../Coponents/RequestsComponets/RequestList";
+import InvitationList from "../Coponents/RequestsComponets/InvitationList"
 
 function RequestsToGroups() {
   const [activeUser, setActiveUser] = useState(() => {
