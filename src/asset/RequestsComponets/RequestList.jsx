@@ -16,53 +16,53 @@ import {
 import { toast } from "react-toastify";
 import UserScoreCalculate from "../../Coponents/UserScoreCalculate";
 import { uuidv4 } from "@firebase/util";
+import { useFindMyGroups } from "../../Hooks/useFindMyGroups";
+import { useNavigate } from "react-router-dom";
 
-function RequestList(requestList) {
+function RequestList({ requestList }) {
+  const navigate = useNavigate();
   const [activeUser, setActiveUser] = useState(() => {
     try {
-      const user = JSON.parse(localStorage.getItem("activeUser"));
-      return user;
+      const active = JSON.parse(localStorage.getItem("activeUser"));
+      return active;
     } catch (error) {
       console.error("Error parsing JSON:", error);
       return null; // or some default value
     }
   });
+
+  let { managerGroup, participantGroup } = useFindMyGroups();
+  if (managerGroup) {
+  }
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
-  const handleAccept = async (id) => {
-    const user = requestList.filter((item) => item.userRef === id);
+  const handleAccept = async (anotherUserRef) => {
+    //שולף מהרשימה את המשתמש שאישרתי
+    const anotherUser = requestList.filter(
+      (item) => item.userRef === anotherUserRef
+    );
+    //מעדכן את הרשימה ללא המשתמש שאישרתי
     const updatedrequestList = requestList.filter(
-      (item) => item.userRef !== id
+      (item) => item.userRef !== anotherUserRef
     );
     requestList = updatedrequestList;
     activeUser.groupParticipantsToApproval = updatedrequestList;
-    setActiveUser(activeUser);
-    console.log(activeUser);
     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    //מעדכן את הדאטה של ההמנהל
     const docRef = doc(db, "users", activeUser.userRef);
-
     await updateDoc(docRef, {
-      groupParticipantsToApproval: requestList,
+      groupParticipantsToApproval: activeUser.groupParticipantsToApproval,
     });
     let updateUser = {
-      email: user[0].email,
-      name: user[0].name,
-      userImg: user[0].userImg,
-      userRef: user[0].userRef,
+      email: anotherUser[0].email,
+      name: anotherUser[0].name,
+      userImg: anotherUser[0].userImg,
+      userRef: anotherUser[0].userRef,
     };
-    const q = query(
-      collection(db, "activeGroups"),
-      where("managerRef", "==", activeUser.userRef)
-    );
-    const querySnapshot = await getDocs(q);
-    querySnapshot
-      .forEach(async (doc) => {
-        let data = doc.data();
-        data.participants.push(updateUser);
-        await setDoc(doc(db, "activeGroups", doc.id), data);
-      })
-
+    managerGroup.participants.push(updateUser);
+    await setDoc(doc(db, "activeGroups", managerGroup.id), managerGroup)
+      //אחראי על עידכון ההישגים האישיים ומעלה נקודות למי שאישרו אותו להצטרף לקבוצה
       .then(async () => {
-        const docRef2 = doc(db, "users", id);
+        const docRef2 = doc(db, "users", anotherUserRef);
         const docSnap2 = await getDoc(docRef2);
         const userAchiev = docSnap2.data();
         let achiev = userAchiev.userAchievements.filter(
@@ -71,13 +71,12 @@ function RequestList(requestList) {
         let item = achiev[0];
         UserScoreCalculate(item, "JoinedGroup", userAchiev);
         toast.success("Join successfully!");
-        localStorage.setItem("isSend", "");
       })
       .catch((error) => {
         toast.error("An error occurred. Please try again.");
       });
     //שולח הודעת פוש ואם אין אישור אז מייל
-    const docRefToken = doc(db, "fcmTokens", id);
+    const docRefToken = doc(db, "fcmTokens", anotherUserRef);
     const docSnapToken = await getDoc(docRefToken);
     if (docSnapToken.exists()) {
       const data = docSnapToken.data();
@@ -89,7 +88,6 @@ function RequestList(requestList) {
         title: title,
         message: message,
       };
-      console.log(alert);
       alertGroupEdited(alert);
     } else {
       fetch(
@@ -101,7 +99,7 @@ function RequestList(requestList) {
           },
           body: JSON.stringify({
             subject: `Group Request Accepted !`,
-            email: user[0].email,
+            email: anotherUser[0].email,
             message:
               " Your request to join to the group was accepted by " +
               activeUser.name +
@@ -113,6 +111,7 @@ function RequestList(requestList) {
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
+    navigate("/myGroups");
   };
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה
 
@@ -167,11 +166,27 @@ function RequestList(requestList) {
     }
   };
   return (
-    <>
+    <div>
       {requestList.map((item) => (
         <div key={uuidv4()} className=" ">
-          <UserProfileModal id={item.userRef} />
           <div className="d-flex justify-content-end  mt-3 ">
+            <div>
+              <div className="grid grid-cols-5 pt-3 ">
+                <img
+                  style={{
+                    width: 90 + "%",
+                    height: 80 + "%",
+                    borderRadius: 25,
+                  }}
+                  src={item.userImg}
+                  className="justify-center flex-auto col-span-1 mt-3"
+                />
+                <div className="col-span-3 mt-1">
+                  <div className="text-xl font-bold">{item.name}</div>
+                  <div className="text-lg font-semibold">{item.email}</div>
+                </div>
+              </div>
+            </div>
             <button
               onClick={() => handleReject(item.userRef)}
               className=" btn btn-sm bg-red-500 hover:bg-red-700 text-white  mr-4"
@@ -187,9 +202,8 @@ function RequestList(requestList) {
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
-  
 }
 
 export default RequestList;

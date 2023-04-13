@@ -9,6 +9,8 @@ import {
 import useMoveMarker from "../../Hooks/useMoveMarker";
 import { GrLocationPin } from "react-icons/gr";
 import JoinGroupCard from "./JoinGroupCard";
+import { uuidv4 } from "@firebase/util";
+
 //פונקציית המפה  עצמה
 function MapAdd({ setCordinates, filteredGroups,fillteredGroupShow }) {
   const [distance, setDistance] = useState(null);
@@ -176,7 +178,7 @@ function MapAdd({ setCordinates, filteredGroups,fillteredGroupShow }) {
                   url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
                   scaledSize: new window.google.maps.Size(50, 50),
                 }}
-                key={item.index}
+                key={uuidv4()}
                 title={item.groupTittle}
                 position={{
                   lat: item.location.latitude,

@@ -18,11 +18,11 @@ import UserScoreCalculate from "../../Coponents/UserScoreCalculate";
 import { uuidv4 } from "@firebase/util";
 import GroupInvationsCard from "./GroupInvationsCard";
 
-function InvitationList(invitationList) {
+function InvitationList({invitationList}) {
   const [activeUser, setActiveUser] = useState(() => {
     try {
-      const user = JSON.parse(localStorage.getItem("activeUser"));
-      return user;
+      const active = JSON.parse(localStorage.getItem("activeUser"));
+      return active;
     } catch (error) {
       console.error("Error parsing JSON:", error);
       return null; // or some default value

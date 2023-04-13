@@ -17,6 +17,12 @@ function RequestsToGroups() {
       return null; // or some default value
     }
   });
+  //בודקת עידכון בזמן אמת במשתמש ומעדכנת את הלוקאל אם יש
+  const unsub= onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+    let data = doc.data()
+     setActiveUser(data)
+     localStorage.setItem("activeUser", JSON.stringify(data));
+ });
   const [requests, setSequests] = useState(
     activeUser.groupParticipantsToApproval
   );
@@ -30,9 +36,7 @@ function RequestsToGroups() {
       setRequestList(newRequestList);
       setInvitationList(newInvitationList);
     }
-  }, [activeUser.groupParticipantsToApproval]);
-  console.log(requestList)
-  console.log(invitationList)
+  }, []);
 
   //צביעת כפתורים של הניווט
   const [btnColorRequest, setBtnColorRequest] = useState(
@@ -54,20 +58,10 @@ function RequestsToGroups() {
     setBtnColorRequest("btn m-2 text-sm glass text-black shadow-md");
     setType("invite");
   };
-  //בודקת עידכון בזמן אמת במשתמש ומעדכנת את הלוקאל אם יש
-  useEffect(() => {
-    const docRef = doc(db, "users", activeUser.userRef);
-    const unsubscribe = onSnapshot(docRef, (doc) => {
-      const userData = doc.data();
-      // Update the activeUser state and localStorage with the new data
-      setActiveUser(userData);
-      localStorage.setItem("activeUser", JSON.stringify(userData));
-    });
+  
     // Unsubscribe from the snapshot listener when the component unmounts
-    return unsubscribe;
-  }, []);
 
-  if (requests.length === 0) {
+  if (requests.length === 0 || (type === "request" && requestList.length===0)|| (type === "invite" && invitationList.length===0)) {
     return (
       <div>
         <div className="topNavBar w-full mb-24">

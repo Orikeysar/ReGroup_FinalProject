@@ -5,12 +5,11 @@ import { db } from "../FirebaseSDK";
 function UserScoreCalculate(item, type, user) {
   //בשביל התאריכים
   const now = new Date();
-  //משיכת לוקאליוזר
-  const activeUser = user;
+  
   //קישור לדאטהבייס
-  const activeUserRef = doc(db, "users", activeUser.userRef);
+  const userRef = doc(db, "users", user.userRef);
   //קישור לטופ10
-  const top10Ref = doc(db, "top10", activeUser.userRef);
+  const top10Ref = doc(db, "top10", user.userRef);
   //טיפול בהוספת חבר
   if (type === "friend") {
     item.numberOfAchievementDoing += item.valuePerAction;
@@ -32,20 +31,19 @@ function UserScoreCalculate(item, type, user) {
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
-    for (let index = 0; index < activeUser.userAchievements.length; index++) {
-      if (activeUser.userAchievements[index].name === "Community Member") {
-        activeUser.userAchievements[index] = item;
+    for (let index = 0; index < user.userAchievements.length; index++) {
+      if (user.userAchievements[index].name === "Community Member") {
+        user.userAchievements[index] = item;
       }
     }
-    activeUser.points = activeUser.points + item.valuePerAction;
-    console.log(activeUser.userAchievements);
-    updateDoc(activeUserRef, {
-      userAchievements: activeUser.userAchievements,
-      points: activeUser.points,
+    user.points = user.points + item.valuePerAction;
+    console.log(user.userAchievements);
+    updateDoc(userRef, {
+      userAchievements: user.userAchievements,
+      points: user.points,
     });
-    localStorage.setItem("activeUser", JSON.stringify(activeUser));
     updateDoc(top10Ref, {
-      points: activeUser.points,
+      points: user.points,
     });
     return null
 
@@ -72,20 +70,19 @@ function UserScoreCalculate(item, type, user) {
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
-    for (let index = 0; index < activeUser.userAchievements.length; index++) {
-      if (activeUser.userAchievements[index].name === "Helped Answered") {
-        activeUser.userAchievements[index] = item;
+    for (let index = 0; index < user.userAchievements.length; index++) {
+      if (user.userAchievements[index].name === "Helped Answered") {
+        user.userAchievements[index] = item;
       }
     }
-    activeUser.points = activeUser.points + item.valuePerAction;
-    console.log(activeUser.userAchievements);
-    updateDoc(activeUserRef, {
-      userAchievements: activeUser.userAchievements,
-      points: activeUser.points,
+    user.points = user.points + item.valuePerAction;
+    console.log(user.userAchievements);
+    updateDoc(userRef, {
+      userAchievements: user.userAchievements,
+      points: user.points,
     });
-    localStorage.setItem("activeUser", JSON.stringify(activeUser));
     updateDoc(top10Ref, {
-      points: activeUser.points,
+      points: user.points,
     });
     return null
 
@@ -112,20 +109,19 @@ function UserScoreCalculate(item, type, user) {
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
-    for (let index = 0; index < activeUser.userAchievements.length; index++) {
-      if (activeUser.userAchievements[index].name === "Like From Community") {
-        activeUser.userAchievements[index] = item;
+    for (let index = 0; index < user.userAchievements.length; index++) {
+      if (user.userAchievements[index].name === "Like From Community") {
+        user.userAchievements[index] = item;
       }
     }
-    activeUser.points = activeUser.points + item.valuePerAction;
-    console.log(activeUser.userAchievements);
-    updateDoc(activeUserRef, {
-      userAchievements: activeUser.userAchievements,
-      points: activeUser.points,
+    user.points = user.points + item.valuePerAction;
+    console.log(user.userAchievements);
+    updateDoc(userRef, {
+      userAchievements: user.userAchievements,
+      points: user.points,
     });
-    localStorage.setItem("activeUser", JSON.stringify(activeUser));
     updateDoc(top10Ref, {
-      points: activeUser.points,
+      points: user.points,
     });
     return null
   }
@@ -155,20 +151,19 @@ function UserScoreCalculate(item, type, user) {
       ) {
         item.activeLevel = item.activeLevel + 1;
       }
-      for (let index = 0; index < activeUser.userAchievements.length; index++) {
-        if (activeUser.userAchievements[index].name === "Opened Groups") {
-          activeUser.userAchievements[index] = item;
+      for (let index = 0; index < user.userAchievements.length; index++) {
+        if (user.userAchievements[index].name === "Opened Groups") {
+          user.userAchievements[index] = item;
         }
       }
-      activeUser.points = activeUser.points + item.valuePerAction;
-      console.log(activeUser.userAchievements);
-      updateDoc(activeUserRef, {
-        userAchievements: activeUser.userAchievements,
-        points: activeUser.points,
+      user.points = user.points + item.valuePerAction;
+      console.log(user.userAchievements);
+      updateDoc(userRef, {
+        userAchievements: user.userAchievements,
+        points: user.points,
       });
-      localStorage.setItem("activeUser", JSON.stringify(activeUser));
       updateDoc(top10Ref, {
-        points: activeUser.points,
+        points: user.points,
       });
     }
     return null;
@@ -199,20 +194,19 @@ function UserScoreCalculate(item, type, user) {
       ) {
         item.activeLevel = item.activeLevel + 1;
       }
-      for (let index = 0; index < activeUser.userAchievements.length; index++) {
-        if (activeUser.userAchievements[index].name === "Join Groups") {
-          activeUser.userAchievements[index] = item;
+      for (let index = 0; index < user.userAchievements.length; index++) {
+        if (user.userAchievements[index].name === "Join Groups") {
+          user.userAchievements[index] = item;
         }
       }
-      activeUser.points = activeUser.points + item.valuePerAction;
-      console.log(activeUser.userAchievements);
-      updateDoc(activeUserRef, {
-        userAchievements: activeUser.userAchievements,
-        points: activeUser.points,
+      user.points = user.points + item.valuePerAction;
+      console.log(user.userAchievements);
+      updateDoc(userRef, {
+        userAchievements: user.userAchievements,
+        points: user.points,
       });
-      localStorage.setItem("activeUser", JSON.stringify(activeUser));
       updateDoc(top10Ref, {
-        points: activeUser.points,
+        points: user.points,
       });
     }
     return null;
