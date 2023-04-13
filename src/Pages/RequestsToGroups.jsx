@@ -17,26 +17,32 @@ function RequestsToGroups() {
       return null; // or some default value
     }
   });
-  //בודקת עידכון בזמן אמת במשתמש ומעדכנת את הלוקאל אם יש
-  const unsub= onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
-    let data = doc.data()
-     setActiveUser(data)
-     localStorage.setItem("activeUser", JSON.stringify(data));
- });
+useEffect(()=>{
+const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+  let data = doc.data()
+  setActiveUser(data)
+  setSequests(data.groupParticipantsToApproval)
+   localStorage.setItem("activeUser", JSON.stringify(data));
+   
+});
+
+
+},[])
+
   const [requests, setSequests] = useState(
     activeUser.groupParticipantsToApproval
   );
-  const [requestList, setRequestList] = useState([]);
-  const [invitationList, setInvitationList] = useState([]);
-  useEffect(() => {
-    if (activeUser.groupParticipantsToApproval.length > 0) {
-      let requests = activeUser.groupParticipantsToApproval;
-      let newRequestList = requests.filter((item) => item.type === "request");
-      let newInvitationList = requests.filter((item) => item.type === "invite");
-      setRequestList(newRequestList);
-      setInvitationList(newInvitationList);
-    }
-  }, []);
+  const [requestList, setRequestList] = useState(()=>{
+    const newRequestList = requests.filter((item) => item.type === "request")
+    return newRequestList
+  });
+  const [invitationList, setInvitationList] = useState(()=>{
+
+ const newInvitationList = requests.filter((item) => item.type === "invite");
+return newInvitationList
+  });
+
+   
 
   //צביעת כפתורים של הניווט
   const [btnColorRequest, setBtnColorRequest] = useState(
@@ -61,7 +67,7 @@ function RequestsToGroups() {
   
     // Unsubscribe from the snapshot listener when the component unmounts
 
-  if (requests.length === 0 || (type === "request" && requestList.length===0)|| (type === "invite" && invitationList.length===0)) {
+  if (requests == null ) {
     return (
       <div>
         <div className="topNavBar w-full mb-24">
@@ -83,7 +89,7 @@ function RequestsToGroups() {
         <CreateGroupButton />
       </div>
     );
-  } else if (type === "request" && requestList.length>0) {
+  } else if (type === "request" && requestList) {
     return (
       <div>
         <div className="topNavBar w-full mb-24">
@@ -107,7 +113,7 @@ function RequestsToGroups() {
         <CreateGroupButton />
       </div>
     );
-  } else if (type === "invite" && invitationList.length>0) {
+  } else if (type === "invite" && invitationList) {
     return (
       <div>
         <div className="topNavBar w-full mb-24">

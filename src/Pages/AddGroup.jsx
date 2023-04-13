@@ -110,7 +110,7 @@ function AddGroup() {
     }
   
   //מקבלת את רשימת החברים ומעדכנת בדאטה שלהם את הבקשה 
-  const handleFriendRequests = async (groupRef) => {
+  const handleFriendRequests = async (groupRef,groupDataTemp) => {
     for (const friend of friendsInvited) {
       const docRef = doc(db, "users", friend.userRef);
       const docSnap = await getDoc(docRef);
@@ -122,7 +122,7 @@ function AddGroup() {
           userRef: activeUser.userRef,
           email: activeUser.email,
           groupRef: groupRef,
-          gorupData: newGroup,
+          groupData: groupDataTemp,
           type: "invite"
         };
         data.groupParticipantsToApproval.push(participant);
@@ -300,7 +300,28 @@ function AddGroup() {
       email: activeUser.email,
     });
     let groupRef=uuidv4();
+let groupDataTemp = {
+  groupTittle: selectedCourse,
+  groupTags: selectedSubjects,
+  groupSize: parseInt(selectedNumber),
+  location: geoPoint,
+  isActive: true,
+  groupImg: activeUser.userImg,
+  managerRef: activeUser.userRef,
+  address: newGroup.address,
+  description: newGroup.description,
+  participants: groupParticipants,
+  timeStamp: Timestamp.fromDate(
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      now.getHours(),
+      now.getMinutes()
+    )
+  ),
 
+}
     //SET USER new group
     await setDoc(doc(db, "activeGroups", groupRef), {
       groupTittle: selectedCourse,
@@ -330,7 +351,7 @@ function AddGroup() {
         let item = achiev[0];
         UserScoreCalculate(item, "CreatedGroups", activeUser);
         toast.success("create success");
-        handleFriendRequests(groupRef)
+        handleFriendRequests(groupRef,groupDataTemp)
         //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה
 
         SendAlertToUserForNewGroup(selectedCourse, selectedSubjects);

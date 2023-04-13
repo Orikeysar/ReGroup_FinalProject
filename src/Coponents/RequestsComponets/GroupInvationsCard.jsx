@@ -29,30 +29,30 @@ import { FaCircle } from "react-icons/fa";
 
 function GroupInvationsCard({ groupData }) {
   const date = new Date();
-  const handleGroupTime = (timeStamp) => {
-    if (timeStamp != null || timeStamp != undefined) {
-      let time = timeStamp.toDate();
-      let hours = time.getHours();
-      let minutes = time.getMinutes();
-      minutes < 10
-        ? (time = "start at " + hours + ": 0" + minutes)
-        : (time = hours + ":" + minutes);
-      //יציג עיגול ירוק עם כיתוב של פתוח עם הזמן הגיע
-      console.log(date.getHours());
-      if (hours > date.getHours()) {
-        return time;
-      } else if (hours === date.getHours() && minutes > date.getMinutes()) {
-        return time;
-      } else {
-        return (
-          <>
-            <FaCircle style={{ color: "green", marginRight: "5px" }} />
-            <span>Open</span>
-          </>
-        );
-      }
-    }
-  };
+  // const handleGroupTime = (timeStamp) => {
+  //   if (timeStamp != null || timeStamp != undefined) {
+  //     let time = timeStamp.toDate();
+  //     let hours = time.getHours();
+  //     let minutes = time.getMinutes();
+  //     minutes < 10
+  //       ? (time = "start at " + hours + ": 0" + minutes)
+  //       : (time = hours + ":" + minutes);
+  //     //יציג עיגול ירוק עם כיתוב של פתוח עם הזמן הגיע
+  //     console.log(date.getHours());
+  //     if (hours > date.getHours()) {
+  //       return time;
+  //     } else if (hours === date.getHours() && minutes > date.getMinutes()) {
+  //       return time;
+  //     } else {
+  //       return (
+  //         <>
+  //           <FaCircle style={{ color: "green", marginRight: "5px" }} />
+  //           <span>Open</span>
+  //         </>
+  //       );
+  //     }
+  //   }
+  // };
   //אחראי על המודל של המשתמש לאחר לחיצה
   const [visible, setVisible] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -65,7 +65,7 @@ function GroupInvationsCard({ groupData }) {
   return (
     <div className=" w-auto h-46 m-2 max-w-full">
       <p className=" flex mt-1 justify-end ">
-        {handleGroupTime(groupData.timeStamp)}
+        {/* {handleGroupTime(groupData.timeStamp)} */}
       </p>
       <div className="flex flex-col lg:flex-row">
         <div className="lg:ml-2">
