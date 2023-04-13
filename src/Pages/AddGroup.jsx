@@ -104,8 +104,8 @@ function AddGroup() {
   };
 
   //handle added
-  const handleInviteFriendChange = async (event, value) => {
-    setFriendsInvited({...friendsInvited,value})
+  const handleInviteFriendChange =  (event, value) => {
+    setFriendsInvited([...friendsInvited,value])
     }
   
   //מקבלת את רשימת החברים ומעדכנת בדאטה שלהם את הבקשה 
@@ -155,12 +155,12 @@ function AddGroup() {
         "fill address and description for the group you want to create"
       );
     } else {
-      // newGroup.participants.push({
-      //   name: activeUser.name,
-      //   userImg: activeUser.userImg,
-      //   userRef: activeUser.userRef,
-      //   email: activeUser.email,
-      // });
+      newGroup.participants.push({
+        name: activeUser.name,
+        userImg: activeUser.userImg,
+        userRef: activeUser.userRef,
+        email: activeUser.email,
+      });
 
       if (managerGroup != null) {
         // idבדיקה בדאטה האם למשתמש קיים קבוצה שיצר במידה וכן יחזיר id

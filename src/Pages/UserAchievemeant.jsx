@@ -96,7 +96,7 @@ function UserAchievemeant() {
         {" "}
         <p className=" font-bold text-xl">Achievements</p>
       </div>
-      <div className="card w-full  justify-center shadow-md">
+      <div className="card w-full justify-center shadow-md">
         <OrderList
           value={userAchievements}
           itemTemplate={itemTemplate}

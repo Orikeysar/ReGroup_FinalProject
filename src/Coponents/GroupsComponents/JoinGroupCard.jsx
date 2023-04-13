@@ -35,6 +35,9 @@ function JoinGroupCard({ group }) {
   const [btnStatus, setBtnStatus] = useState(false);
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
+  //אחראי על שינוי הכפתור בשליחת בקשה
+  const [isSended, setIsSended]=useState(false);
+  
   //פרטי המשתמש המחובר
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
@@ -89,7 +92,7 @@ function JoinGroupCard({ group }) {
         "you already participant in group!,evry user can join only one group at time!"
       );
     }
-    localStorage.setItem("isSend", group.managerRef);
+    //לבדוק אם להוריד את המנגאר
     const user = {
       email: activeUser.email,
       name: activeUser.name,
@@ -148,6 +151,7 @@ function JoinGroupCard({ group }) {
     }
     toast.success("Request was sended to the manager")
     setBtnStatus(true);
+    setIsSended(true)
   };
 
   const handleLeaveGroup = async (group) => {
@@ -246,7 +250,7 @@ function JoinGroupCard({ group }) {
           </div>
         </div>
         <div className="ml-auto mt-3 lg:mt-0">
-          {localStorage.getItem("isSend") ===group.managerRef?
+          {isSended?
             (
             <div className=" justify-center">
               <button disabled={true} className="btn btn-sm ml-auto">

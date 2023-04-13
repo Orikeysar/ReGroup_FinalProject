@@ -37,9 +37,7 @@ import "animate.css/animate.min.css";
 function MyGroupPage() {
   const navigate = useNavigate();
   const date = new Date();
-  if( localStorage.getItem("isSend")===undefined){
- localStorage.setItem("isSend","")
-  }
+
  
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();

@@ -5,10 +5,8 @@ import { db } from "../FirebaseSDK";
 function UpdateRecentActivities(item, type, user) {
   //בשביל התאריכים
   const now = new Date();
-//משיכת לוקאליוזר
-  const activeUser = user;
   //קישור לדאטהבייס
-  const activeUserRef = doc(db, "users", activeUser.userRef);
+  const userRef = doc(db, "users", user.userRef);
 
   //טיפול בהוספת חבר
   if (type === "friend") {
@@ -26,12 +24,11 @@ function UpdateRecentActivities(item, type, user) {
         )
       ),
     };
-    activeUser.recentActivities.push(friend);
-    console.log(activeUser.recentActivities);
-    updateDoc(activeUserRef, {
-      recentActivities: activeUser.recentActivities,
+    user.recentActivities.push(friend);
+    console.log(user.recentActivities);
+    updateDoc(userRef, {
+      recentActivities: user.recentActivities,
     });
-    localStorage.setItem("activeUser", JSON.stringify(activeUser));
   }
 
   //טיפול בקבלת לייק על תשובה
@@ -50,12 +47,11 @@ function UpdateRecentActivities(item, type, user) {
         )
       ),
     };
-    activeUser.recentActivities.push(LikeOnAnswer);
-    console.log(activeUser.recentActivities);
-    updateDoc(activeUserRef, {
-      recentActivities: activeUser.recentActivities,
+    user.recentActivities.push(LikeOnAnswer);
+    console.log(user.recentActivities);
+    updateDoc(userRef, {
+      recentActivities: user.recentActivities,
     });
-    localStorage.setItem("activeUser", JSON.stringify(activeUser));
   }
 
   //טיפול בקבלת לייק על שאלה
@@ -74,12 +70,11 @@ function UpdateRecentActivities(item, type, user) {
         )
       ),
     };
-    activeUser.recentActivities.push(LikeOnQuestion);
-    console.log(activeUser.recentActivities);
-    updateDoc(activeUserRef, {
-      recentActivities: activeUser.recentActivities,
+    user.recentActivities.push(LikeOnQuestion);
+    console.log(user.recentActivities);
+    updateDoc(userRef, {
+      recentActivities: user.recentActivities,
     });
-    localStorage.setItem("activeUser", JSON.stringify(activeUser));
   }
 
   //טיפול ביצירת קבוצה
@@ -100,12 +95,11 @@ function UpdateRecentActivities(item, type, user) {
         )
       ),
     };
-    activeUser.recentActivities.push(CreatedGroup);
-    console.log(activeUser.recentActivities);
-    updateDoc(activeUserRef, {
-      recentActivities: activeUser.recentActivities,
+    user.recentActivities.push(CreatedGroup);
+    console.log(user.recentActivities);
+    updateDoc(userRef, {
+      recentActivities: user.recentActivities,
     });
-    localStorage.setItem("activeUser", JSON.stringify(activeUser));
   }
   //טיפול עזיבת קבוצה 
   if (type === "JoinedGroup") {
@@ -125,12 +119,11 @@ function UpdateRecentActivities(item, type, user) {
         )
       ),
     };
-    activeUser.recentActivities.push(JoinedGroup);
-    console.log(activeUser.recentActivities);
-    updateDoc(activeUserRef, {
-      recentActivities: activeUser.recentActivities,
+    user.recentActivities.push(JoinedGroup);
+    console.log(user.recentActivities);
+    updateDoc(userRef, {
+      recentActivities: user.recentActivities,
     });
-    localStorage.setItem("activeUser", JSON.stringify(activeUser));
   }
 
   //   //טיפול בהוספת חבר
@@ -149,12 +142,12 @@ function UpdateRecentActivities(item, type, user) {
   //         )
   //       ),
   //     };
-  //     activeUser.recentActivities.push(friend);
-  //     console.log(activeUser.recentActivities);
-  //     await updateDoc(activeUserRef, {
-  //       recentActivities: activeUser.recentActivities,
+  //     user.recentActivities.push(friend);
+  //     console.log(user.recentActivities);
+  //     await updateDoc(userRef, {
+  //       recentActivities: user.recentActivities,
   //     });
-  //     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+  //     localStorage.setItem("user", JSON.stringify(user));
   //   };
 
   //   //טיפול בקבלת לייק על תשובה
@@ -173,12 +166,12 @@ function UpdateRecentActivities(item, type, user) {
   //         )
   //       ),
   //     };
-  //     activeUser.recentActivities.push(LikeOnAnswer);
-  //     console.log(activeUser.recentActivities);
-  //     await updateDoc(activeUserRef, {
-  //       recentActivities: activeUser.recentActivities,
+  //     user.recentActivities.push(LikeOnAnswer);
+  //     console.log(user.recentActivities);
+  //     await updateDoc(userRef, {
+  //       recentActivities: user.recentActivities,
   //     });
-  //     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+  //     localStorage.setItem("user", JSON.stringify(user));
   //   };
 
   //   //טיפול בקבלת לייק על שאלה
@@ -197,12 +190,12 @@ function UpdateRecentActivities(item, type, user) {
   //         )
   //       ),
   //     };
-  //     activeUser.recentActivities.push(LikeOnQuestion);
-  //     console.log(activeUser.recentActivities);
-  //     await updateDoc(activeUserRef, {
-  //       recentActivities: activeUser.recentActivities,
+  //     user.recentActivities.push(LikeOnQuestion);
+  //     console.log(user.recentActivities);
+  //     await updateDoc(userRef, {
+  //       recentActivities: user.recentActivities,
   //     });
-  //     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+  //     localStorage.setItem("user", JSON.stringify(user));
   //   };
   //   //טיפול ביצירת קבוצה
   //   const handleCreatedGroup = async (item) => {
@@ -222,12 +215,12 @@ function UpdateRecentActivities(item, type, user) {
   //         )
   //       ),
   //     };
-  //     activeUser.recentActivities.push(CreatedGroup);
-  //     console.log(activeUser.recentActivities);
-  //     await updateDoc(activeUserRef, {
-  //       recentActivities: activeUser.recentActivities,
+  //     user.recentActivities.push(CreatedGroup);
+  //     console.log(user.recentActivities);
+  //     await updateDoc(userRef, {
+  //       recentActivities: user.recentActivities,
   //     });
-  //     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+  //     localStorage.setItem("user", JSON.stringify(user));
   //   };
   //   //טיפול הצטרפות לקבוצה
   //   const handleJoinedGroup = async (item) => {
@@ -247,12 +240,12 @@ function UpdateRecentActivities(item, type, user) {
   //         )
   //       ),
   //     };
-  //     activeUser.recentActivities.push(JoinedGroup);
-  //     console.log(activeUser.recentActivities);
-  //     await updateDoc(activeUserRef, {
-  //       recentActivities: activeUser.recentActivities,
+  //     user.recentActivities.push(JoinedGroup);
+  //     console.log(user.recentActivities);
+  //     await updateDoc(userRef, {
+  //       recentActivities: user.recentActivities,
   //     });
-  //     localStorage.setItem("activeUser", JSON.stringify(activeUser));
+  //     localStorage.setItem("user", JSON.stringify(user));
   //   };
 
   return null;
