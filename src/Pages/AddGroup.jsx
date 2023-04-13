@@ -17,6 +17,7 @@ import {
   query,
   where,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
 import NavBar from "../Coponents/navbars/NavBar";
 import MyAddGroupMapComponent from "../Coponents/GroupsComponents/MyAddGroupMapComponent ";
@@ -109,24 +110,26 @@ function AddGroup() {
     }
   
   //מקבלת את רשימת החברים ומעדכנת בדאטה שלהם את הבקשה 
-  const handleFriendRequests = async () => {
+  const handleFriendRequests = async (groupRef) => {
     for (const friend of friendsInvited) {
       const docRef = doc(db, "users", friend.userRef);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         let data = docSnap.data();
         let participant = {
-          name: friend.name,
-          userImg: friend.userImg,
-          userRef: friend.userRef,
-          email: friend.email,
-          managerRef: newGroup.managerRef,
+          name: activeUser.name,
+          userImg: activeUser.userImg,
+          userRef: activeUser.userRef,
+          email: activeUser.email,
+          groupRef: groupRef,
           type: "invite"
         };
         data.groupParticipantsToApproval.push(participant);
-        await setDoc(doc(db, "users", friend.userRef), data);
+        await updateDoc(docRef,{
+          groupParticipantsToApproval: data.groupParticipantsToApproval
+      });
       } else{
-        toast.info("user"+friend.name+" not found ")
+        toast.info("user "+friend.name+" not found ")
       }
     } 
     handleSendEmail(friendsInvited);
@@ -295,9 +298,10 @@ function AddGroup() {
       userRef: activeUser.userRef,
       email: activeUser.email,
     });
+    let groupRef=uuidv4();
 
     //SET USER new group
-    await setDoc(doc(db, "activeGroups", uuidv4()), {
+    await setDoc(doc(db, "activeGroups", groupRef), {
       groupTittle: selectedCourse,
       groupTags: selectedSubjects,
       groupSize: parseInt(selectedNumber),
@@ -325,7 +329,7 @@ function AddGroup() {
         let item = achiev[0];
         UserScoreCalculate(item, "CreatedGroups", activeUser);
         toast.success("create success");
-        handleFriendRequests()
+        handleFriendRequests(groupRef)
         //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה
 
         SendAlertToUserForNewGroup(selectedCourse, selectedSubjects);

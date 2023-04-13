@@ -88,7 +88,7 @@ function HamburgerMenu() {
           isOpen ? "transform translate-x-0" : "transform -translate-x-full"
         }`}
       >
-        <ul className="p-4 mt-4">
+        <ul className="p-4 mt-4 ">
           <li className="mb-2 border-b-2 border-gray-300">
             <div className="navbar-center">
               <img
