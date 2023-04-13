@@ -88,7 +88,7 @@ function HamburgerMenu() {
           isOpen ? "transform translate-x-0" : "transform -translate-x-full"
         }`}
       >
-        <ul className="p-4 mt-4">
+        <ul className="p-4 mt-4 text-left justify-start">
           <li className="mb-2 border-b-2 border-gray-300">
             <div className="navbar-center">
               <img
@@ -100,11 +100,11 @@ function HamburgerMenu() {
             </div>
           </li>
           <li>
-            <p className="font-semibold">Profile</p>
+            <p className="font-semibold text-left">Profile</p>
             <ul>
               <li>
                 <p
-                  className={`btn btn-ghost w-full ${
+                  className={`btn btn-ghost w-full text-left justify-start ${
                     localStorage.getItem("componentChoosen") === "MyGroupsPage"
                       ? "bg-gray-100"
                       : ""
@@ -117,7 +117,7 @@ function HamburgerMenu() {
               </li>
               <li>
                 <p
-                  className={`btn btn-ghost w-full ${
+                  className={`btn btn-ghost w-full justify-start ${
                     localStorage.getItem("componentChoosen") === "achievements"
                       ? "bg-gray-100"
                       : ""
@@ -131,7 +131,7 @@ function HamburgerMenu() {
               <li>
                 <div className="relative">
                   <p
-                    className={`btn btn-ghost w-full ${
+                    className={`btn btn-ghost w-full justify-start ${
                       localStorage.getItem("componentChoosen") === "FriendsList"
                         ? "bg-gray-100"
                         : activeUser.friendsListToAccept.length > 0
@@ -144,7 +144,7 @@ function HamburgerMenu() {
                     My Friends
                   </p>
                   {activeUser.friendsListToAccept.length > 0 && (
-                    <div className="mt-3 absolute top-0 right-0 bg-red-500 rounded-full h-6 w-6 flex items-center justify-center text-white text-xs">
+                    <div className="mt-3 absolute top-0 right-0 bg-red-500 rounded-full h-6 w-6 flex items-center justify-start text-white text-xs">
                       {activeUser.friendsListToAccept.length}
                     </div>
                   )}
@@ -153,7 +153,7 @@ function HamburgerMenu() {
 
               <li>
                 <p
-                  className={`btn btn-ghost w-full ${
+                  className={`btn btn-ghost w-full justify-start ${
                     localStorage.getItem("componentChoosen") ===
                     "RecentActivities"
                       ? "bg-gray-100"
@@ -168,13 +168,13 @@ function HamburgerMenu() {
             </ul>
           </li>
           <li>
-            <p className="font-semibold border-t-2 border-gray-300 pt-3">
+            <p className="font-semibold border-t-2 border-gray-300 pt-3 justify-start">
               Groups
             </p>
             <ul>
               <li>
                 <p
-                  className={`btn btn-ghost w-full ${
+                  className={`btn btn-ghost w-full justify-start ${
                     localStorage.getItem("componentChoosen") === "groups"
                       ? "bg-gray-100"
                       : ""
@@ -182,12 +182,12 @@ function HamburgerMenu() {
                   value="groups"
                   onClick={handleGroupsNavButton}
                 >
-                  Find Groups
+                  Find 
                 </p>
               </li>
               <li>
                 <p
-                  className={`btn btn-ghost w-full ${
+                  className={`btn btn-ghost w-full justify-start ${
                     localStorage.getItem("componentChoosen") === "createGroups"
                       ? "bg-gray-100"
                       : ""
@@ -195,13 +195,13 @@ function HamburgerMenu() {
                   onClick={handleCreateGroupNavButton}
                   value="createGroups"
                 >
-                  Create Group
+                  Create
                 </p>
               </li>
               <li>
                 <div className="relative">
                   <p
-                    className={`btn btn-ghost w-full ${
+                    className={`btn btn-ghost w-full justify-start ${
                       localStorage.getItem("componentChoosen") ===
                       "requestsGroups"
                         ? "bg-gray-100"
@@ -212,10 +212,10 @@ function HamburgerMenu() {
                     value="requestsGroups"
                     onClick={handleRequestsToGroupsNavButton}
                   >
-                    Requests
+                   Requests
                   </p>
                   {activeUser.groupParticipantsToApproval.length > 0 && (
-                    <div className="mt-3 absolute top-0 right-0 bg-red-500 rounded-full h-6 w-6 flex items-center justify-center text-white text-xs">
+                    <div className="mt-3 absolute top-0 right-0 bg-red-500 rounded-full h-6 w-6 flex items-center justify-start text-white text-xs">
                       {activeUser.groupParticipantsToApproval.length}
                     </div>
                   )}
