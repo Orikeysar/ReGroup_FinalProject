@@ -6,10 +6,9 @@ import NavBar from "../Coponents/navbars/NavBar";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
 import {
-  setDoc,
   updateDoc,
+  getDoc,
   doc,
-  GeoPoint,
   Timestamp,
   collection,
   query,
@@ -469,7 +468,6 @@ function MyGroupPage() {
         if (groupId) {
           // Delete the document
           await deleteDoc(doc(db, "activeGroups", groupId));
-          console.log("Document deleted:", groupId);
           toast.success("delete success");
           //send this group to user recent groups גל שים לב
           let now = Timestamp.now();
@@ -486,17 +484,31 @@ function MyGroupPage() {
             isActive: false,
             timeStamp: now,
           };
-          // activeUser.recentActivities.push(newGroupActiviteis);
 
           //updat recent activites
-          UpdateRecentActivities(
-            newGroupActiviteis,
-            "CreatedGroups",
-            activeUser
-          );
-
-          localStorage.setItem("activeUser", JSON.stringify(activeUser));
-          navigate("/");
+          for (const participant of newGroupActiviteis.participants){
+            // אם המשתתף הוא המחובר ישלח את הלוקאל שלו, אחרת ימשוך מהדאטה את המשתתף וישלח לפונקציה
+            if(participant.userRef===activeUser.userRef){
+              UpdateRecentActivities(
+                newGroupActiviteis,
+                "CreatedGroups",
+                activeUser
+              );
+            }else { 
+              const docRefParticipant = doc(db, "user", participant.userRef);
+              const docSnapParticipant = await getDoc(docRefParticipant);
+              if (docSnapParticipant.exists()){
+                let user =docSnapParticipant.data();
+                UpdateRecentActivities(
+                newGroupActiviteis,
+                "CreatedGroups",
+                user
+              );
+              }
+              
+            }
+          }
+          navigate("/myGroups");
         }
       } else {
         console.log("No document found with the specified managerRef.");
@@ -537,7 +549,7 @@ function MyGroupPage() {
       participants: newParticipantsList,
     });
     UpdateRecentActivities(group, "JoinedGroup", activeUser);
-    navigate("/");
+    navigate("/myGroups");
   };
 
   return (
@@ -570,7 +582,7 @@ function MyGroupPage() {
               marginBottom: "20px",
             }}
           >
-            Groups you manage:
+            Group you manage:
           </p>
           {ShowManagerGroup()}
           <p
@@ -583,7 +595,7 @@ function MyGroupPage() {
               marginBottom: "20px",
             }}
           >
-            Groups you participate in:
+            Group you participate in:
           </p>
           {ShowParticipantGroup()}
         </div>
