@@ -4,7 +4,7 @@ import { RiGroup2Fill } from "react-icons/ri";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
-import { alertGroupEdited, db, sendMailOverHTTP } from "../FirebaseSDK";
+import { alertGroupEdited, db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {

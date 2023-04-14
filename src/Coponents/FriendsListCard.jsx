@@ -6,7 +6,7 @@ import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "./profileComponents/UserProfileModal";
 import { db } from "../FirebaseSDK";
-import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
+import { doc, Timestamp, onSnapshot} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 function FriendsListCard() {
   const navigate = useNavigate();

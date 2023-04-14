@@ -3,7 +3,6 @@ import { useState } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../Coponents/navbars/NavBar";
-
 import Map from "../Coponents/GroupsComponents/Map";
 import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
 import CoursesList from "../Coponents/GroupsComponents/CoursesList";

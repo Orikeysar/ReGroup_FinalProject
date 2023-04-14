@@ -1,5 +1,5 @@
 
-import { doc, updateDoc, Timestamp, getDoc } from "firebase/firestore";
+import { doc, updateDoc, Timestamp } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 
 function UpdateRecentActivities(item, type, user) {

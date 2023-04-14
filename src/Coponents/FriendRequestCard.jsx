@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "primereact/button";
 import { OrderList } from "primereact/orderlist";
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
-import { Dialog } from "primereact/dialog";
-import UserProfileModal from "./profileComponents/UserProfileModal";
-import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
+import { doc, updateDoc, Timestamp, getDoc, onSnapshot} from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
