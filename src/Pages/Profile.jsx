@@ -1,187 +1,199 @@
 import React from "react";
 import { useState, useEffect } from "react";
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
-import { getAuth } from "firebase/auth";
+import { getAuth, updateProfile } from "firebase/auth";
 import {
+  updateDoc,
   doc,
   getDoc,
 } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-<<<<<<< Updated upstream
-import { RxCounterClockwiseClock } from "react-icons/rx";
-import Spinner from "../Coponents/Spinner"
-function Profile() {
-
- const navigate = useNavigate();
-;
- const [loading, setLoading] = useState(true);
-  const auth = getAuth();
-  const user = auth.currentUser;
-=======
 import Spinner from "../Coponents/Spinner";
-import RecentActivitiesCard from "../Coponents/RecentActivitiesCard";
-import CoursesList from "../Coponents/CoursesList";
-import NavBar from "../Coponents/NavBar";
-import  BottomNavigation  from "../Coponents/BottumNavBar";
-import FriendsListCard from "../Coponents/FriendsListCard"
-import UserAchievemeant from '../Coponents/UserAchievemeant'
+import { FiEdit } from "react-icons/fi";
+import { AiOutlineMail } from "react-icons/ai";
+import { BsFilePerson } from "react-icons/bs";
+import { FaUniversity } from "react-icons/fa";
+import ProfileImgEdit from "../Coponents/profileComponents/ProfileImgEdit";
 function Profile() {
-  // const [activeUser, setActiveUser] = useState();
+  const auth = getAuth();
   const navigate = useNavigate();
-const [componentChoosen, setComponentChoosen] = useState(localStorage.getItem("componentChoosen"));
-  const [userData, setUserData] = useState(() => {
-    const user = JSON.parse(localStorage.getItem("userData"));
+  
+  const [componentChoosen, setComponentChoosen] = useState(
+    localStorage.getItem("componentChoosen")
+  );
+  const [activeUser, setActiveUser] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-console.log(userData)
-  // const [loading, setLoading] = useState(true);
-  // const auth = getAuth();
-  // const user = auth.currentUser;
->>>>>>> Stashed changes
-
-
-
-
- const [activeUser, setActiveUser] = useState(null)
-  
-  
+  const [changeDetails, setChangeDetails] = useState(false);
+  const [formData, setFormData] = useState({
+    name: activeUser.name,
+    degree: activeUser.degree,
+  });
+  const { name, degree } = formData;
 
   useEffect(() => {
-<<<<<<< Updated upstream
-   
-    const fetchUsersData = async () => {
-      
-        const UsersRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(UsersRef);
-        let userData = {};
-        if (docSnap.exists()) {
-          userData = { id: docSnap.id, data: docSnap.data() };
-        } else {
-          // doc.data() will be undefined in this case
-          toast("No such document!");
-        }
-        //       console.log(user)
-        // console.log(auth.currentUser.uid)
-
-        setActiveUser(userData.data);
-      
-    
-=======
-    setComponentChoosen(localStorage.getItem("componentChoosen"))
-
-    const handleFirstQuestions = () => {
-      console.log(userData)
-      if (userData.firstLogIn) {
-        navigate("/FirstSignUpQuestions");
-      }
->>>>>>> Stashed changes
-    };
-
-
-    fetchUsersData();
-        setLoading(false);
-  }, [user.data, activeUser, user.uid]);
-  const handleFirstQuestions=()=>{
-    if(activeUser.firstLogIn){
-
-      navigate("/FirstSignUpQuestions");
-      
-    }
-  }
-  handleFirstQuestions();
+    setComponentChoosen(localStorage.getItem("componentChoosen"));
+  });
 
   const onLogout = () => {
     auth.signOut();
     navigate("/sign-in");
   };
 
-<<<<<<< Updated upstream
-  if(activeUser == null){
-=======
+  const onEdit = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+  };
+  //הפונקציה מעלה תמונה לסטורג ושולחת קישור לדאטה בייס
+  const onSubmitEdit = async () => {
+    try {
+      if (activeUser.name !== name || activeUser.degree !== degree) {
+        // Update display name in fb
+        await updateProfile(auth.currentUser, {
+          displayName: name,
+        });
 
+        // Update in firestore
+        const userRef = doc(db, "users", auth.currentUser.uid);
 
-  if (userData == null) {
+        await updateDoc(userRef, {
+          name,
+          degree,
+        });
+
+        const top10Ref = doc(db, "top10", auth.currentUser.uid);
+        await updateDoc(top10Ref, {
+          name,
+        });
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+          const user = {
+            data: docSnap.data(),
+          };
+          localStorage.setItem("activeUser", JSON.stringify(user.data));
+        }
+
+        toast.success("Updated profile details! ");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Could not update profile details");
+    }
+  };
+
+  if (activeUser == null) {
     return <Spinner />;
   }
->>>>>>> Stashed changes
 
-    return <Spinner/>
-  }
+  const editImageIconClicked = () => {
+    if (localStorage.getItem("componentChoosen") === "EditImage") {
+      localStorage.setItem("componentChoosen", "/");
+      navigate("/");
+    } else {
+      localStorage.setItem("componentChoosen", "EditImage");
+      setComponentChoosen("EditImage");
+      navigate("/");
+    }
+  };
+
   return (
     <div className="container">
-      {/* //TOP NAVBAR */}
-      <div className="topNavBar w-full mb-2">
-           <NavBar />
-         </div>
       <div className="row userInfo">
         <div className="col-md-4 animated fadeIn " key={activeUser.name}>
           <div className="card ">
-            <div className="card-body flex-row">
+            <div className="card-body flex-row ">
               <div className="avatar w-2/5 ">
+                <button
+                  id="about"
+                  className="relative  right-0 flex-grow-0 max-h-4 w-5  "
+                >
+                  {" "}
+                  <FiEdit onClick={editImageIconClicked} />
+                </button>
                 <div className="w-28 rounded-full object-fill">
                   <img
                     src={activeUser.userImg}
                     className="object-center object-fill"
-                    alt=""
+                    alt="תמונת פרופיל"
                   />
                 </div>
               </div>
-              <div className="userInfo text-center w-3/5">
-                <p className="card-title block underline  ">
-                  {activeUser.name}
-                </p>
-                <p className="card-text">
-                  {activeUser.email}
-                  <br />
-                  <span className="degree">{activeUser.Degree}</span>
-                </p>
-                <button
-                  type="button"
-                  className="logOut btn-xs border-gray-500 bg-gray-600 text-white rounded-md mt-2 "
-                  onClick={onLogout}
-                >
-                  Logout
-                </button>
+
+              <div className="userInfo justify-center w-3/5">
+                <div className="flex flex-row-reverse">
+                  <button>
+                    <FiEdit
+                      className="changePersonalDetails  "
+                      onClick={() => {
+                        changeDetails && onSubmitEdit();
+                        setChangeDetails((prevState) => !prevState);
+                      }}
+                    >
+                      {changeDetails ? "done" : "edit"}
+                    </FiEdit>
+                  </button>
+                </div>
+                <div className="text-xl text-center bg-transparent flex flex-row">
+                  <BsFilePerson className="self-center" />
+                  <input
+                    type="text"
+                    id="name"
+                    className={
+                      !changeDetails
+                        ? "underline w-5/6  ml-4"
+                        : "profileName ml-4 w-5/6 "
+                    }
+                    disabled={!changeDetails}
+                    value={name}
+                    onChange={onEdit}
+                  />
+                </div>
+                <div className="flex flex-row ">
+                  <AiOutlineMail className="self-center" />
+                  <p className="card-text ml-4 ">{activeUser.email}</p>
+                </div>
+                <div className=" flex flex-row">
+                  <FaUniversity className="self-center" />
+                  <input
+                    type="text"
+                    id="degree"
+                    className={
+                      !changeDetails
+                        ? "underline w-5/6  ml-4"
+                        : "profileName ml-4 w-5/6 "
+                    }
+                    disabled={!changeDetails}
+                    value={degree}
+                    onChange={onEdit}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       {/* //LAST ACTIVITIES  */}
-<<<<<<< Updated upstream
-      <div className="lastActivities  mt-4 mb-4">
-        <div className="activitiesHeade   ">
-          <div></div>
-          <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
-            {" "}
-            <RxCounterClockwiseClock className=" mr-2 w-max " />
-            <p className=" font-bold text-lg">Recent Activities</p>{" "}
-          </div>
-          <div></div>
-=======
       <div className=" mt-4 mb-4">
-        <div>
-
-
-        {componentChoosen === "RecentActivities" ? <RecentActivitiesCard/> :(
-          componentChoosen === "CoursesList"  )? <CoursesList/> : (
-          componentChoosen === "FriendsList" ) ? <FriendsListCard/> : <UserAchievemeant/>
-        }
-      
-
-
-          
->>>>>>> Stashed changes
-        </div>
+        {/* //select between components */}
+        {componentChoosen === "EditImage"?<ProfileImgEdit />:null}
+        {/* <div>
+          {componentChoosen === "RecentActivities" ? (
+            <RecentActivitiesCard />
+          ) : componentChoosen === "CoursesList" ? (
+            <CoursesList />
+          ) : componentChoosen === "FriendsList" ? (
+            <FriendsListCard />
+          ) : componentChoosen === "EditImage" ? (
+            <ProfileImgEdit />
+          ) : (
+            <UserAchievemeant />
+          )}
+        </div> */}
       </div>
-      <div className="buttomNavBar w-full  absolute bottom-0 pb-4">
-          <BottomNavigation/>
-        </div>
     </div>
   );
 }

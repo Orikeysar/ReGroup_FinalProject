@@ -176,7 +176,7 @@ export  const userDataTest={
     achievementList:[
         {
             name : "Assist Friend",
-            numberOfAchievementDoing:5,
+            numberOfAchievementDoing:0,
             AchievementImg:"https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
             activeLevel:1,
             currentTopUse:20,

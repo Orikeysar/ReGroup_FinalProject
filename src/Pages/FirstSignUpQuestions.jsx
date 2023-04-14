@@ -1,10 +1,17 @@
 import React from "react";
 import SelectCheckBox from "../Coponents/SelectCheckBox.jsx"
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 //מציג שאלון ראשוני למשתמש
 function FirstSignUpQuestions() {
-<<<<<<< Updated upstream
-  const onSubmit = () => {};
-=======
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(() => {
+    // Read the initial value of the user data from localStorage
+    const storedUserData = localStorage.getItem("userData");
+    // If there is a stored value, parse it and use it as the initial state
+    return storedUserData ? JSON.parse(storedUserData) : {};
+  });
   // באישור שליחה של המשתמש ניצור אובייקט חדש של יוזר ונעדכן את הלוקל סטורג 
   const onSubmitForm = (event) => {
     event.preventDefault();
@@ -25,14 +32,8 @@ function FirstSignUpQuestions() {
     navigate("/");
 
   };
-  const navigate = useNavigate();
 
-  const [userData, setUserData] = useState(() => {
-    // Read the initial value of the user data from localStorage
-    const storedUserData = localStorage.getItem("userData");
-    // If there is a stored value, parse it and use it as the initial state
-    return storedUserData ? JSON.parse(storedUserData) : {};
-  });
+  
   
 
   const [name, setName] = useState(userData.name);
@@ -46,15 +47,12 @@ function FirstSignUpQuestions() {
   const handleNameChange = (e) => {
     setName(e.target.value);
   };
-  const handleImgChange = (e) => {
-    setImg(e.target.value);
-  };
+  
   const handleDegreeChange = (e) => {
     setDegree(e.target.value);
   };
 
 
->>>>>>> Stashed changes
   return (
     <div className="hero sizeForm">
       <div className="hero-content text-center">
@@ -63,14 +61,18 @@ function FirstSignUpQuestions() {
           <p className="py-6  text-gray-600">
             One more step and you're done. Please fill in the following details:
           </p>
-          <form style={{display:"grid"}} onSubmit={onSubmit}>
+          <form style={{display:"grid"}} onSubmit={onSubmitForm}>
+            <div className=" justify-center w-full">
+              <input type="image" src={img} size={30} shape="circle" ></input>
+            </div>
             <div style={{margin:15,justifySelf:"center", width:290}} className="form-control">
               <label className="input-group input-group-md">
                 <span>Full Name</span>
                 <input
                   type="text"
-                  placeholder="Type here"
+                  placeholder={name}
                   className="input input-bordered input-md"
+                  onChange={handleNameChange}
                 />
               </label>
             </div>
@@ -81,16 +83,17 @@ function FirstSignUpQuestions() {
                   type="text"
                   placeholder="Type here"
                   className="input input-bordered input-md"
+                  onChange={handleDegreeChange}
                 />
               </label>
             </div>
             {/* קריאה לרנדור כל הקורסים שיש בדאטה  */}
             <div style={{margin:15,justifySelf:"center", width:290,}}>
-              <SelectCheckBox></SelectCheckBox>
+              <SelectCheckBox handleSelectedCourses={selectedCourses} selectedCourses={selectedCourses}></SelectCheckBox>
             </div>
-            
+                      <button style={{margin:10}} className="btn btn-primary bg-gray-700">submit</button>
+
           </form>
-          <button style={{margin:10}} className="btn btn-primary bg-gray-700">submit</button>
         </div>
       </div>
     </div>

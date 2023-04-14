@@ -7,58 +7,59 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import Profile from "./Pages/Profile";
 import PraivteRoute from "./Coponents/PraivteRoute.jsx";
-<<<<<<< Updated upstream
-=======
 import ForgotPassword from "./Pages/ForgotPassword";
->>>>>>> Stashed changes
+import FindGroups from "./Pages/FindGroups";
+import AddGroup from "./Pages/AddGroup";
+import MyGroupPage from "./Pages/MyGroupPage";
+import FriendsListCard from "./Coponents/FriendsListCard";
+import UserAchievemeant from "./Pages/UserAchievemeant";
+import RecentActivitiesCard from "./Pages/RecentActivitiesCard";
+import UserFriendsPage from "./Pages/UserFriendsPage";
+import RequestsToGroups from "./Pages/RequestsToGroups";
 function App() {
   return (
     <>
-      <div className="container h-full">
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCt1tGfbI6o0A6dcCFTstFsPlAUEQYaYS4&callback=initMap&v=weekly"
+      defer
+    ></script>
+      <div className="container h-full w-full">
         <Router>
-<<<<<<< Updated upstream
-          <div className="topNavBar w-full ">
-           
-            <NavBar />
-          </div>
-=======
-          
->>>>>>> Stashed changes
           <div className="bodyContent">
             <Routes>
-             
               {/* //to render component inside of component and route you need to route inside route */}
-          <Route path='/' element={<PraivteRoute/>}>
-          <Route path="/" element={<Profile />} />
-          <Route path="/FirstSignUpQuestions" element={<FirstSignUpQuestions />} />
+              <Route path="/" element={<PraivteRoute />}>
+                <Route path="/" element={<MyGroupPage />} />
+              </Route>
 
-          </Route>
-           
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
+              <Route path="/forgotPassword" element={<ForgotPassword />} />
+              <Route path="/findGroups" element={<FindGroups />} />
+              <Route path="/createGroups" element={<AddGroup />} />
+              <Route path="/myGroups" element={<MyGroupPage />} />
+              <Route path="/myFriends" element={<UserFriendsPage />} />
+              <Route path="/achievements" element={<UserAchievemeant />} />
+              <Route path="/recentActivities" element={<RecentActivitiesCard />} />
+              <Route path="/requestGroups" element={<RequestsToGroups />} />
             </Routes>
           </div>
+
+          <ToastContainer
+            position="top-center"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            
+            pauseOnHover
+            theme="light"
+          />
+          
         </Router>
-<<<<<<< Updated upstream
-=======
-       
-        
->>>>>>> Stashed changes
-        <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-        <div className="buttomNavBar w-full pb-2 absolute bottom-0">
-          <BottumNavBar/>
-        </div>
       </div>
     </>
   );

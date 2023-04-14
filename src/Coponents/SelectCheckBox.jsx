@@ -1,5 +1,4 @@
-import React, { Component, useState } from "react";
-import { dataSelection } from "../asset/DataSelection";
+import React, { useState } from "react";
 import { MultiSelect } from 'primereact/multiselect';
 
 //theme
@@ -20,7 +19,7 @@ export default function SelectCheckBoxs() {
         //מחזיר את הרשימה של כל הקורסים שקיימים
  return (
         <div className="card flex justify-content-center">
-            <MultiSelect value={selectedCurses} onChange={(e) => setSelectedCurses(e.value)} options={dataSelection} optionLabel="id" 
+            <MultiSelect value={selectedCurses} onChange={(e) => setSelectedCurses(e.value)} options={""} optionLabel="id" 
                 placeholder="Choose courses in your field of knowledge" maxSelectedLabels={30} className="w-full md:w-20rem" />
         </div>
     );
