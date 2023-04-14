@@ -110,7 +110,7 @@ function FriendsListCard() {
               >
                 <div className="m-0">
                   {/* הפרטים של המשתמש */}
-                  <UserProfileModal id={product.userRef} />
+                  <UserProfileModal id={selectedUserId} />
                 </div>
               </Dialog>
             </div>
