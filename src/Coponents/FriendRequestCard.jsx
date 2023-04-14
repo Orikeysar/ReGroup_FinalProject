@@ -101,13 +101,13 @@ function FriendRequestCard() {
             anotherUser.friendsWaitingToAcceptByAnotherUser,
         }).then(() => {
           UpdateRecentActivities(newFriend, "friend", activeUser);
-          UpdateRecentActivities(newFriend, "friend", id);
+          UpdateRecentActivities(newFriend, "friend", anotherUser);
           let achiev = activeUser.userAchievements.filter(
             (element) => element.name === "Community Member"
           );
           let item = achiev[0];
           UserScoreCalculate(item, "friend", activeUser);
-          UserScoreCalculate(item, "friend", id);
+          UserScoreCalculate(item, "friend", anotherUser);
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success("you accept firend success");
           window.location.reload();

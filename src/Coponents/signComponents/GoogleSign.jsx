@@ -117,11 +117,11 @@ function GoogleSign() {
         });
         toast.success("Build user with google success");
       }
-
+      const docSnapAgain = await getDoc(docRef);
       //Check if user exists,if not, create user
-      if (docSnap.exists()) {
+      if (docSnapAgain.exists()) {
         const userData = {
-          data: docSnap.data(),
+          data: docSnapAgain.data(),
         };
 
         localStorage.setItem("componentChoosen", "UserAchievemeant");

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
 import TextField from "@mui/material/TextField";
@@ -75,23 +75,14 @@ function AddGroup() {
     setSelectedSubjects(selectedSubjects);
     setSelectedNumber(selectedNumber);
   };
-  const useEffect =
-    (() => {
-      if (managerGroup != null && editGroupState === "Create New Group") {
-        setEditGroupState("Edit Your Group");
-      }
-      setNewGroup({
-        ...newGroup,
-        groupTittle: selectedCourse,
-        groupTags: selectedSubjects,
-        groupSize: selectedNumber,
-        location: cordinates,
-        isActive: true,
-        groupImg: activeUser.userImg,
-        userRef: activeUser.userRef,
-      });
-    },
-    [newGroup]);
+ useEffect(()=>{
+if(editGroupState==="Edit Your Group" ){
+
+
+}
+
+
+ },[])
 
   //הפונקציה תופסת שינויים בשהמשתמש מכניס למשתנים
   const onChange = (e) => {
@@ -397,7 +388,7 @@ let groupDataTemp = {
         };
         console.log(alert);
         alertGroupEdited(alert);
-      } else {
+      } 
         fetch(
           "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
           {
@@ -416,7 +407,7 @@ let groupDataTemp = {
           .then((response) => response.text())
           .then((data) => console.log(data))
           .catch((error) => console.error(error));
-        }
+        
       } 
       toast.success("Messages have been sent to users")
     } 

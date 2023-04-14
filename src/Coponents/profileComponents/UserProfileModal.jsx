@@ -51,9 +51,25 @@ function UserProfileModal({ id }) {
     fetchUser();
     return null;
   }
+  //שולח הודעה לחבר
+const handleSendAlert=async()=>{
+try{
+  saveMessagingDeviceToken(activeUser.userRef);
+  const docRef = doc(db, "fcmTokens", id);
+  const docSnap = await getDoc(docRef);
+  const data = docSnap.data();
+  const token = data.fcmToken;
+  onButtonClick(token);
+  }catch{
+toast.error("this user dont accepy messageing")
+setBtnStatus("add");
+  }
+  
 
+}
   //הוספת המשתמש לרשימה בדאטה
   const handleAddFriend = async () => {
+    setBtnStatus("wait");
     let now = Timestamp.now();
     let newFriend = {
       email: user.email,
@@ -74,14 +90,7 @@ function UserProfileModal({ id }) {
     if (friendExists) {
       toast.error(`${newFriend.name} already get your request`);
     } else {
-      //שולח הודעה למשתמש שיש לו בקשה ממתינה
-      saveMessagingDeviceToken(activeUser.userRef);
-      const docRef = doc(db, "fcmTokens", id);
-      const docSnap = await getDoc(docRef);
-      const data = docSnap.data();
-      const token = data.fcmToken;
-      onButtonClick(token);
-      //שליחה סיום
+     
       //הכנסת משתמש לרשימה שמחכה לאישור או דחיה אצל המשתמש המחובר
       activeUser.friendsWaitingToAcceptByAnotherUser.push(newFriend);
       //הכנסת משתמש לרשימה שמחכה לאישור או דחיה אצל המשתמש שנשלחה לו הבקשה(לא המחובר) ר
@@ -108,13 +117,17 @@ function UserProfileModal({ id }) {
             toast.success(
               "congrats ! you send " + newFriend.name + " friend requst"
             );
-            setBtnStatus("wait");
-
+             setBtnStatus("wait");
+           
+    
             localStorage.setItem("activeUser", JSON.stringify(activeUser));
+             //שולח הודעה למשתמש שיש לו בקשה ממתינה
+      handleSendAlert();
+      //שליחה סיום
           });
         })
         .catch((error) => {
-          toast.error("Bad Cardictionals details,try again");
+          toast.error("Adding friend error,try again");
           console.log(error);
         });
 
@@ -130,6 +143,7 @@ function UserProfileModal({ id }) {
           " from the friends list?"
       ) === true
     ) {
+      setBtnStatus("wait");
       let newFriendsList = activeUser.friendsList.filter(
         (item) => id !== item.userRef
       );
@@ -145,13 +159,16 @@ function UserProfileModal({ id }) {
           await updateDoc(userRef, {
             friendsList: user.friendsList,
           }).then(() => {
-            toast.success("Done successfully");
+            toast.success("Remone Done successfully");
             setBtnStatus("add");
             localStorage.setItem("activeUser", JSON.stringify(activeUser));
+            //שולח הודעה למשתמש שיש לו בקשה ממתינה
+      handleSendAlert();
+      //שליחה סיום
           });
         })
         .catch((error) => {
-          toast.error("Bad Cardictionals details,try again");
+          toast.error("remove not worked, try again");
           console.log(error);
         });
     }
@@ -194,8 +211,8 @@ function UserProfileModal({ id }) {
             </div>
           ))}
           <div className=" ml-auto justify-end col-span-1 mt-4">
-
-          {btnStatus==="remove" ? (
+{activeUser.userRef !== user.userRef?(
+  btnStatus==="remove" ? (
             <button
               onClick={handleRemoveFriend}
               className="btn btn-sm bg-red-600 mt-3 justify-self-end"
@@ -218,7 +235,8 @@ function UserProfileModal({ id }) {
               request sended
             </button>
           )
-          }
+          ):("")}
+          
         </div>
 
         </div>
