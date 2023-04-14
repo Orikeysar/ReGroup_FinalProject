@@ -43,6 +43,7 @@ function FacebookSign() {
           points: 0,
           recentActivities: [],
           friendsWaitingToAcceptByAnotherUser:[],
+          groupParticipantsToApproval:[],
           userAchievements: [
             {
               name: "Joined Groups",

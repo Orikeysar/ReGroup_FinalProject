@@ -17,6 +17,8 @@ import {
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 import GoogleSign from "../Coponents/signComponents/GoogleSign";
+import SelectCheckBox from "../Coponents/SelectCheckBox";
+import { uuidv4 } from "@firebase/util";
 import { saveMessagingDeviceToken } from "../messaging";
 
 
@@ -37,6 +39,7 @@ function SignUp() {
     recentActivities: [],
     friendsListToAccept:[],
     friendsWaitingToAcceptByAnotherUser:[],
+    groupParticipantsToApproval:[],
     userAchievements: [
       {
         name: "Joined Groups",

@@ -47,6 +47,7 @@ function GoogleSign() {
           recentActivities: [],
           friendsListToAccept: [],
           friendsWaitingToAcceptByAnotherUser:[],
+          groupParticipantsToApproval:[],
           userAchievements: [
             {
               name: "Joined Groups",

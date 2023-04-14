@@ -261,3 +261,68 @@ exports.FCMNotification5MinGroup = functions.pubsub.schedule("every 3 minutes")
         }
       });
     });
+//     // delete user from 2 groups
+// exports.DeleteUserFrom2Groups = functions.pubsub.schedule("every 3 minutes")
+//         .onRun(async (context) => {
+//             const activeGroupsRef = db.collection("activeGroups");
+//             const now = new Date();
+//             const fiveMinutesLater = new Date(now.getTime() + 5 * 60 * 1000);
+//             const activeGroupsSnapshot = await activeGroupsRef.get();
+//             const batch = db.batch();
+    
+//             // Step 1: Fetch all groups from "activeGroups" collection
+//             const groups = [];
+//             activeGroupsSnapshot.forEach((doc) => {
+//                 const group = doc.data();
+//                 group.id = doc.id;
+//                 groups.push(group);
+//             });
+    
+//             // Step 2: For each group, fetch the manager's information
+//             for (const group of groups) {
+//                 const managerRef = group.managerRef;
+//                 const managerDoc = await db.doc(managerRef).get();
+//                 const manager = managerDoc.data();
+    
+//                 // Step 3: Check if the manager is a participant in any other group
+//                 for (const otherGroup of groups) {
+//                     if (otherGroup.id !== group.id) {
+//                         const otherGroupParticipants = otherGroup.participants;
+//                         for (const participant of otherGroupParticipants) {
+//                             if (participant.userRef === managerRef) {
+//                                 const otherGroupTimestamp = new Date(
+//                                     otherGroup.timeStamp._seconds * 1000 +
+//                                     otherGroup.timeStamp._nanoseconds / 1000000
+//                                 );
+    
+//                                 // Step 4: If the manager is a participant in another group that has started, remove them from that group
+//                                 if (otherGroupTimestamp <= now) {
+//                                     const otherGroupRef = activeGroupsRef.doc(otherGroup.id);
+//                                     batch.update(otherGroupRef, {
+//                                         participants: otherGroupParticipants.filter(p => p.userRef !== managerRef)
+//                                     });
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 }
+    
+//                 // Step 5: Check if the manager's own group has already started
+//                 const groupTimestamp = new Date(
+//                     group.timeStamp._seconds * 1000 +
+//                     group.timeStamp._nanoseconds / 1000000
+//                 );
+    
+//                 // Step 6: If the manager's own group has started, remove them from that group
+//                 if (groupTimestamp <= now) {
+//                     const groupRef = activeGroupsRef.doc(group.id);
+//                     batch.update(groupRef, {
+//                         participants: group.participants.filter(p => p.userRef !== managerRef)
+//                     });
+//                 }
+//             }
+    
+//             // Step 7: Update the relevant groups' documents in the "activeGroups" collection
+//             await batch.commit();
+//         });
+    
