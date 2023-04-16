@@ -65,9 +65,7 @@ function AddGroup() {
   useEffect(() => {
     if (managerGroup != null && btnState === "Create New Group") {
       setBtnState("Edit Your Group");
-      let participants = managerGroup.participants.filter(
-        (participant) => participant.userRef !== managerGroup.managerRef
-      );
+
       let newUpdateGroup = {
         address: "",
         groupTittle: "",
@@ -77,7 +75,7 @@ function AddGroup() {
         managerRef: managerGroup.managerRef,
         location: { lat: 0, lng: 0 },
         description: "",
-        participants: participants,
+        participants: managerGroup.participants,
         isActive: managerGroup.isActive,
         timeStamp: "00:00:00",
         id: managerGroup.id,
@@ -161,7 +159,6 @@ function AddGroup() {
         toast.info("user " + friend.name + " not found ");
       }
     }
-    
   };
 
   //הפונקציה בודקת האם מילא את כל הפרטים
@@ -181,13 +178,6 @@ function AddGroup() {
         "fill address and description for the group you want to create"
       );
     } else {
-      newGroup.participants.push({
-        name: activeUser.name,
-        userImg: activeUser.userImg,
-        userRef: activeUser.userRef,
-        email: activeUser.email,
-      });
-
       if (managerGroup != null) {
         if (
           window.confirm(
@@ -210,15 +200,14 @@ function AddGroup() {
     const [hours, minutes] = newGroup.timeStamp.split(":");
     now.setHours(hours, minutes, 0, 0);
     const geoPoint = new GeoPoint(cordinates.lat, cordinates.lng);
-    //SET USER new group
-    await setDoc(doc(db, "activeGroups", groupId), {
+    let newEditGroup = {
       groupTittle: selectedCourse,
       groupTags: selectedSubjects,
       groupSize: parseInt(selectedNumber),
       location: geoPoint,
-      isActive: newGroup.isActive,
-      groupImg: newGroup.userImg,
-      managerRef: newGroup.userRef,
+      isActive: false,
+      groupImg: activeUser.userImg,
+      managerRef: activeUser.userRef,
       address: newGroup.address,
       description: newGroup.description,
       participants: newGroup.participants,
@@ -232,60 +221,39 @@ function AddGroup() {
           now.getMinutes()
         )
       ),
-    })
-      //אם הצליח, זה יישלח רק למשתתפים שהם לא המנהל הודעה על שינוי.  במקרה והם לא אישרו קבלת הודעות פוש באפליקציה יישלח אליהם מייל
-      .then(async () => {
-        toast.success("edit success");
-        for (const item of newGroup.participants) {
-          if (item.userRef != activeUser.userRef) {
-            const docRef = doc(db, "fcmTokens", item.userRef);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-              const data = docSnap.data();
-              const token = data.fcmToken;
-              const title =
-                "The group you are registered to in " +
-                selectedCourse +
-                " as been edited.";
-              const message = " Please keep up to date with the changes ";
-              const alert = {
-                token: token,
-                title: title,
-                message: message,
-              };
-              console.log(alert);
-              alertGroupEdited(alert);
-            } else {
-              fetch(
-                "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    subject: `Your group as been edited !`,
-                    email: item.email,
-                    message:
-                      "The group you are registered to - " +
-                      selectedCourse +
-                      " as been edited. Please keep up to date with the changes. you can see here the changes in myGroups page : https://regroup-a4654.web.app/myGroups",
-                  }),
-                }
-              )
-                .then((response) => response.text())
-                .then((data) => console.log(data))
-                .catch((error) => console.error(error));
-            }
-          }
-        }
-        navigate("/myGroups");
-      })
-      .catch((error) => {
-        toast.error("Bad Cardictionals details,try again");
-        console.log(error);
-      });
+    };
+    //SET USER new group
+    await setDoc(doc(db, "activeGroups", groupId), {
+      groupTittle: selectedCourse,
+      groupTags: selectedSubjects,
+      groupSize: parseInt(selectedNumber),
+      location: geoPoint,
+      isActive: false,
+      groupImg: activeUser.userImg,
+      managerRef: activeUser.userRef,
+      address: newGroup.address,
+      description: newGroup.description,
+      participants: newGroup.participants,
+      id: groupId,
+      timeStamp: Timestamp.fromDate(
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          now.getHours(),
+          now.getMinutes()
+        )
+      ),
+    }).then(
+      handleFriendRequests(groupId, newEditGroup)
+      //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה}
+    );
+
+    navigate("/myGroups");
   };
+
+
+  
   //פותח קבוצה חדשה עם מספר סידור חדש
   const CreateNewGroup = async () => {
     const now = new Date();
@@ -367,7 +335,6 @@ function AddGroup() {
   const onSubmitForm = async (e) => {
     //במידה ויש קבוצה דומה המשתמש יקבל התראה לפני פתיחת הקבוצה
     if (filteredGroups.length > 0) {
-      
       if (
         window.confirm(
           "you want to see another active groups with same parameters?"
@@ -384,41 +351,40 @@ function AddGroup() {
   };
 
   const handleSendEmail = async (friend) => {
-      const docRefToken = doc(db, "fcmTokens", friend.userRef);
-      const docSnapToken = await getDoc(docRefToken);
-      if (docSnapToken.exists()) {
-        const data = docSnapToken.data();
-        const token = data.fcmToken;
-        const title = "Group Request  !";
-        const message =
-          activeUser.name + " send you a request to join the group";
-        const alert = {
-          token: token,
-          title: title,
-          message: message,
-        };
-        console.log(alert);
-        alertGroupEdited(alert);
-      } else {
-        fetch(
-          "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              subject: `Group Request !`,
-              email: friend.email,
-              message:
-                activeUser.name +
-                " send you a request to join the group . For more details : https://regroup-a4654.web.app/requestGroups",
-            }),
-          }
-        )
-          .then((response) => response.text())
-          .then((data) => console.log(data))
-          .catch((error) => console.error(error));
+    const docRefToken = doc(db, "fcmTokens", friend.userRef);
+    const docSnapToken = await getDoc(docRefToken);
+    if (docSnapToken.exists()) {
+      const data = docSnapToken.data();
+      const token = data.fcmToken;
+      const title = "Group Request  !";
+      const message = activeUser.name + " send you a request to join the group";
+      const alert = {
+        token: token,
+        title: title,
+        message: message,
+      };
+      console.log(alert);
+      alertGroupEdited(alert);
+    } else {
+      fetch(
+        "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            subject: `Group Request !`,
+            email: friend.email,
+            message:
+              activeUser.name +
+              " send you a request to join the group . For more details : https://regroup-a4654.web.app/requestGroups",
+          }),
+        }
+      )
+        .then((response) => response.text())
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error));
     }
     toast.success("Messages have been sent to users");
   };

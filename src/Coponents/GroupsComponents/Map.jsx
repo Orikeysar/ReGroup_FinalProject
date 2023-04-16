@@ -4,6 +4,7 @@ import {
   useLoadScript,
   Marker,
   InfoWindow,
+  AdvancedMarkerView 
 } from "@react-google-maps/api";
 import Spinner from "../Spinner";
 import { uuidv4 } from "@firebase/util";
@@ -51,6 +52,12 @@ export default function Map({ filteredGroups }) {
               handleDistance(item.location);
             }}
             icon={item.groupTittle === "my location" ? item.groupImg : null}
+            label={{
+              text: item.groupTittle,
+              color: "white",
+              fontWeight: "bold",
+              fontSize: "16px",
+            }}
           />
         );
       }
@@ -69,27 +76,7 @@ export default function Map({ filteredGroups }) {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [dropdownRef]);
-//אחראי על האייקון של המארקר
-const handleIconGroupImg=(group)=>{
-  const canvas = document.createElement('canvas');
-  canvas.width = 30;
-  canvas.height = 30;
-  const ctx = canvas.getContext('2d');
-  const img1 = new Image();
-  img1.crossOrigin = 'anonymous';
-  img1.src = group.groupImg;
-  img1.onload = () => {
-    ctx.drawImage(img1, 0, 0, 15, 30);
-    const img2 = new Image();
-    img2.crossOrigin = 'anonymous';
-    img2.src = iconImg;
-    img2.onload = () => {
-    ctx.drawImage(img2, 15, 0, 15, 30);
-    const icon = canvas.toDataURL();
-    return icon;
-  }
-}
-}
+
   //פונקציה המקבלת את מיקום המארקר שנלחץ, מוצאת את המיקום הנוכחי שלי ומחשבת את המרחק בנינו
   const handleDistance = (markerLocation) => {
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -153,7 +140,13 @@ const handleIconGroupImg=(group)=>{
 
     return { lat: newLat, lng: newLng };
   };
-
+  const markerStyle = (groupImg) => ({
+    background: `url(${groupImg}) center / cover`,
+    width: "32px",
+    height: "32px",
+    borderRadius: "50%",
+    cursor: "pointer",
+  });
   if (!isLoaded) return <Spinner />;
 
   return (
@@ -174,7 +167,7 @@ const handleIconGroupImg=(group)=>{
         center={center}
         mapContainerClassName=" map-container mb-20"
       >
-        {filteredGroups.map((item) =>
+        {filteredGroups.map((item,index) =>
           item.groupSize > item.participants.length ? (
             // item.groupImg=()=>handleIconGroupImg(item),
             <Marker
@@ -190,6 +183,15 @@ const handleIconGroupImg=(group)=>{
                 handleDistance(item.location);
               }}
               icon={item.groupTittle==="my location"?item.groupImg:null}
+              label={{
+                text:  `${index + 1}`,
+                color: "black",
+                fontWeight: "bold",
+                fontSize: "12px",
+
+              }}
+              glyph={item.groupImg}
+              
             />
           ) : (
             handleRenderGroup(item)
