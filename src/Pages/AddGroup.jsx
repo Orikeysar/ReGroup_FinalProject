@@ -82,6 +82,7 @@ function AddGroup() {
         timeStamp: "00:00:00",
         id: managerGroup.id,
       };
+      setNewGroup(newUpdateGroup);
 
       // let catchGroupExist = {
       //   address: managerGroup.address,
