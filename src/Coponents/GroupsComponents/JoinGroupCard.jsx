@@ -36,8 +36,8 @@ function JoinGroupCard({ group }) {
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
   //אחראי על שינוי הכפתור בשליחת בקשה
-  const [isSended, setIsSended]=useState(false);
-  
+  const [isSended, setIsSended] = useState(false);
+
   //פרטי המשתמש המחובר
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
@@ -46,6 +46,7 @@ function JoinGroupCard({ group }) {
   const handleDropdownClick = () => {
     setShowDropdown(!showDropdown);
   };
+  //מרנדרת את הזמן או לחליפין מראה אייקון פתוח
   const handleGroupTime = (timeStamp) => {
     if (timeStamp != null || timeStamp != undefined) {
       let time = timeStamp.toDate();
@@ -61,6 +62,10 @@ function JoinGroupCard({ group }) {
       } else if (hours === date.getHours() && minutes > date.getMinutes()) {
         return time;
       } else {
+        if (group.isActive === false) {
+          handleIsActiveChange();
+        }
+
         return (
           <>
             <FaCircle style={{ color: "green", marginRight: "5px" }} />
@@ -68,6 +73,57 @@ function JoinGroupCard({ group }) {
           </>
         );
       }
+    }
+  };
+  //מאתחלת את הקבוצה לפעילה ומוציא מנהל שמשתתף בשתי קבוצות פועלות
+  const handleIsActiveChange = async () => {
+    try {
+      let groupRef = doc(db, "activeGroups", group.id);
+      await updateDoc(groupRef, {
+        isActive: true,
+      });
+      //בודקת האם המנהל משתתף בעוד קבוצה
+      const groupsRef = collection(db, "activeGroups");
+      const groupsSnapshot = await getDocs(groupsRef);
+      groupsSnapshot.forEach((doc) => {
+        let groupData = doc.data();
+        if (groupData.id !== group.id) {
+          if (groupData.isActive) {
+            let participants = groupData.participants;
+            participants.forEach(async (participant) => {
+              if (participant.userRef === group.managerRef) {
+                let participantGroupRef = doc(db, "activeGroups", groupData.id);
+                await updateDoc(participantGroupRef, {
+                  participants: participants.filter(
+                    (p) => p.userRef !== group.managerRef
+                  ),
+                }).then(
+                  fetch(
+                    "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        subject: `We removed you from a group`,
+                        email: JSON.stringify(participant.email),
+                        message:
+                          "Due to your participation in two active groups, we removed you from the group : " +
+                          JSON.stringify(group.groupTittle) +
+                          " that you are participating in." +
+                          " you can see here your corrent group : https://regroup-a4654.web.app/myGroups",
+                      }),
+                    }
+                  )
+                );
+              }
+            });
+          }
+        }
+      });
+    } catch (error) {
+      console.log("error: " + error);
     }
   };
   //אחראי על המודל של המשתמש לאחר לחיצה
@@ -99,7 +155,7 @@ function JoinGroupCard({ group }) {
       userImg: activeUser.userImg,
       userRef: activeUser.userRef,
       managerRef: group.managerRef,
-      type: "request"
+      type: "request",
     };
     const docRef = doc(db, "users", group.managerRef);
     const docSnap = await getDoc(docRef);
@@ -144,14 +200,13 @@ function JoinGroupCard({ group }) {
           .then((data) => console.log(data))
           .then("Request sended")
           .catch((error) => console.error(error));
-
       }
     } else {
       toast.error("User not found. Please try again later");
     }
-    toast.success("Request was sended to the manager")
+    toast.success("Request was sended to the manager");
     setBtnStatus(true);
-    setIsSended(true)
+    setIsSended(true);
   };
 
   const handleLeaveGroup = async (group) => {
@@ -250,8 +305,7 @@ function JoinGroupCard({ group }) {
           </div>
         </div>
         <div className="ml-auto mt-3 lg:mt-0">
-          {isSended?
-            (
+          {isSended ? (
             <div className=" justify-center">
               <button disabled={true} className="btn btn-sm ml-auto">
                 Sended
