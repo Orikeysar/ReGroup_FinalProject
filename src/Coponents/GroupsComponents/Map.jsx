@@ -7,7 +7,7 @@ import {
 } from "@react-google-maps/api";
 import Spinner from "../Spinner";
 import { uuidv4 } from "@firebase/util";
-
+import iconImg from '../../asset/iconImg.jpeg'
 import JoinGroupCard from "./JoinGroupCard";
 
 export default function Map({ filteredGroups }) {
@@ -54,8 +54,8 @@ export default function Map({ filteredGroups }) {
           />
         );
       }
+    }
   };
-}
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -69,10 +69,27 @@ export default function Map({ filteredGroups }) {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [dropdownRef]);
-
-  const handleDropdownClick = () => {
-    setShowDropdown(!showDropdown);
-  };
+//אחראי על האייקון של המארקר
+const handleIconGroupImg=(group)=>{
+  const canvas = document.createElement('canvas');
+  canvas.width = 30;
+  canvas.height = 30;
+  const ctx = canvas.getContext('2d');
+  const img1 = new Image();
+  img1.crossOrigin = 'anonymous';
+  img1.src = group.groupImg;
+  img1.onload = () => {
+    ctx.drawImage(img1, 0, 0, 15, 30);
+    const img2 = new Image();
+    img2.crossOrigin = 'anonymous';
+    img2.src = iconImg;
+    img2.onload = () => {
+    ctx.drawImage(img2, 15, 0, 15, 30);
+    const icon = canvas.toDataURL();
+    return icon;
+  }
+}
+}
   //פונקציה המקבלת את מיקום המארקר שנלחץ, מוצאת את המיקום הנוכחי שלי ומחשבת את המרחק בנינו
   const handleDistance = (markerLocation) => {
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -120,9 +137,11 @@ export default function Map({ filteredGroups }) {
       });
     });
   };
+  //מוצא את המיקום של רופין
   const handleRuppinLocation = () => {
     setCenter({ lat: 32.342884, lng: 34.912755 });
   };
+  //אם שני מרקרים על אותו המיקום, יזיז את המארקר טיפה הצידה
   const offsetCoordinates = (lat, lng, index) => {
     const offsetAngle = (index * 360) / 10; // Adjust the divisor to change the spacing between markers
     const offsetDistance = 0.0001; // Adjust the value to change the distance between markers
@@ -157,6 +176,7 @@ export default function Map({ filteredGroups }) {
       >
         {filteredGroups.map((item) =>
           item.groupSize > item.participants.length ? (
+            // item.groupImg=()=>handleIconGroupImg(item),
             <Marker
               key={uuidv4()}
               title={item.groupTittle}
@@ -169,7 +189,7 @@ export default function Map({ filteredGroups }) {
                 setSelectedMarker(item);
                 handleDistance(item.location);
               }}
-              icon={item.groupTittle === "my location" ? item.groupImg : null}
+              icon={item.groupTittle==="my location"?item.groupImg:null}
             />
           ) : (
             handleRenderGroup(item)
