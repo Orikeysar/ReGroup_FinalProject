@@ -1,12 +1,16 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavBar from "../Coponents/navbars/NavBar";
 import FriendsListCard from "../Coponents/FriendsListCard";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 import FriendRequestCard from "../Coponents/FriendRequestCard";
 
 function UserFriendsPage() {
-  
+  const [activeUser, setactiveUser] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("activeUser"));
+    return user;
+  });
+
   const [requestBtnClicked, setRequestBtnClicked] = useState(false);
 
   return (

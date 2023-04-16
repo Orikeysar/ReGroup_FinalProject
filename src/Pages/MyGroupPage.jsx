@@ -486,26 +486,25 @@ function MyGroupPage() {
           };
 
           //updat recent activites
-          for (const participant of newGroupActiviteis.participants){
+          for (const participant of newGroupActiviteis.participants) {
             // אם המשתתף הוא המחובר ישלח את הלוקאל שלו, אחרת ימשוך מהדאטה את המשתתף וישלח לפונקציה
-            if(participant.userRef===activeUser.userRef){
+            if (participant.userRef === activeUser.userRef) {
               UpdateRecentActivities(
                 newGroupActiviteis,
                 "CreatedGroups",
                 activeUser
               );
-            }else { 
+            } else {
               const docRefParticipant = doc(db, "user", participant.userRef);
               const docSnapParticipant = await getDoc(docRefParticipant);
-              if (docSnapParticipant.exists()){
-                let user =docSnapParticipant.data();
+              if (docSnapParticipant.exists()) {
+                let user = docSnapParticipant.data();
                 UpdateRecentActivities(
-                newGroupActiviteis,
-                "CreatedGroups",
-                user
-              );
+                  newGroupActiviteis,
+                  "CreatedGroups",
+                  user
+                );
               }
-              
             }
           }
           navigate("/myGroups");
@@ -518,7 +517,7 @@ function MyGroupPage() {
   };
 
   //תופס את לחיצת הכפתור עריכה על כרטיס הקבוצה
-  const handleEditManagerGroup = (group) => {
+  const handleEditManagerGroup = () => {
     navigate("/createGroups");
   };
   const handleLeaveGroup = async (group) => {
