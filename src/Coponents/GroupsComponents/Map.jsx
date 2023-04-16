@@ -70,14 +70,14 @@ export default function Map({ filteredGroups }) {
     };
   }, [dropdownRef]);
 //אחראי על האייקון של המארקר
-const handleIcon=(groupImg)=>{
+const handleIconGroupImg=(group)=>{
   const canvas = document.createElement('canvas');
   canvas.width = 30;
   canvas.height = 30;
   const ctx = canvas.getContext('2d');
   const img1 = new Image();
   img1.crossOrigin = 'anonymous';
-  img1.src = groupImg;
+  img1.src = group.groupImg;
   img1.onload = () => {
     ctx.drawImage(img1, 0, 0, 15, 30);
     const img2 = new Image();
@@ -176,7 +176,7 @@ const handleIcon=(groupImg)=>{
       >
         {filteredGroups.map((item) =>
           item.groupSize > item.participants.length ? (
-            
+            // item.groupImg=()=>handleIconGroupImg(item),
             <Marker
               key={uuidv4()}
               title={item.groupTittle}
@@ -189,7 +189,7 @@ const handleIcon=(groupImg)=>{
                 setSelectedMarker(item);
                 handleDistance(item.location);
               }}
-              icon={item.groupImg}
+              icon={item.groupTittle==="my location"?item.groupImg:null}
             />
           ) : (
             handleRenderGroup(item)
