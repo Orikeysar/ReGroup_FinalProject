@@ -5,12 +5,22 @@ import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "./profileComponents/UserProfileModal";
-import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  Timestamp,
+  getDoc,
+  collection,
+  query,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import UpdateRecentActivities from "./UpdateRecentActivities";
 import UserScoreCalculate from "./UserScoreCalculate";
+import { saveMessagingDeviceToken } from "../messaging";
+import { onButtonClick } from "../FirebaseSDK";
 function FriendRequestCard() {
   const navigate = useNavigate();
   //array for frinds
@@ -21,13 +31,13 @@ function FriendRequestCard() {
     return user;
   });
 
-  const unsub= onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
-   let data = doc.data()
-    setactiveUser(data)
-    setReaustFriends(data.friendsListToAccept)
+  const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+    let data = doc.data();
+    setactiveUser(data);
+    setReaustFriends(data.friendsListToAccept);
     localStorage.setItem("activeUser", JSON.stringify(data));
-});
-  
+  });
+
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
       const firestoreTimestamp = new Timestamp(
@@ -80,7 +90,8 @@ function FriendRequestCard() {
         userImg: activeUser.userImg,
       };
       let activeUserFriendRequestList = activeUser.friendsListToAccept;
-      let anotherUserFriendRequestList = anotherUser.friendsWaitingToAcceptByAnotherUser;
+      let anotherUserFriendRequestList =
+        anotherUser.friendsWaitingToAcceptByAnotherUser;
       //  יצירת רשימות חדשות לפני דחיפה לדאטה
       activeUser.friendsListToAccept = deleteObjectById(
         activeUserFriendRequestList,
@@ -102,7 +113,7 @@ function FriendRequestCard() {
           friendsList: anotherUser.friendsList,
           friendsWaitingToAcceptByAnotherUser:
             anotherUser.friendsWaitingToAcceptByAnotherUser,
-        }).then(() => {
+        }).then(async () => {
           UpdateRecentActivities(newFriend, "friend", activeUser);
           UpdateRecentActivities(newFriend, "friend", anotherUserRef);
           let achiev = activeUser.userAchievements.filter(
@@ -112,9 +123,24 @@ function FriendRequestCard() {
           UserScoreCalculate(item, "friend", activeUser);
           UserScoreCalculate(item, "friend", anotherUserRef);
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
-          toast.success("you accept firend success");
+          toast.success("you accepted"+ anotherUser.name +"to your friends list ");
+          try {
+            //send message
+            saveMessagingDeviceToken(anotherUserRef.userRef);
+            const docRef = doc(db, "fcmTokens", id);
+            const docSnap = await getDoc(docRef);
+            const data = docSnap.data();
+            const token = data.fcmToken;
+            onButtonClick(token);
+            //סיום שליחת הודעה
+          } catch (error) {
+            toast.error("accept worked but friend wont get the message");
+            window.location.reload();
+          navigate("/myFriends");
+          }
+
           window.location.reload();
-          navigate("/myFriends")
+          navigate("/myFriends");
         });
       });
     } else {
@@ -154,7 +180,7 @@ function FriendRequestCard() {
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success("delete from request list success");
           window.location.reload();
-           navigate("/myFriends")
+          navigate("/myFriends");
         });
       });
     } else {

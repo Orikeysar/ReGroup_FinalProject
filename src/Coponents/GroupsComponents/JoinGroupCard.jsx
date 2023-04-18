@@ -23,15 +23,13 @@ import UpdateRecentActivities from "../UpdateRecentActivities";
 import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import { useNavigate } from "react-router-dom";
-import { TrendingUpRounded } from "@mui/icons-material";
-import UserScoreCalculate from "../UserScoreCalculate";
 import { FaCircle } from "react-icons/fa";
 
 function JoinGroupCard({ group }) {
   const navigate = useNavigate();
   const date = new Date();
   const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef(null);
+
   const [btnStatus, setBtnStatus] = useState(false);
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
@@ -43,9 +41,7 @@ function JoinGroupCard({ group }) {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  const handleDropdownClick = () => {
-    setShowDropdown(!showDropdown);
-  };
+
   //מרנדרת את הזמן או לחליפין מראה אייקון פתוח
   const handleGroupTime = (timeStamp) => {
     if (timeStamp != null || timeStamp != undefined) {
@@ -62,10 +58,7 @@ function JoinGroupCard({ group }) {
       } else if (hours === date.getHours() && minutes > date.getMinutes()) {
         return time;
       } else {
-        if (group.isActive === false) {
-          handleIsActiveChange();
-        }
-
+     
         return (
           <>
             <FaCircle style={{ color: "green", marginRight: "5px" }} />
@@ -75,57 +68,7 @@ function JoinGroupCard({ group }) {
       }
     }
   };
-  //מאתחלת את הקבוצה לפעילה ומוציא מנהל שמשתתף בשתי קבוצות פועלות
-  const handleIsActiveChange = async () => {
-    try {
-      let groupRef = doc(db, "activeGroups", group.id);
-      await updateDoc(groupRef, {
-        isActive: true,
-      });
-      //בודקת האם המנהל משתתף בעוד קבוצה
-      const groupsRef = collection(db, "activeGroups");
-      const groupsSnapshot = await getDocs(groupsRef);
-      groupsSnapshot.forEach((doc) => {
-        let groupData = doc.data();
-        if (groupData.id !== group.id) {
-          if (groupData.isActive) {
-            let participants = groupData.participants;
-            participants.forEach(async (participant) => {
-              if (participant.userRef === group.managerRef) {
-                let participantGroupRef = doc(db, "activeGroups", groupData.id);
-                await updateDoc(participantGroupRef, {
-                  participants: participants.filter(
-                    (p) => p.userRef !== group.managerRef
-                  ),
-                }).then(
-                  fetch(
-                    "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
-                    {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        subject: `We removed you from a group`,
-                        email: JSON.stringify(participant.email),
-                        message:
-                          "Due to your participation in two active groups, we removed you from the group : " +
-                          JSON.stringify(group.groupTittle) +
-                          " that you are participating in." +
-                          " you can see here your corrent group : https://regroup-a4654.web.app/myGroups",
-                      }),
-                    }
-                  )
-                );
-              }
-            });
-          }
-        }
-      });
-    } catch (error) {
-      console.log("error: " + error);
-    }
-  };
+ 
   //אחראי על המודל של המשתמש לאחר לחיצה
   const [visible, setVisible] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);

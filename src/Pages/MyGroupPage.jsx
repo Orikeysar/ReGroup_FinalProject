@@ -79,8 +79,9 @@ function MyGroupPage() {
     }
   }, [managerGroup, participantGroup]);
   const [managerGroupId, setManagerGroupId] = useState(null);
-  //פונקציה שמסדרת את זמן הקבוצה
-  const handleGroupTime = (timeStamp) => {
+   //מרנדרת את הזמן או לחליפין מראה אייקון פתוח
+   const handleGroupTime = (group) => {
+    let timeStamp = group.timeStamp
     if (timeStamp != null || timeStamp != undefined) {
       let time = timeStamp.toDate();
       let hours = time.getHours();
@@ -89,12 +90,21 @@ function MyGroupPage() {
         ? (time = "start at " + hours + ": 0" + minutes)
         : (time = hours + ":" + minutes);
       //יציג עיגול ירוק עם כיתוב של פתוח עם הזמן הגיע
-
+      
       if (hours > date.getHours()) {
         return time;
       } else if (hours === date.getHours() && minutes > date.getMinutes()) {
         return time;
       } else {
+        if(group.managerRef === activeUser.userRef){
+ if (group.isActive === false) {
+          handleIsActiveChange(group);
+        }
+
+        }
+       
+        
+
         return (
           <>
             <FaCircle style={{ color: "green", marginRight: "5px" }} />
@@ -102,6 +112,57 @@ function MyGroupPage() {
           </>
         );
       }
+    }
+  };
+   //מאתחלת את הקבוצה לפעילה ומוציא מנהל שמשתתף בשתי קבוצות פועלות
+   const handleIsActiveChange = async (group) => {
+    try {
+      let groupRef = doc(db, "activeGroups", group.id);
+      await updateDoc(groupRef, {
+        isActive: true,
+      });
+      //בודקת האם המנהל משתתף בעוד קבוצה
+      const groupsRef = collection(db, "activeGroups");
+      const groupsSnapshot = await getDocs(groupsRef);
+      groupsSnapshot.forEach((GroupChecked) => {
+        let groupData = GroupChecked.data();
+        if (groupData.id !== group.id) {
+          if (groupData.isActive) {
+            let participants = groupData.participants;
+            participants.forEach(async (participant) => {
+              if (participant.userRef === group.managerRef) {
+                let participantGroupRef = doc(db, "activeGroups", groupData.id);
+                await updateDoc(participantGroupRef, {
+                  participants: participants.filter(
+                    (p) => p.userRef !== group.managerRef
+                  ),
+                }).then(
+                  fetch(
+                    "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        subject: `We removed you from a group`,
+                        email: JSON.stringify(participant.email),
+                        message:
+                          "Due to your participation in two active groups, we removed you from the group : " +
+                          JSON.stringify(group.groupTittle) +
+                          " that you are participating in." +
+                          " you can see here your corrent group : https://regroup-a4654.web.app/myGroups",
+                      }),
+                    }
+                  )
+                );
+              }
+            });
+          }
+        }
+      });
+    } catch (error) {
+      console.log("error: " + error);
     }
   };
   //animation my groups divs
@@ -175,7 +236,7 @@ function MyGroupPage() {
           key={managerGroup.managerRef}
         >
           <p className="flex mt-1 justify-end">
-            {handleGroupTime(managerGroup.timeStamp)}
+            {handleGroupTime(managerGroup)}
           </p>
           <div className="flex flex-row flex-wrap">
             <div className="ml-2">
@@ -345,7 +406,7 @@ function MyGroupPage() {
           key={participantGroup.managerRef}
         >
           <p className=" flex mt-1 justify-end ">
-            {handleGroupTime(participantGroup.timeStamp)}
+            {handleGroupTime(participantGroup)}
           </p>
           <div className="flex flex-col lg:flex-row">
             <div className="lg:mr-4 mb-4 lg:mb-0">
