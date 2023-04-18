@@ -4,10 +4,11 @@ import {
   useLoadScript,
   Marker,
   InfoWindow,
+  MarkerWithLabel 
 } from "@react-google-maps/api";
 import Spinner from "../Spinner";
 import { uuidv4 } from "@firebase/util";
-
+import iconImg from '../../asset/iconImg.jpeg'
 import JoinGroupCard from "./JoinGroupCard";
 
 export default function Map({ filteredGroups }) {
@@ -39,23 +40,32 @@ export default function Map({ filteredGroups }) {
       if (item.participants[i].userRef === activeUser.userRef) {
         return (
           <Marker
-            key={uuidv4()}
-            title={item.groupTittle}
-            position={offsetCoordinates(
-              item.location.latitude,
-              item.location.longitude,
-              item.index
-            )}
-            onClick={() => {
-              setSelectedMarker(item);
-              handleDistance(item.location);
-            }}
-            icon={item.groupTittle === "my location" ? item.groupImg : null}
-          />
+          key={uuidv4()}
+          title={item.groupTittle}
+          position={offsetCoordinates(
+            item.location.latitude,
+            item.location.longitude,
+            item.index
+          )}
+          onClick={() => {
+            setSelectedMarker(item);
+            handleDistance(item.location);
+          }}
+          icon={item.groupTittle==="my location"?item.groupImg:null}
+          label={{
+
+            text: `${i+1}`,
+            color: "black",
+            fontWeight: "bold",
+            fontSize: "12px",
+
+          }}
+          
+        />
         );
       }
+    }
   };
-}
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -70,9 +80,6 @@ export default function Map({ filteredGroups }) {
     };
   }, [dropdownRef]);
 
-  const handleDropdownClick = () => {
-    setShowDropdown(!showDropdown);
-  };
   //פונקציה המקבלת את מיקום המארקר שנלחץ, מוצאת את המיקום הנוכחי שלי ומחשבת את המרחק בנינו
   const handleDistance = (markerLocation) => {
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -120,9 +127,11 @@ export default function Map({ filteredGroups }) {
       });
     });
   };
+  //מוצא את המיקום של רופין
   const handleRuppinLocation = () => {
     setCenter({ lat: 32.342884, lng: 34.912755 });
   };
+  //אם שני מרקרים על אותו המיקום, יזיז את המארקר טיפה הצידה
   const offsetCoordinates = (lat, lng, index) => {
     const offsetAngle = (index * 360) / 10; // Adjust the divisor to change the spacing between markers
     const offsetDistance = 0.0001; // Adjust the value to change the distance between markers
@@ -155,8 +164,9 @@ export default function Map({ filteredGroups }) {
         center={center}
         mapContainerClassName=" map-container mb-20"
       >
-        {filteredGroups.map((item) =>
+        {filteredGroups.map((item,index) =>
           item.groupSize > item.participants.length ? (
+            // item.groupImg=()=>handleIconGroupImg(item),
             <Marker
               key={uuidv4()}
               title={item.groupTittle}
@@ -169,7 +179,16 @@ export default function Map({ filteredGroups }) {
                 setSelectedMarker(item);
                 handleDistance(item.location);
               }}
-              icon={item.groupTittle === "my location" ? item.groupImg : null}
+              icon={item.groupTittle==="my location"?item.groupImg:null}
+              label={{
+
+                text: `${index+1}`,
+                color: "black",
+                fontWeight: "bold",
+                fontSize: "12px",
+
+              }}
+              
             />
           ) : (
             handleRenderGroup(item)

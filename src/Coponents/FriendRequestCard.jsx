@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Button } from "primereact/button";
 import { OrderList } from "primereact/orderlist";
 import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
-import { doc, updateDoc, Timestamp, getDoc, onSnapshot} from "firebase/firestore";
+import { Dialog } from "primereact/dialog";
+import UserProfileModal from "./profileComponents/UserProfileModal";
+import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -101,13 +104,13 @@ function FriendRequestCard() {
             anotherUser.friendsWaitingToAcceptByAnotherUser,
         }).then(() => {
           UpdateRecentActivities(newFriend, "friend", activeUser);
-          UpdateRecentActivities(newFriend, "friend", anotherUser);
+          UpdateRecentActivities(newFriend, "friend", anotherUserRef);
           let achiev = activeUser.userAchievements.filter(
             (element) => element.name === "Community Member"
           );
           let item = achiev[0];
           UserScoreCalculate(item, "friend", activeUser);
-          UserScoreCalculate(item, "friend", anotherUser);
+          UserScoreCalculate(item, "friend", anotherUserRef);
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success("you accept firend success");
           window.location.reload();

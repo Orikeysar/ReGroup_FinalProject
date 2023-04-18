@@ -1,6 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import { db } from "../../FirebaseSDK";
+import { toast } from "react-toastify";
+import { getAuth } from "firebase/auth";
 import { onSnapshot, collection, orderBy,query } from "firebase/firestore";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "../profileComponents/UserProfileModal";

@@ -36,8 +36,8 @@ function JoinGroupCard({ group }) {
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
   //אחראי על שינוי הכפתור בשליחת בקשה
-  const [isSended, setIsSended]=useState(false);
-  
+  const [isSended, setIsSended] = useState(false);
+
   //פרטי המשתמש המחובר
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
@@ -46,6 +46,7 @@ function JoinGroupCard({ group }) {
   const handleDropdownClick = () => {
     setShowDropdown(!showDropdown);
   };
+  //מרנדרת את הזמן או לחליפין מראה אייקון פתוח
   const handleGroupTime = (timeStamp) => {
     if (timeStamp != null || timeStamp != undefined) {
       let time = timeStamp.toDate();
@@ -61,6 +62,10 @@ function JoinGroupCard({ group }) {
       } else if (hours === date.getHours() && minutes > date.getMinutes()) {
         return time;
       } else {
+        if (group.isActive === false) {
+          handleIsActiveChange();
+        }
+
         return (
           <>
             <FaCircle style={{ color: "green", marginRight: "5px" }} />
@@ -68,6 +73,57 @@ function JoinGroupCard({ group }) {
           </>
         );
       }
+    }
+  };
+  //מאתחלת את הקבוצה לפעילה ומוציא מנהל שמשתתף בשתי קבוצות פועלות
+  const handleIsActiveChange = async () => {
+    try {
+      let groupRef = doc(db, "activeGroups", group.id);
+      await updateDoc(groupRef, {
+        isActive: true,
+      });
+      //בודקת האם המנהל משתתף בעוד קבוצה
+      const groupsRef = collection(db, "activeGroups");
+      const groupsSnapshot = await getDocs(groupsRef);
+      groupsSnapshot.forEach((doc) => {
+        let groupData = doc.data();
+        if (groupData.id !== group.id) {
+          if (groupData.isActive) {
+            let participants = groupData.participants;
+            participants.forEach(async (participant) => {
+              if (participant.userRef === group.managerRef) {
+                let participantGroupRef = doc(db, "activeGroups", groupData.id);
+                await updateDoc(participantGroupRef, {
+                  participants: participants.filter(
+                    (p) => p.userRef !== group.managerRef
+                  ),
+                }).then(
+                  fetch(
+                    "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        subject: `We removed you from a group`,
+                        email: JSON.stringify(participant.email),
+                        message:
+                          "Due to your participation in two active groups, we removed you from the group : " +
+                          JSON.stringify(group.groupTittle) +
+                          " that you are participating in." +
+                          " you can see here your corrent group : https://regroup-a4654.web.app/myGroups",
+                      }),
+                    }
+                  )
+                );
+              }
+            });
+          }
+        }
+      });
+    } catch (error) {
+      console.log("error: " + error);
     }
   };
   //אחראי על המודל של המשתמש לאחר לחיצה
@@ -99,7 +155,7 @@ function JoinGroupCard({ group }) {
       userImg: activeUser.userImg,
       userRef: activeUser.userRef,
       managerRef: group.managerRef,
-      type: "request"
+      type: "request",
     };
     const docRef = doc(db, "users", group.managerRef);
     const docSnap = await getDoc(docRef);
@@ -144,14 +200,13 @@ function JoinGroupCard({ group }) {
           .then((data) => console.log(data))
           .then("Request sended")
           .catch((error) => console.error(error));
-
       }
     } else {
       toast.error("User not found. Please try again later");
     }
-    toast.success("Request was sended to the manager")
+    toast.success("Request was sended to the manager");
     setBtnStatus(true);
-    setIsSended(true)
+    setIsSended(true);
   };
 
   const handleLeaveGroup = async (group) => {
@@ -187,11 +242,11 @@ function JoinGroupCard({ group }) {
 
   let btn2 = false;
   return (
-    <div className=" w-auto  card h-46 m-2 p-2  overflow-hidden max-w-full">
+    <div className=" w-auto  card h-46 m-2 p-2  overflow-hidden ">
       <p className=" flex mt-1 justify-end ">
         {handleGroupTime(group.timeStamp)}
       </p>
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col lg:flex-col xl:flex-col">
         <div className="lg:ml-2">
           <div className="grid grid-cols-6 gap-2">
             <div className="col-span-2">
@@ -219,11 +274,11 @@ function JoinGroupCard({ group }) {
             })}
           </div>
         </div>
-        <div className="lg:ml-3 mt-3 lg:mt-0 lg:border lg:rounded-lg lg:w-1/3">
+        <div className=" border rounded-xl mt-2 mb-2">
           <p className="ml-3 mt-3 text-sm underline">Description:</p>
           <p className="ml-3 mt-3 text-lg text-center">{group.description}</p>
         </div>
-        <div className="w-full lg:w-1/3 mt-3 lg:mt-0 lg:ml-3">
+        <div className="w-full ">
           <div className="flex flex-wrap lg:flex-nowrap">
             {group.participants.map((participant) => {
               if (participant.userRef === activeUser.userRef) {
@@ -241,7 +296,7 @@ function JoinGroupCard({ group }) {
                   }
                   onClick={() => handleUserClick(participant.userRef)}
                   color="success"
-                  className="mr-2 mb-2 lg:mr-0 lg:mb-0"
+                  className="mr-2 mb-2"
                   variant="outlined"
                   label={participant.name}
                 />
@@ -249,9 +304,8 @@ function JoinGroupCard({ group }) {
             })}
           </div>
         </div>
-        <div className="ml-auto mt-3 lg:mt-0">
-          {isSended?
-            (
+        <div className="ml-auto mt-3">
+          {isSended ? (
             <div className=" justify-center">
               <button disabled={true} className="btn btn-sm ml-auto">
                 Sended
