@@ -242,11 +242,11 @@ function JoinGroupCard({ group }) {
 
   let btn2 = false;
   return (
-    <div className=" w-auto  card h-46 m-2 p-2  overflow-hidden max-w-full">
+    <div className=" w-auto  card h-46 m-2 p-2  overflow-hidden ">
       <p className=" flex mt-1 justify-end ">
         {handleGroupTime(group.timeStamp)}
       </p>
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col lg:flex-col xl:flex-col">
         <div className="lg:ml-2">
           <div className="grid grid-cols-6 gap-2">
             <div className="col-span-2">
@@ -274,11 +274,11 @@ function JoinGroupCard({ group }) {
             })}
           </div>
         </div>
-        <div className="lg:ml-3 mt-3 lg:mt-0 lg:border lg:rounded-lg lg:w-1/3">
+        <div className=" border rounded-xl mt-2 mb-2">
           <p className="ml-3 mt-3 text-sm underline">Description:</p>
           <p className="ml-3 mt-3 text-lg text-center">{group.description}</p>
         </div>
-        <div className="w-full lg:w-1/3 mt-3 lg:mt-0 lg:ml-3">
+        <div className="w-full ">
           <div className="flex flex-wrap lg:flex-nowrap">
             {group.participants.map((participant) => {
               if (participant.userRef === activeUser.userRef) {
@@ -296,7 +296,7 @@ function JoinGroupCard({ group }) {
                   }
                   onClick={() => handleUserClick(participant.userRef)}
                   color="success"
-                  className="mr-2 mb-2 lg:mr-0 lg:mb-0"
+                  className="mr-2 mb-2"
                   variant="outlined"
                   label={participant.name}
                 />
@@ -304,7 +304,7 @@ function JoinGroupCard({ group }) {
             })}
           </div>
         </div>
-        <div className="ml-auto mt-3 lg:mt-0">
+        <div className="ml-auto mt-3">
           {isSended ? (
             <div className=" justify-center">
               <button disabled={true} className="btn btn-sm ml-auto">

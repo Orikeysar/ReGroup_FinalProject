@@ -4,7 +4,7 @@ import {
   useLoadScript,
   Marker,
   InfoWindow,
-  AdvancedMarkerView 
+  MarkerWithLabel 
 } from "@react-google-maps/api";
 import Spinner from "../Spinner";
 import { uuidv4 } from "@firebase/util";
@@ -40,25 +40,28 @@ export default function Map({ filteredGroups }) {
       if (item.participants[i].userRef === activeUser.userRef) {
         return (
           <Marker
-            key={uuidv4()}
-            title={item.groupTittle}
-            position={offsetCoordinates(
-              item.location.latitude,
-              item.location.longitude,
-              item.index
-            )}
-            onClick={() => {
-              setSelectedMarker(item);
-              handleDistance(item.location);
-            }}
-            icon={item.groupTittle === "my location" ? item.groupImg : null}
-            label={{
-              text: item.groupTittle,
-              color: "white",
-              fontWeight: "bold",
-              fontSize: "16px",
-            }}
-          />
+          key={uuidv4()}
+          title={item.groupTittle}
+          position={offsetCoordinates(
+            item.location.latitude,
+            item.location.longitude,
+            item.index
+          )}
+          onClick={() => {
+            setSelectedMarker(item);
+            handleDistance(item.location);
+          }}
+          icon={item.groupTittle==="my location"?item.groupImg:null}
+          label={{
+
+            text: `${i+1}`,
+            color: "black",
+            fontWeight: "bold",
+            fontSize: "12px",
+
+          }}
+          
+        />
         );
       }
     }
@@ -140,13 +143,7 @@ export default function Map({ filteredGroups }) {
 
     return { lat: newLat, lng: newLng };
   };
-  const markerStyle = (groupImg) => ({
-    background: `url(${groupImg}) center / cover`,
-    width: "32px",
-    height: "32px",
-    borderRadius: "50%",
-    cursor: "pointer",
-  });
+
   if (!isLoaded) return <Spinner />;
 
   return (
@@ -184,13 +181,13 @@ export default function Map({ filteredGroups }) {
               }}
               icon={item.groupTittle==="my location"?item.groupImg:null}
               label={{
-                text:  `${index + 1}`,
+
+                text: `${index+1}`,
                 color: "black",
                 fontWeight: "bold",
                 fontSize: "12px",
 
               }}
-              glyph={item.groupImg}
               
             />
           ) : (

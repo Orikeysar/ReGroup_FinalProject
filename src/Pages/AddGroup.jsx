@@ -82,27 +82,6 @@ function AddGroup() {
       };
       setNewGroup(newUpdateGroup);
 
-      // let catchGroupExist = {
-      //   address: managerGroup.address,
-      //   groupTittle: managerGroup.groupTittle,
-      //   groupImg: managerGroup.groupImg,
-      //   groupTags: managerGroup.groupTags,
-      //   groupSize: managerGroup.groupSize,
-      //   managerRef: managerGroup.managerRef,
-      //   location: managerGroup.location,
-      //   description: managerGroup.description,
-      //   participants: participants,
-      //   isActive: managerGroup.isActive,
-      //   timeStamp:managerGroup.timeStamp,
-      //   id: managerGroup.id,
-      // };
-      // setNewGroup(catchGroupExist);
-      // setCordinates(catchGroupExist.location); //מיקום
-      // setFriendsInvited(catchGroupExist.participants); //חברים
-      // setSelectedCourse(catchGroupExist.groupTittle); //קורס
-      // setSelectedSubjects(catchGroupExist.groupTags); //נושאים
-      // setSelectedNumber(catchGroupExist.groupSize); //גודל
-      // setSelectTimeStamp(catchGroupExist.timeStamp); //זמן
     }
   }, [managerGroup]);
   //הפונקציה נשלחת לקומפוננט של הפילטורים ואחראית לעדכן את הערכים שחוזרים משם
