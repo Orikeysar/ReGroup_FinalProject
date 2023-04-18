@@ -31,7 +31,45 @@ function MapAdd({ setCordinates, filteredGroups,fillteredGroupShow }) {
     googleMapsApiKey: "AIzaSyCt1tGfbI6o0A6dcCFTstFsPlAUEQYaYS4",
   });
 
+ //ריכוז המפה למיקום הנוכחי שלי
+ const handleMyLocation = () => {
+  navigator.geolocation.getCurrentPosition(function (position) {
+    var myLat = position.coords.latitude;
+    var myLng = position.coords.longitude;
+    var newCenter = { lat: myLat, lng: myLng };
+    setMapCenter(newCenter);
+    filteredGroups.push({
+      groupTittle: "my location",
+      location: {
+        latitude: myLat,
+        longitude: myLng,
+      },
+      index: filteredGroups.length + 1,
+      groupImg: {
+        url: "https://cdn-icons-png.flaticon.com/512/75/75768.png",
+        scaledSize: new window.google.maps.Size(42, 42),
+      },
+      groupSize: 1,
+      participants: [],
+    });
+  });
+};
+//מוצא את המיקום של רופין
+const handleRuppinLocation = () => {
+  setMapCenter({ lat: 32.342884, lng: 34.912755 });
+};
+//אם שני מרקרים על אותו המיקום, יזיז את המארקר טיפה הצידה
+const offsetCoordinates = (lat, lng, index) => {
+  const offsetAngle = (index * 360) / 10; // Adjust the divisor to change the spacing between markers
+  const offsetDistance = 0.0001; // Adjust the value to change the distance between markers
 
+  const newLat =
+    lat + offsetDistance * Math.cos((offsetAngle * Math.PI) / 180);
+  const newLng =
+    lng + offsetDistance * Math.sin((offsetAngle * Math.PI) / 180);
+
+  return { lat: newLat, lng: newLng };
+};
 
   //פונקצייה להזזת המרקר ממקום למקום
   function TravellingMarker({ position, ...rest }) {
@@ -101,7 +139,7 @@ function MapAdd({ setCordinates, filteredGroups,fillteredGroupShow }) {
       {loadError && <p>{loadError}</p>}
       {!isLoaded && <p>Loading .. </p>}
       {isLoaded && (
-        <div className="w-full">
+        <div className="w-full mb-2">
           <div className="createGroupMapHeader">
             <button
               onClick={() => {
@@ -155,7 +193,12 @@ function MapAdd({ setCordinates, filteredGroups,fillteredGroupShow }) {
               building 20
             </button>
           </div>
-
+<div className="end-3 mb-1"> <button onClick={handleMyLocation} className="btn btn-xs mb-2">
+        My location
+      </button>
+      <button onClick={handleRuppinLocation} className="btn btn-xs mb-2 ml-1">
+        Ruppin center
+      </button></div>
           <GoogleMap
             zoom={15}
             center={{ lat: 32.342884, lng: 34.912755 }}
