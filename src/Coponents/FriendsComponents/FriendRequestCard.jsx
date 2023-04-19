@@ -26,15 +26,7 @@ function FriendRequestCard() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  useEffect(() => {
-    const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
-      let data = doc.data();
-      setactiveUser(data);
-      setReaustFriends(data.friendsListToAccept);
-      localStorage.setItem("activeUser", JSON.stringify(data));
-      setIsLoaded(true);
-    });
-  }, []);
+
 
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
@@ -55,7 +47,14 @@ function FriendRequestCard() {
   };
 
   useEffect(() => {
-    setReaustFriends(activeUser.friendsListToAccept);
+    setReaustFriends(activeUser.friendsListToAccept); 
+    const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+      let data = doc.data();
+      setactiveUser(data);
+      setReaustFriends(data.friendsListToAccept);
+      localStorage.setItem("activeUser", JSON.stringify(data));
+     
+    });
   }, []);
   function deleteObjectById(objectList, id) {
     return objectList.filter((obj) => obj.userRef !== id);
@@ -65,14 +64,14 @@ function FriendRequestCard() {
   const activeUserRef = doc(db, "users", activeUser.userRef);
 
   const handleUserAcceptClick = async (id) => {
-    try{
-    setIsLoaded(false);
+    
+    setIsLoaded(false)
     //מושך מהדאטה את המשתמש שאותו מאשרים או דוחים
     const anotherUserRef = doc(db, "users", id);
     const docSnap = await getDoc(anotherUserRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
-      setAnotherUser(data);
+      let anotherUser = data
       //אוביקט חדש של חבר
       let now = Timestamp.now();
       let newFriend = {
@@ -137,22 +136,19 @@ function FriendRequestCard() {
             //סיום שליחת הודעה
           } catch (error) {
             toast.error("accept worked but friend wont get the message");
-            setIsLoaded(true);
-            window.location.reload();
-            navigate("/myFriends");
+          
           }
-
+          setIsLoaded(true);
           window.location.reload();
           navigate("/myFriends");
         });
       });
     } else {
+      window.location.reload();
+      navigate("/myFriends");
+
     }
-  }catch(error){
-    toast.error("Something not worked")
-    window.location.reload();
-    navigate("/myGroups");
-  }
+  
   };
 
   const handleUserDeleteClick = async (id) => {
@@ -162,7 +158,7 @@ function FriendRequestCard() {
     const docSnap = await getDoc(anotherUserRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
-      setAnotherUser(data);
+      let anotherUser = data
 
       let activeUserFriendRequestList = activeUser.friendsListToAccept;
       let anotherUserFriendRequestList =
@@ -249,9 +245,10 @@ function FriendRequestCard() {
       </div>
     );
   };
-  if (isLoaded === false) {
+
     return (
       <div className="  mt-4 mb-4">
+        
         <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
           <img
             className=" w-10 h-10 rounded-full "
@@ -260,34 +257,19 @@ function FriendRequestCard() {
           />{" "}
           <p className=" font-bold text-xl">Friend request List</p>
         </div>
-
-        <div className="card w-full justify-center">
-          <Spinner />
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div className="  mt-4 mb-4">
-        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
-          <img
-            className=" w-10 h-10 rounded-full "
-            src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2FjoinGroup.png?alt=media&token=293b90df-3802-4736-b8cc-0d64a8c3faff"
-            alt="Users Recored"
-          />{" "}
-          <p className=" font-bold text-xl">Friend request List</p>
-        </div>
-
+{isLoaded === false ?(<Spinner/>):(
         <div className="card w-full justify-center">
           <OrderList
+            className="my-orderlist"
             value={reaustFriends}
             onChange={(e) => setReaustFriends(e.value)}
             itemTemplate={itemTemplate}
           ></OrderList>
         </div>
+        )}
       </div>
     );
-  }
+  
 }
 
 export default FriendRequestCard;

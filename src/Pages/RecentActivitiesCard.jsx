@@ -299,6 +299,7 @@ function RecentActivitiesCard() {
             <div>
               <div className="card w-full  justify-center ">
                 <OrderList
+                  className="my-orderlist"
                   value={activitiesTypeGeneral}
                   itemTemplate={itemTemplateGeneral}
                 ></OrderList>
@@ -373,6 +374,7 @@ function RecentActivitiesCard() {
             </div>
             <div className="card w-full  justify-center ">
               <OrderList
+                className="my-orderlist"
                 value={activitiesTypeGroups}
                 itemTemplate={itemTemplateGroups}
               ></OrderList>

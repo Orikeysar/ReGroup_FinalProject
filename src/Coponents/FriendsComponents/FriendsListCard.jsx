@@ -136,6 +136,7 @@ function FriendsListCard() {
 
       <div className="card w-full justify-center">
         <OrderList
+        className="my-orderlist"
           value={friends}
           onChange={(e) => setFriends(e.value)}
           itemTemplate={itemTemplate}
