@@ -89,7 +89,7 @@ function FindGroups() {
             </Modal>
           )}
         </div>
-        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle  ">
           <img
             className=" w-10 h-10 rounded-full "
             src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fjoin.png?alt=media&token=4395691e-43bf-4f76-9dab-a5aae3841bec"
@@ -97,15 +97,6 @@ function FindGroups() {
           />{" "}
           <p className=" font-bold text-xl">Find Groups</p>
         </div>
-      <div className=" flex justify-center mb-2">
-        <label className=" text-lg">here you can find groups or </label>&nbsp;
-        <label
-          onClick={() => navigate("/createGroups")}
-          className=" font-bold text-lg hover:drop-shadow-xl underline"
-        >
-          Create new+
-        </label>
-      </div>
       <div>
         {/* סינון קבוצות */}
         <FillterGroups handleFillterGroups={handleFillterGroups} />

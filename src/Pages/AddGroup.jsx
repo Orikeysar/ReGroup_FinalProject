@@ -435,7 +435,7 @@ function AddGroup() {
             </Modal>
           )}
         </div>
-        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle  ">
           <img
             className=" w-10 h-10 rounded-full "
             src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fteamwork.png?alt=media&token=21523315-cbdc-42e3-b046-2fe14652b1b4"
@@ -443,17 +443,8 @@ function AddGroup() {
           />{" "}
           <p className=" font-bold text-xl">Create Group</p>
         </div>
-      <div className=" flex justify-center mb-2">
-        <label className=" text-lg">here you can go back to find groups</label>
-        &nbsp;
-        <label
-          onClick={() => navigate("/findGroups")}
-          className=" font-bold text-lg hover:drop-shadow-xl underline"
-        >
-          Find Group
-        </label>
-      </div>
-      <div className="form grid justify-center my-4 w-full text-center">
+      
+      <div className="form grid justify-center mb-4 w-full text-center">
         {/* //Fillters group component */}
         <div className="self-center justify-center">
           <FillterGroups handleFillterGroups={handleFillterGroups} />
