@@ -16,9 +16,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
-import GoogleSign from "../Coponents/signComponents/GoogleSign";
-import SelectCheckBox from "../Coponents/SelectCheckBox";
-import { uuidv4 } from "@firebase/util";
+import GoogleSign from "../Coponents/Sign-In-UpComponents/GoogleSign";
 import { saveMessagingDeviceToken } from "../messaging";
 
 

@@ -31,13 +31,17 @@ function CoursesList() {
     let user = {
       name: activeUser.name,
       email: activeUser.email,
-      degree: activeUser.degree,
-      friendsList:activeUser.friendsList , 
-      courses: selectedCourses,
       userImg: activeUser.userImg,
-      recentActivities: activeUser.recentActivities,
+      userRef:activeUser.userRef,
+      degree: activeUser.degree,
+      friendsList:activeUser.friendsList,
+      courses: selectedCourses,
       points: activeUser.points,
-      userAchievements: activeUser.userAchievements
+      recentActivities: activeUser.recentActivities,
+      friendsListToAccept:activeUser.friendsListToAccept,
+      friendsWaitingToAcceptByAnotherUser:activeUser.friendsWaitingToAcceptByAnotherUser,
+      groupParticipantsToApproval:activeUser.groupParticipantsToApproval,
+      userAchievements:activeUser.userAchievements
     };
     localStorage.setItem("activeUser", JSON.stringify(user));
     await setDoc(doc(db, "users", auth.currentUser.uid), user);
@@ -48,15 +52,19 @@ function CoursesList() {
   const handleDelete = async(id) => {
     const updatedCourses = couresUserList.filter((course) => course.id !== id);
       let user = {
-      name: activeUser.name,
-      email: activeUser.email,
-      degree: activeUser.degree,
-      friendsList:activeUser.friendsList , 
-      courses: updatedCourses,
-      userImg: activeUser.userImg,
-      recentActivities: activeUser.recentActivities,
-      points: activeUser.points,
-    userAchievements: activeUser.userAchievements,
+        name: activeUser.name,
+        email: activeUser.email,
+        userImg: activeUser.userImg,
+        userRef:activeUser.userRef,
+        degree: activeUser.degree,
+        friendsList:activeUser.friendsList,
+        courses: updatedCourses,
+        points: activeUser.points,
+        recentActivities: activeUser.recentActivities,
+        friendsListToAccept:activeUser.friendsListToAccept,
+        friendsWaitingToAcceptByAnotherUser:activeUser.friendsWaitingToAcceptByAnotherUser,
+        groupParticipantsToApproval:activeUser.groupParticipantsToApproval,
+        userAchievements:activeUser.userAchievements
     
     };
 

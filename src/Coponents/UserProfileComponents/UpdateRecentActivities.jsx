@@ -1,6 +1,6 @@
 
 import { doc, updateDoc, Timestamp, getDoc } from "firebase/firestore";
-import { db } from "../FirebaseSDK";
+import { db } from "../../FirebaseSDK";
 
 function UpdateRecentActivities(item, type, user) {
   //בשביל התאריכים

@@ -1,26 +1,21 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import UserProfileModal from "../../Coponents/profileComponents/UserProfileModal";
+import { useState } from "react";
 import { db, alertGroupEdited } from "../../FirebaseSDK";
 import {
   doc,
   getDoc,
   updateDoc,
-  onSnapshot,
-  collection,
   setDoc,
-  query,
-  getDocs,
-  where,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
-import UserScoreCalculate from "../../Coponents/UserScoreCalculate";
+import UserScoreCalculate from "../UserProfileComponents/UserScoreCalculate";
 import { uuidv4 } from "@firebase/util";
 import { useFindMyGroups } from "../../Hooks/useFindMyGroups";
 import { useNavigate } from "react-router-dom";
-
+import Spinner from "../GeneralComponents/Spinner";
 function RequestList({ requestList }) {
   const navigate = useNavigate();
+  const [isLoaded, setIsLoaded] = useState(true);
   const [activeUser, setActiveUser] = useState(() => {
     try {
       const active = JSON.parse(localStorage.getItem("activeUser"));
@@ -35,6 +30,7 @@ function RequestList({ requestList }) {
 
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
   const handleAccept = async (anotherUserRef) => {
+    setIsLoaded(false)
     //שולף מהרשימה את המשתמש שאישרתי
     const anotherUser = requestList.filter(
       (item) => item.userRef === anotherUserRef
@@ -110,11 +106,13 @@ function RequestList({ requestList }) {
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
+    setIsLoaded(true)
     window.location.reload();
   };
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה
 
   const handleReject = async (id) => {
+    setIsLoaded(false)
     const user = requestList.filter((item) => item.userRef === id);
     const updatedrequestList = requestList.filter(
       (item) => item.userRef !== id
@@ -163,9 +161,21 @@ function RequestList({ requestList }) {
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
+    setIsLoaded(true)
     window.location.reload();
 
   };
+
+
+  if (isLoaded === false) {
+    return (
+     
+        <div className="card w-full justify-center">
+          <Spinner />
+        </div>
+    
+    );
+  } else {
   return (
     <div>
       {requestList.map((item) => (
@@ -205,7 +215,7 @@ function RequestList({ requestList }) {
       ))}
     </div>
 
-  );
+  )}
 }
 
 export default RequestList;

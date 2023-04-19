@@ -1,5 +1,5 @@
 import React from "react";
-import SelectCheckBox from "../Coponents/SelectCheckBox.jsx"
+import SelectCheckBox from "../Coponents/GeneralComponents/SelectCheckBox"
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 

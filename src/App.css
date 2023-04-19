@@ -39,7 +39,14 @@ body{
     transform: rotate(360deg);
   }
 }
-.p-orderlist-controls {
+.p-orderlist-list{
+  height: auto;
+  max-height: 100% !important;
+  
+  }
+  
+  .p-orderlist-controls{
+    
   display: none;
   
   }

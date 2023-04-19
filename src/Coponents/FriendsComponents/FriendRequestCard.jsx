@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "primereact/button";
 import { OrderList } from "primereact/orderlist";
-import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
-import { Dialog } from "primereact/dialog";
-import UserProfileModal from "./profileComponents/UserProfileModal";
-import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
-import { db } from "../FirebaseSDK";
+import Spinner from "../GeneralComponents/Spinner";
+import {
+  doc,
+  updateDoc,
+  Timestamp,
+  getDoc,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "../../FirebaseSDK";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import UpdateRecentActivities from "./UpdateRecentActivities";
-import UserScoreCalculate from "./UserScoreCalculate";
+import UpdateRecentActivities from "../UserProfileComponents/UpdateRecentActivities";
+import UserScoreCalculate from "../UserProfileComponents/UserScoreCalculate";
+import { saveMessagingDeviceToken } from "../../messaging";
+import { onButtonClick } from "../../FirebaseSDK";
 function FriendRequestCard() {
   const navigate = useNavigate();
+  const [isLoaded, setIsLoaded] = useState(true);
   //array for frinds
   const [reaustFriends, setReaustFriends] = useState([]);
   const [anotherUser, setAnotherUser] = useState(null);
@@ -21,13 +27,7 @@ function FriendRequestCard() {
     return user;
   });
 
-  const unsub= onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
-   let data = doc.data()
-    setactiveUser(data)
-    setReaustFriends(data.friendsListToAccept)
-    localStorage.setItem("activeUser", JSON.stringify(data));
-});
-  
+
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
       const firestoreTimestamp = new Timestamp(
@@ -47,7 +47,14 @@ function FriendRequestCard() {
   };
 
   useEffect(() => {
-    setReaustFriends(activeUser.friendsListToAccept);
+    setReaustFriends(activeUser.friendsListToAccept); 
+    const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+      let data = doc.data();
+      setactiveUser(data);
+      setReaustFriends(data.friendsListToAccept);
+      localStorage.setItem("activeUser", JSON.stringify(data));
+     
+    });
   }, []);
   function deleteObjectById(objectList, id) {
     return objectList.filter((obj) => obj.userRef !== id);
@@ -57,12 +64,14 @@ function FriendRequestCard() {
   const activeUserRef = doc(db, "users", activeUser.userRef);
 
   const handleUserAcceptClick = async (id) => {
+    
+    setIsLoaded(false)
     //מושך מהדאטה את המשתמש שאותו מאשרים או דוחים
     const anotherUserRef = doc(db, "users", id);
     const docSnap = await getDoc(anotherUserRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
-      setAnotherUser(data);
+      let anotherUser = data
       //אוביקט חדש של חבר
       let now = Timestamp.now();
       let newFriend = {
@@ -80,7 +89,8 @@ function FriendRequestCard() {
         userImg: activeUser.userImg,
       };
       let activeUserFriendRequestList = activeUser.friendsListToAccept;
-      let anotherUserFriendRequestList = anotherUser.friendsWaitingToAcceptByAnotherUser;
+      let anotherUserFriendRequestList =
+        anotherUser.friendsWaitingToAcceptByAnotherUser;
       //  יצירת רשימות חדשות לפני דחיפה לדאטה
       activeUser.friendsListToAccept = deleteObjectById(
         activeUserFriendRequestList,
@@ -102,7 +112,7 @@ function FriendRequestCard() {
           friendsList: anotherUser.friendsList,
           friendsWaitingToAcceptByAnotherUser:
             anotherUser.friendsWaitingToAcceptByAnotherUser,
-        }).then(() => {
+        }).then(async () => {
           UpdateRecentActivities(newFriend, "friend", activeUser);
           UpdateRecentActivities(newFriend, "friend", anotherUserRef);
           let achiev = activeUser.userAchievements.filter(
@@ -112,22 +122,43 @@ function FriendRequestCard() {
           UserScoreCalculate(item, "friend", activeUser);
           UserScoreCalculate(item, "friend", anotherUserRef);
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
-          toast.success("you accept firend success");
+          toast.success(
+            "you accepted" + anotherUser.name + "to your friends list "
+          );
+          try {
+            //send message
+            saveMessagingDeviceToken(anotherUserRef.userRef);
+            const docRef = doc(db, "fcmTokens", id);
+            const docSnap = await getDoc(docRef);
+            const data = docSnap.data();
+            const token = data.fcmToken;
+            onButtonClick(token);
+            //סיום שליחת הודעה
+          } catch (error) {
+            toast.error("accept worked but friend wont get the message");
+          
+          }
+          setIsLoaded(true);
           window.location.reload();
-          navigate("/myFriends")
+          navigate("/myFriends");
         });
       });
     } else {
+      window.location.reload();
+      navigate("/myFriends");
+
     }
+  
   };
 
   const handleUserDeleteClick = async (id) => {
+    setIsLoaded(false);
     //מושך מהדאטה את המשתמש שאותו מאשרים או דוחים
     const anotherUserRef = doc(db, "users", id);
     const docSnap = await getDoc(anotherUserRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
-      setAnotherUser(data);
+      let anotherUser = data
 
       let activeUserFriendRequestList = activeUser.friendsListToAccept;
       let anotherUserFriendRequestList =
@@ -153,8 +184,9 @@ function FriendRequestCard() {
         }).then(() => {
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success("delete from request list success");
+          setIsLoaded(true);
           window.location.reload();
-           navigate("/myFriends")
+          navigate("/myFriends");
         });
       });
     } else {
@@ -214,24 +246,30 @@ function FriendRequestCard() {
     );
   };
 
-  return (
-    <div className="friendsList  mt-4 mb-4">
-      <div className="friendsListHeader   mb-4 ">
-        <div className="flex  items-center space-x-2 justify-center text-3xl align-middle ">
-          <TbFriends className=" mr-2 w-max " />
-          <p className=" font-bold text-lg">Friend request List</p>
+    return (
+      <div className="  mt-4 mb-4">
+        
+        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+          <img
+            className=" w-10 h-10 rounded-full "
+            src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2FjoinGroup.png?alt=media&token=293b90df-3802-4736-b8cc-0d64a8c3faff"
+            alt="Users Recored"
+          />{" "}
+          <p className=" font-bold text-xl">Friend request List</p>
         </div>
+{isLoaded === false ?(<Spinner/>):(
+        <div className="card w-full justify-center">
+          <OrderList
+            className="my-orderlist"
+            value={reaustFriends}
+            onChange={(e) => setReaustFriends(e.value)}
+            itemTemplate={itemTemplate}
+          ></OrderList>
+        </div>
+        )}
       </div>
-
-      <div className="card w-full justify-center">
-        <OrderList
-          value={reaustFriends}
-          onChange={(e) => setReaustFriends(e.value)}
-          itemTemplate={itemTemplate}
-        ></OrderList>
-      </div>
-    </div>
-  );
+    );
+  
 }
 
 export default FriendRequestCard;

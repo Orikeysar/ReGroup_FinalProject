@@ -1,32 +1,80 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "primereact/button";
 import { OrderList } from "primereact/orderlist";
-import { TbFriends } from "react-icons/tb";
 import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
-import UserProfileModal from "./profileComponents/UserProfileModal";
-import { db } from "../FirebaseSDK";
-import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
+import UserProfileModal from "../UserProfileComponents/UserProfileModal";
+import { db } from "../../FirebaseSDK";
+import {
+  doc,
+  Timestamp,
+  onSnapshot,
+  collection,
+  query,
+  orderBy
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-function FriendsListCard() {
+import Spinner from "../GeneralComponents/Spinner";
+
+
+ function FriendsListCard() {
   const navigate = useNavigate();
   //array for frinds
+  const [isLoaded, setIsLoaded] = useState(true);
   const [friends, setFriends] = useState([]);
-
+  const [allUsers, setAllUsers] = useState([]);
   const [activeUser, setactiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
-  });
+  }); 
+   const [btnColorAllFriends, setBtnColorAllFriends] = useState(
+    "btn m-2 text-sm  text-black glass shadow-md"
+  );
+  const [btnColorMyFriends, setBtnColorMyFriends] = useState(
+    "btn m-2 text-sm shadow-md"
+  );
+  const [type, setType] = useState("MyFriends");
 
-  const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
-    let data = doc.data()
-     setactiveUser(data)
-     setFriends(data.friendsList)
-     localStorage.setItem("activeUser", JSON.stringify(data));
-     
- });
 
+  
+  
+  useEffect(() => {
 
+    const colUserRef = collection(db, "users");
+  const q = query(colUserRef, orderBy("name","desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newlist = [];
+      snapshot.docs.forEach((doc, index) => {
+        newlist.push({ ...doc.data(), userRef: doc.id, index });
+      });
+      setAllUsers(newlist);
+      setIsLoaded(false);
+    });
+  
+    return unsubscribe;
+  }, []);
+
+  
+  useEffect(() => {
+    setFriends(activeUser.friendsList);   
+    const unsubFriends = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+      let data = doc.data();
+      setactiveUser(data);
+      setFriends(data.friendsList);
+      localStorage.setItem("activeUser", JSON.stringify(data));
+    });
+  }, []);
+
+  //אחראי על המודל של המשתמש לאחר לחיצה
+  const [visible, setVisible] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
+  const handleUserClick = (id) => {
+    setSelectedUserId(id);
+    setVisible(true);
+  };
+
+  
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
       const firestoreTimestamp = new Timestamp(
@@ -45,19 +93,17 @@ function FriendsListCard() {
     }
   };
 
-  useEffect(() => {
-    setFriends(activeUser.friendsList);
-  }, []);
-
-  //אחראי על המודל של המשתמש לאחר לחיצה
-  const [visible, setVisible] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null);
-
-  const handleUserClick = (id) => {
-    setSelectedUserId(id);
-    setVisible(true);
+  //משנה את הצבע בחירה ומעביר אותך למערך הרלוונטי
+  const handleClickAllFriends = () => {
+    setBtnColorMyFriends("btn m-2 text-sm glass text-black shadow-md");
+    setBtnColorAllFriends("btn m-2 shadow-md");
+    setType("AllFriends");
   };
-
+  const handleClickMyFriends = () => {
+    setBtnColorMyFriends("btn m-2 shadow-md");
+    setBtnColorAllFriends("btn m-2 text-sm glass text-black shadow-md");
+    setType("MyFriends");
+  };
   //render card of friend
   const itemTemplate = (product) => {
     if (product === undefined) {
@@ -67,6 +113,7 @@ function FriendsListCard() {
         </div>
       );
     }
+   
     return (
       <div className="col-12 mt-4">
         <div className="grid grid-cols-4 gap-3 text-center ">
@@ -110,7 +157,7 @@ function FriendsListCard() {
               >
                 <div className="m-0">
                   {/* הפרטים של המשתמש */}
-                  <UserProfileModal id={product.userRef} />
+                  <UserProfileModal id={selectedUserId} />
                 </div>
               </Dialog>
             </div>
@@ -120,19 +167,36 @@ function FriendsListCard() {
     );
   };
 
+
+ if (isLoaded) {
+      return (<div><Spinner/></div>)
+    }else{
   return (
     <div className="friendsList  mt-4 mb-4">
-     
-      <div className="friendsListHeader   mb-4 ">
-        <div className="flex  items-center space-x-2 justify-center text-3xl align-middle ">
-          <TbFriends className=" mr-2 w-max " />
-          <p className=" font-bold text-lg">Friend List</p>
-        </div>
+      <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+        <img
+          className=" w-10 h-10 rounded-full "
+          src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fpeople.png?alt=media&token=9b1c3358-d184-4397-89d8-5898044a3556"
+          alt="Users Recored"
+        />{" "}
+        <p className=" font-bold text-xl">Friend List</p>
       </div>
 
       <div className="card w-full justify-center">
+        <div>
+        <div className="flex justify-center m-2">
+          <button onClick={handleClickAllFriends} className={btnColorAllFriends}>
+          All Users
+          </button>
+          <button onClick={handleClickMyFriends} className={btnColorMyFriends}>
+          My Friends
+          </button>
+        </div>
+        {}
+        </div>
         <OrderList
-          value={friends}
+        className="my-orderlist"
+          value={type === "MyFriends"?(friends):(allUsers)}
           onChange={(e) => setFriends(e.value)}
           itemTemplate={itemTemplate}
           filter
@@ -140,7 +204,7 @@ function FriendsListCard() {
         ></OrderList>
       </div>
     </div>
-  );
+  );}
 }
 
 export default FriendsListCard;

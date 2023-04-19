@@ -15,13 +15,14 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import NavBar from "../Coponents/navbars/NavBar";
+import NavBar from "../Coponents/NavBarComponents/NavBar";
 import MyAddGroupMapComponent from "../Coponents/GroupsComponents/MyAddGroupMapComponent ";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
 import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
-import UserScoreCalculate from "../Coponents/UserScoreCalculate";
+import UserScoreCalculate from "../Coponents/UserProfileComponents/UserScoreCalculate";
 import SendAlertToUserForNewGroup from "../Coponents/GroupsComponents/SendAlertToUserForNewGroup";
+import { Modal, Box } from "@mui/material";
 
 function AddGroup() {
   const navigate = useNavigate();
@@ -30,6 +31,39 @@ function AddGroup() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+  //מודל מידע ראשוני
+  const [displayPopUp, setDisplayPopUp] = useState(true);
+  // when pop-up is closed this function triggers
+  const closePopUp = () => {
+    // setting key "seenPopUp" with value true into localStorage
+    localStorage.setItem("seenPopUpAddGroup", true);
+    // setting state to false to not display pop-up
+    setDisplayPopUp(false);
+  };
+
+  // check if  user seen and closed the pop-up
+  useEffect(() => {
+    // getting value of "seenPopUp" key from localStorage
+    let returningUser = localStorage.getItem("seenPopUpAddGroup");
+    // setting the opposite to state, false for returning user, true for a new user
+    setDisplayPopUp(!returningUser);
+  }, []);
+  //אחראי על הסטייל של המודל הראשוני
+  const PopUpInfoStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 300,
+    height: 400,
+    boxShadow: 24,
+    padding: 2,
+    textAlign: "center",
+    backgroundColor: "#fff",
+    borderRadius: "10px",
+    boxShadow: "0 0 20px rgba(0,0,0,0.3)",
+  };
+
   //איתחול משתני יצירת קבוצה וכפתור הסבמיט
   const [btnState, setBtnState] = useState("Create New Group"); //כפתור
   const [cordinates, setCordinates] = useState(null); //מיקום
@@ -374,22 +408,43 @@ function AddGroup() {
       <div className="topNavBar w-full mb-24">
         <NavBar />
       </div>
-      <div className=" flex items-center space-x-2 justify-center text-base align-middle mb-5">
-        {" "}
-        <RiGroup2Fill size={30} className=" mr-2 w-max " />
-        <p className=" font-bold text-xl">Create Groups</p>
-      </div>
-      <div className=" flex justify-center mb-2">
-        <label className=" text-lg">here you can go back to find groups</label>
-        &nbsp;
-        <label
-          onClick={() => navigate("/findGroups")}
-          className=" font-bold text-lg hover:drop-shadow-xl underline"
-        >
-          Find Group
-        </label>
-      </div>
-      <div className="form grid justify-center my-4 w-full text-center">
+      {/* הצגת המודל הראשוני עם המידע  */}
+      <div className=" float-none">
+          {displayPopUp && (
+            <Modal
+              open={true}
+              // once pop-up will close "closePopUp" function will be executed
+              onClose={closePopUp}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={PopUpInfoStyle}>
+                {/* what user will see in the modal is defined below */}
+                <img src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fteamwork.png?alt=media&token=21523315-cbdc-42e3-b046-2fe14652b1b4" className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"/>
+                <h1>Create your first group !</h1>
+                <p className="mt-2">
+                Here you can create a new group, if you haven't found a group to participate in. You can Create one group at a time.
+                </p>
+                <p className="mt-2">
+                With the help of advanced filters, you can quickly create a group suitable for your educational needs.
+                </p>
+                <button className="mt-2" onClick={closePopUp}>
+                  OK
+                </button>
+              </Box>
+            </Modal>
+          )}
+        </div>
+        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle  ">
+          <img
+            className=" w-10 h-10 rounded-full "
+            src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fteamwork.png?alt=media&token=21523315-cbdc-42e3-b046-2fe14652b1b4"
+            alt="Users Recored"
+          />{" "}
+          <p className=" font-bold text-xl">Create Group</p>
+        </div>
+      
+      <div className="form grid justify-center mb-4 w-full text-center">
         {/* //Fillters group component */}
         <div className="self-center justify-center">
           <FillterGroups handleFillterGroups={handleFillterGroups} />

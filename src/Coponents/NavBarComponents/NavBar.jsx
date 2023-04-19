@@ -5,10 +5,11 @@ import Top10Modal from "../top10Components/Top10Modal";
 import HamburgerMenu from "./HamburgerMenu";
 import { Dialog } from "primereact/dialog";
 import { useState, useEffect } from "react";
-import Profile from "../../Pages/Profile"
+import Profile from "../../Pages/Profile";
+
 function NavBar() {
   const navigate = useNavigate();
-  const [activeUser, setactiveUser] = useState(() => {
+  const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
@@ -16,6 +17,7 @@ function NavBar() {
     localStorage.setItem("componentChoosen", "UserAchievemeant");
     navigate("/");
   };
+  
   //אחראי על מודל המשתמש שלוחצים עליו
   const [visible, setVisible] = useState(false);
   const handleUserClick = () => {
@@ -50,7 +52,7 @@ function NavBar() {
           <img
             className="rounded-full cursor-pointer transition duration-300 hover:scale-110 w-10 h-10 ml-4 "
             src={activeUser.userImg}
-            alt="users recorde"
+            alt={activeUser.name}
             onClick={handleUserClick}
           />
         </div>

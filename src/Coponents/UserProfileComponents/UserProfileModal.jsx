@@ -61,7 +61,7 @@ try{
   const token = data.fcmToken;
   onButtonClick(token);
   }catch{
-toast.error("this user dont accepy messageing")
+toast.error("this user dont accept messageing")
 setBtnStatus("add");
   }
   

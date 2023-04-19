@@ -39,20 +39,7 @@ width: fit-content;
   
   
 }
-.p-orderlist-list{
-height: auto;
-max-height: none;
 
-}
-.p-orderlist{
-height: auto;
-  max-height: none;
-}	
-.p-orderlist-controls{
-  
-display: none;
-
-}
 .map-container{
   width: 100%;
   height: 60vh;
@@ -189,4 +176,14 @@ a {
 .slide-in {
   animation: slideInFromTop 1s ease-in-out;
 }
+.p-orderlist-list{
+height: auto;
+max-height: 100% !important;
 
+}
+
+.my-orderlist .p-orderlist-controls{
+  
+display: none;
+
+}

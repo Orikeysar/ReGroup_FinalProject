@@ -2,7 +2,7 @@ import React from "react";
 import Map from "../Coponents/GroupsComponents/Map";
 import { useState, useEffect } from "react";
 import { db } from "../FirebaseSDK";
-import NavBar from "../Coponents/navbars/NavBar";
+import NavBar from "../Coponents/NavBarComponents/NavBar";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
 import {
@@ -25,8 +25,8 @@ import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
-import UserProfileModal from "../Coponents/profileComponents/UserProfileModal";
-import UpdateRecentActivities from "../Coponents/UpdateRecentActivities";
+import UserProfileModal from "../Coponents/UserProfileComponents/UserProfileModal";
+import UpdateRecentActivities from "../Coponents/UserProfileComponents/UpdateRecentActivities";
 import { getAuth } from "firebase/auth";
 import { Dialog } from "primereact/dialog";
 import { FaCircle } from "react-icons/fa";
@@ -34,10 +34,43 @@ import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 import IconButton from "@mui/material/IconButton";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "animate.css/animate.min.css";
-
+import { Modal, Box } from "@mui/material";
+import welcomeIcon from '../asset/welcome-back.png'
 function MyGroupPage() {
   const navigate = useNavigate();
   const date = new Date();
+  //מודל מידע ראשוני
+  const [displayPopUp, setDisplayPopUp] = useState(true);
+  // when pop-up is closed this function triggers
+  const closePopUp = () => {
+    // setting key "seenPopUp" with value true into localStorage
+    localStorage.setItem("seenPopUpMyGroups", true);
+    // setting state to false to not display pop-up
+    setDisplayPopUp(false);
+  };
+
+  // check if  user seen and closed the pop-up
+  useEffect(() => {
+    // getting value of "seenPopUp" key from localStorage
+    let returningUser = localStorage.getItem("seenPopUpMyGroups");
+    // setting the opposite to state, false for returning user, true for a new user
+    setDisplayPopUp(!returningUser);
+  }, []);
+  //אחראי על הסטייל של המודל הראשוני
+  const PopUpInfoStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 300,
+    height: 400,
+    boxShadow: 24,
+    padding: 2,
+    textAlign: "center",
+    backgroundColor: "#fff",
+    borderRadius: "10px",
+    boxShadow: "0 0 20px rgba(0,0,0,0.3)",
+  };
 
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
@@ -79,8 +112,9 @@ function MyGroupPage() {
     }
   }, [managerGroup, participantGroup]);
   const [managerGroupId, setManagerGroupId] = useState(null);
-  //פונקציה שמסדרת את זמן הקבוצה
-  const handleGroupTime = (timeStamp) => {
+  //מרנדרת את הזמן או לחליפין מראה אייקון פתוח
+  const handleGroupTime = (group) => {
+    let timeStamp = group.timeStamp;
     if (timeStamp != null || timeStamp != undefined) {
       let time = timeStamp.toDate();
       let hours = time.getHours();
@@ -95,6 +129,12 @@ function MyGroupPage() {
       } else if (hours === date.getHours() && minutes > date.getMinutes()) {
         return time;
       } else {
+        if (group.managerRef === activeUser.userRef) {
+          if (group.isActive === false) {
+            handleIsActiveChange(group);
+          }
+        }
+
         return (
           <>
             <FaCircle style={{ color: "green", marginRight: "5px" }} />
@@ -102,6 +142,57 @@ function MyGroupPage() {
           </>
         );
       }
+    }
+  };
+  //מאתחלת את הקבוצה לפעילה ומוציא מנהל שמשתתף בשתי קבוצות פועלות
+  const handleIsActiveChange = async (group) => {
+    try {
+      let groupRef = doc(db, "activeGroups", group.id);
+      await updateDoc(groupRef, {
+        isActive: true,
+      });
+      //בודקת האם המנהל משתתף בעוד קבוצה
+      const groupsRef = collection(db, "activeGroups");
+      const groupsSnapshot = await getDocs(groupsRef);
+      groupsSnapshot.forEach((GroupChecked) => {
+        let groupData = GroupChecked.data();
+        if (groupData.id !== group.id) {
+          if (groupData.isActive) {
+            let participants = groupData.participants;
+            participants.forEach(async (participant) => {
+              if (participant.userRef === group.managerRef) {
+                let participantGroupRef = doc(db, "activeGroups", groupData.id);
+                await updateDoc(participantGroupRef, {
+                  participants: participants.filter(
+                    (p) => p.userRef !== group.managerRef
+                  ),
+                }).then(
+                  fetch(
+                    "https://us-central1-regroup-a4654.cloudfunctions.net/sendMailOverHTTP",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        subject: `We removed you from a group`,
+                        email: JSON.stringify(participant.email),
+                        message:
+                          "Due to your participation in two active groups, we removed you from the group : " +
+                          JSON.stringify(group.groupTittle) +
+                          " that you are participating in." +
+                          " you can see here your corrent group : https://regroup-a4654.web.app/myGroups",
+                      }),
+                    }
+                  )
+                );
+              }
+            });
+          }
+        }
+      });
+    } catch (error) {
+      console.log("error: " + error);
     }
   };
   //animation my groups divs
@@ -175,7 +266,7 @@ function MyGroupPage() {
           key={managerGroup.managerRef}
         >
           <p className="flex mt-1 justify-end">
-            {handleGroupTime(managerGroup.timeStamp)}
+            {handleGroupTime(managerGroup)}
           </p>
           <div className="flex flex-row flex-wrap">
             <div className="ml-2">
@@ -333,7 +424,7 @@ function MyGroupPage() {
         <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
           <h2>
             Sorry... you don't participate in groups. You can send a request to
-            join or create a group and share with others.
+            join to other groups.
           </h2>
         </div>
       );
@@ -345,7 +436,7 @@ function MyGroupPage() {
           key={participantGroup.managerRef}
         >
           <p className=" flex mt-1 justify-end ">
-            {handleGroupTime(participantGroup.timeStamp)}
+            {handleGroupTime(participantGroup)}
           </p>
           <div className="flex flex-col lg:flex-row">
             <div className="lg:mr-4 mb-4 lg:mb-0">
@@ -520,6 +611,7 @@ function MyGroupPage() {
   const handleEditManagerGroup = () => {
     navigate("/createGroups");
   };
+  //תופס את לחיצת הכפתור מחיקת על כרטיס הקבוצה
   const handleLeaveGroup = async (group) => {
     let groupId = null;
     let newParticipantsList = [];
@@ -561,7 +653,35 @@ function MyGroupPage() {
         <div className="hidden">
           <FillterGroups handleFillterGroups={handleFillterGroups} />
         </div>
-
+        {/* הצגת המודל הראשוני עם המידע  */}
+        <div className=" float-none">
+          {displayPopUp && (
+            <Modal
+              open={true}
+              // once pop-up will close "closePopUp" function will be executed
+              onClose={closePopUp}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={PopUpInfoStyle}>
+                {/* what user will see in the modal is defined below */}
+                <img src={welcomeIcon} className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"/>
+                <h1>Welcome to ReGroup!</h1>
+                <p className="mt-2">
+                  On the my groups page you can see the group you manage or
+                  participate in in tabs and on the map.
+                </p>
+                <p className="mt-2">
+                  It's time to enjoy the features through the menu, join an
+                  existing group or open a new one.
+                </p>
+                <button className="mt-2" onClick={closePopUp}>
+                  OK
+                </button>
+              </Box>
+            </Modal>
+          )}
+        </div>
         {/* //הצגת הקבוצות שנמצאו */}
         <div
           className="col-md-4 animate__animated animate__fadeIn animate__slow"
