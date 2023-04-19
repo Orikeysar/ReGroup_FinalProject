@@ -18,7 +18,7 @@ import { saveMessagingDeviceToken } from "../../messaging";
 import { onButtonClick } from "../../FirebaseSDK";
 function FriendRequestCard() {
   const navigate = useNavigate();
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
   //array for frinds
   const [reaustFriends, setReaustFriends] = useState([]);
   const [anotherUser, setAnotherUser] = useState(null);

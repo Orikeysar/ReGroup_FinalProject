@@ -1,31 +1,25 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import UserProfileModal from "../UserProfileComponents/UserProfileModal";
 import { db, alertGroupEdited } from "../../FirebaseSDK";
 import {
   doc,
   getDoc,
   updateDoc,
-  onSnapshot,
-  collection,
   setDoc,
-  query,
-  getDocs,
-  where,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 import UserScoreCalculate from "../UserProfileComponents/UserScoreCalculate";
 import { uuidv4 } from "@firebase/util";
-import GroupInvationsCard from "./GroupInvationsCard";
 import { useNavigate } from "react-router-dom";
-import { useFindMyGroups } from "../../Hooks/useFindMyGroups";
 import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
+import Spinner from "../GeneralComponents/Spinner";
 function InvitationList({ invitationList }) {
   const navigate = useNavigate();
-
+  const [isLoaded, setIsLoaded] = useState(true);
   const [activeUser, setActiveUser] = useState(() => {
     try {
       const active = JSON.parse(localStorage.getItem("activeUser"));
@@ -46,6 +40,7 @@ function InvitationList({ invitationList }) {
 
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
   const handleAccept = async (anotherUser) => {
+    setIsLoaded(false)
     const updatedinvitationList = invitationList.filter(
       (item) => item.userRef !== anotherUser.userRef
     );
@@ -78,6 +73,7 @@ function InvitationList({ invitationList }) {
           );
           let item = achiev[0];
           UserScoreCalculate(item, "JoinedGroup", userAchiev);
+          
           toast.success("Join successfully!");
         })
         .catch((error) => {
@@ -122,11 +118,13 @@ function InvitationList({ invitationList }) {
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
+    setIsLoaded(true)
     window.location.reload();
   };
 
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה
   const handleReject = async (anotherUser) => {
+    setIsLoaded(false)
     const updatedinvitationList = invitationList.filter(
       (item) => item.userRef !== anotherUser.userRef
     );
@@ -171,9 +169,23 @@ function InvitationList({ invitationList }) {
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
     }
+    setIsLoaded(true)
   };
+
+
+
+
+
   //מרנדר את הקבוצה שהמנהל שלה רוצה שתצטרף אלייה
- 
+ if (isLoaded === false) {
+    return (
+     
+        <div className="card w-full justify-center">
+          <Spinner />
+        </div>
+    
+    );
+  } else {
   return (
     <>
       {invitationList.map((item) =>
@@ -283,7 +295,7 @@ function InvitationList({ invitationList }) {
         ) : null
       )}
     </>
-  );
+  )}
 }
 
 export default InvitationList;
