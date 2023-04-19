@@ -3,9 +3,11 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import Logo from "../../asset/ReGroupIcon.png";
+import { db } from "../../FirebaseSDK";
+import { doc, onSnapshot } from "firebase/firestore";
 function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeUser, setactiveUser] = useState(() => {
+  const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
@@ -18,6 +20,13 @@ function HamburgerMenu() {
     localStorage.setItem("componentChoosen", "UserAchievemeant");
     navigate("/");
   };
+  useEffect(()=>{
+    const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+      let data = doc.data()
+      setActiveUser(data)
+       localStorage.setItem("activeUser", JSON.stringify(data));
+    });
+    },[])
   //navigate
   const auth = getAuth();
   const [value, setValue] = useState(localStorage.getItem("componentChoosen"));

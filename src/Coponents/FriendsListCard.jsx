@@ -6,7 +6,15 @@ import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
 import UserProfileModal from "./profileComponents/UserProfileModal";
 import { db } from "../FirebaseSDK";
-import { doc, updateDoc, Timestamp, getDoc,collection,query, onSnapshot} from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  Timestamp,
+  getDoc,
+  collection,
+  query,
+  onSnapshot,
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 function FriendsListCard() {
   const navigate = useNavigate();
@@ -18,14 +26,14 @@ function FriendsListCard() {
     return user;
   });
 
-  const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
-    let data = doc.data()
-     setactiveUser(data)
-     setFriends(data.friendsList)
-     localStorage.setItem("activeUser", JSON.stringify(data));
-     
- });
-
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
+      let data = doc.data();
+      setactiveUser(data);
+      setFriends(data.friendsList);
+      localStorage.setItem("activeUser", JSON.stringify(data));
+    });
+  }, []);
 
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
@@ -122,12 +130,13 @@ function FriendsListCard() {
 
   return (
     <div className="friendsList  mt-4 mb-4">
-     
-      <div className="friendsListHeader   mb-4 ">
-        <div className="flex  items-center space-x-2 justify-center text-3xl align-middle ">
-          <TbFriends className=" mr-2 w-max " />
-          <p className=" font-bold text-lg">Friend List</p>
-        </div>
+      <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+        <img
+          className=" w-10 h-10 rounded-full "
+          src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fpeople.png?alt=media&token=9b1c3358-d184-4397-89d8-5898044a3556"
+          alt="Users Recored"
+        />{" "}
+        <p className=" font-bold text-xl">Friend List</p>
       </div>
 
       <div className="card w-full justify-center">

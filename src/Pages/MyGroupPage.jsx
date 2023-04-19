@@ -34,10 +34,43 @@ import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 import IconButton from "@mui/material/IconButton";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "animate.css/animate.min.css";
-
+import { Modal, Box } from "@mui/material";
+import welcomeIcon from '../asset/welcome-back.png'
 function MyGroupPage() {
   const navigate = useNavigate();
   const date = new Date();
+  //מודל מידע ראשוני
+  const [displayPopUp, setDisplayPopUp] = useState(true);
+  // when pop-up is closed this function triggers
+  const closePopUp = () => {
+    // setting key "seenPopUp" with value true into localStorage
+    localStorage.setItem("seenPopUpMyGroups", true);
+    // setting state to false to not display pop-up
+    setDisplayPopUp(false);
+  };
+
+  // check if  user seen and closed the pop-up
+  useEffect(() => {
+    // getting value of "seenPopUp" key from localStorage
+    let returningUser = localStorage.getItem("seenPopUpMyGroups");
+    // setting the opposite to state, false for returning user, true for a new user
+    setDisplayPopUp(!returningUser);
+  }, []);
+  //אחראי על הסטייל של המודל הראשוני
+  const PopUpInfoStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 300,
+    height: 400,
+    boxShadow: 24,
+    padding: 2,
+    textAlign: "center",
+    backgroundColor: "#fff",
+    borderRadius: "10px",
+    boxShadow: "0 0 20px rgba(0,0,0,0.3)",
+  };
 
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
@@ -79,9 +112,9 @@ function MyGroupPage() {
     }
   }, [managerGroup, participantGroup]);
   const [managerGroupId, setManagerGroupId] = useState(null);
-   //מרנדרת את הזמן או לחליפין מראה אייקון פתוח
-   const handleGroupTime = (group) => {
-    let timeStamp = group.timeStamp
+  //מרנדרת את הזמן או לחליפין מראה אייקון פתוח
+  const handleGroupTime = (group) => {
+    let timeStamp = group.timeStamp;
     if (timeStamp != null || timeStamp != undefined) {
       let time = timeStamp.toDate();
       let hours = time.getHours();
@@ -90,20 +123,17 @@ function MyGroupPage() {
         ? (time = "start at " + hours + ": 0" + minutes)
         : (time = hours + ":" + minutes);
       //יציג עיגול ירוק עם כיתוב של פתוח עם הזמן הגיע
-      
+
       if (hours > date.getHours()) {
         return time;
       } else if (hours === date.getHours() && minutes > date.getMinutes()) {
         return time;
       } else {
-        if(group.managerRef === activeUser.userRef){
- if (group.isActive === false) {
-          handleIsActiveChange(group);
+        if (group.managerRef === activeUser.userRef) {
+          if (group.isActive === false) {
+            handleIsActiveChange(group);
+          }
         }
-
-        }
-       
-        
 
         return (
           <>
@@ -114,8 +144,8 @@ function MyGroupPage() {
       }
     }
   };
-   //מאתחלת את הקבוצה לפעילה ומוציא מנהל שמשתתף בשתי קבוצות פועלות
-   const handleIsActiveChange = async (group) => {
+  //מאתחלת את הקבוצה לפעילה ומוציא מנהל שמשתתף בשתי קבוצות פועלות
+  const handleIsActiveChange = async (group) => {
     try {
       let groupRef = doc(db, "activeGroups", group.id);
       await updateDoc(groupRef, {
@@ -394,7 +424,7 @@ function MyGroupPage() {
         <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
           <h2>
             Sorry... you don't participate in groups. You can send a request to
-            join or create a group and share with others.
+            join to other groups.
           </h2>
         </div>
       );
@@ -581,6 +611,7 @@ function MyGroupPage() {
   const handleEditManagerGroup = () => {
     navigate("/createGroups");
   };
+  //תופס את לחיצת הכפתור מחיקת על כרטיס הקבוצה
   const handleLeaveGroup = async (group) => {
     let groupId = null;
     let newParticipantsList = [];
@@ -622,7 +653,35 @@ function MyGroupPage() {
         <div className="hidden">
           <FillterGroups handleFillterGroups={handleFillterGroups} />
         </div>
-
+        {/* הצגת המודל הראשוני עם המידע  */}
+        <div className=" float-none">
+          {displayPopUp && (
+            <Modal
+              open={true}
+              // once pop-up will close "closePopUp" function will be executed
+              onClose={closePopUp}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={PopUpInfoStyle}>
+                {/* what user will see in the modal is defined below */}
+                <img src={welcomeIcon} className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"/>
+                <h1>Welcome to ReGroup!</h1>
+                <p className="mt-2">
+                  On the my groups page you can see the group you manage or
+                  participate in in tabs and on the map.
+                </p>
+                <p className="mt-2">
+                  It's time to enjoy the features through the menu, join an
+                  existing group or open a new one.
+                </p>
+                <button className="mt-2" onClick={closePopUp}>
+                  OK
+                </button>
+              </Box>
+            </Modal>
+          )}
+        </div>
         {/* //הצגת הקבוצות שנמצאו */}
         <div
           className="col-md-4 animate__animated animate__fadeIn animate__slow"

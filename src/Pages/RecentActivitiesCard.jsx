@@ -8,6 +8,7 @@ import { OrderList } from "primereact/orderlist";
 import { Timestamp } from "firebase/firestore";
 import NavBar from "../Coponents/navbars/NavBar";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
+import { Modal, Box } from "@mui/material";
 
 function RecentActivitiesCard() {
   const navigate = useNavigate();
@@ -16,10 +17,44 @@ function RecentActivitiesCard() {
     const storedactiveUser = localStorage.getItem("activeUser");
     return JSON.parse(storedactiveUser);
   });
+  //מודל מידע ראשוני
+  const [displayPopUp, setDisplayPopUp] = useState(true);
+  // when pop-up is closed this function triggers
+  const closePopUp = () => {
+    // setting key "seenPopUp" with value true into localStorage
+    localStorage.setItem("seenPopUpRecent", true);
+    // setting state to false to not display pop-up
+    setDisplayPopUp(false);
+  };
+
+  // check if  user seen and closed the pop-up
+  useEffect(() => {
+    // getting value of "seenPopUp" key from localStorage
+    let returningUser = localStorage.getItem("seenPopUpRecent");
+    // setting the opposite to state, false for returning user, true for a new user
+    setDisplayPopUp(!returningUser);
+  }, []);
+  //אחראי על הסטייל של המודל הראשוני
+  const PopUpInfoStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 300,
+    height: 400,
+    boxShadow: 24,
+    padding: 2,
+    textAlign: "center",
+    backgroundColor: "#fff",
+    borderRadius: "10px",
+    boxShadow: "0 0 20px rgba(0,0,0,0.3)",
+  };
   //מערכים להפרדה בין מה שבטייפ כללי ומה שבטייפ קבוצות והצבעים של הכפתורים
   const [activitiesTypeGroups, setActivitiesTypeGroups] = useState([]);
   const [activitiesTypeGeneral, setActivitiesTypeGeneral] = useState([]);
-  const [btnColorGeneral, setBtnColorGeneral] = useState("btn m-2 text-sm shadow-md");
+  const [btnColorGeneral, setBtnColorGeneral] = useState(
+    "btn m-2 text-sm shadow-md"
+  );
   const [btnColorGroups, setBtnColorGroups] = useState(
     "btn m-2 text-sm  text-black glass shadow-md"
   );
@@ -141,9 +176,42 @@ function RecentActivitiesCard() {
         <div className="topNavBar w-full mb-20">
           <NavBar />
         </div>
-        <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
-          {" "}
-          <RxCounterClockwiseClock className=" mr-2 w-max " />
+        <div className=" float-none">
+          {displayPopUp && (
+            <Modal
+              open={true}
+              // once pop-up will close "closePopUp" function will be executed
+              onClose={closePopUp}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={PopUpInfoStyle}>
+                {/* what user will see in the modal is defined below */}
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Frecent.png?alt=media&token=f75db574-c9cc-4246-a350-ae9c2f3b3b40"
+                  className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"
+                />
+                <h1>Your recent activities</h1>
+                <p className="mt-2">
+                  Here you can track your actions in the system.
+                </p>
+                <p className="mt-2">
+                  You can switch between GENERAL actions, like friend you added, and GROUPS related to
+                  groups you've created or joined info in the past.
+                </p>
+                <button className="mt-2" onClick={closePopUp}>
+                  OK
+                </button>
+              </Box>
+            </Modal>
+          )}
+        </div>
+        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+          <img
+            className=" w-10 h-10 rounded-full "
+            src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Frecent.png?alt=media&token=f75db574-c9cc-4246-a350-ae9c2f3b3b40"
+            alt="Users Recored"
+          />{" "}
           <p className=" font-bold text-xl">Recent Activities</p>
         </div>
         <div className="flex justify-center m-2">
@@ -155,8 +223,12 @@ function RecentActivitiesCard() {
           </button>
         </div>
         <div className=" justify-center m-10">
-        <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
-            <h2>Hello! You currently have no recent activities, you are welcome to start creating groups or participate and here you can see the history of all your actions.</h2>
+          <div className="shadow-md card w-auto h-46 m-2 p-2 border border-stone-400 overflow-hidden">
+            <h2>
+              Hello! You currently have no recent activities, you are welcome to
+              start creating groups or participate and here you can see the
+              history of all your actions.
+            </h2>
           </div>
         </div>
         <CreateGroupButton />
@@ -170,9 +242,42 @@ function RecentActivitiesCard() {
         <div className="topNavBar w-full mb-24">
           <NavBar />
         </div>
-        <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
-          {" "}
-          <RxCounterClockwiseClock className=" mr-2 w-max " />
+        <div className=" float-none">
+          {displayPopUp && (
+            <Modal
+              open={true}
+              // once pop-up will close "closePopUp" function will be executed
+              onClose={closePopUp}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={PopUpInfoStyle}>
+                {/* what user will see in the modal is defined below */}
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Frecent.png?alt=media&token=f75db574-c9cc-4246-a350-ae9c2f3b3b40"
+                  className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"
+                />
+                <h1>Your recent activities</h1>
+                <p className="mt-2">
+                  Here you can track your actions in the system.
+                </p>
+                <p className="mt-2">
+                  You can switch between general actions and actions related to
+                  groups you've created or joined.
+                </p>
+                <button className="mt-2" onClick={closePopUp}>
+                  OK
+                </button>
+              </Box>
+            </Modal>
+          )}
+        </div>
+        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+          <img
+            className=" w-10 h-10 rounded-full "
+            src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Frecent.png?alt=media&token=f75db574-c9cc-4246-a350-ae9c2f3b3b40"
+            alt="Users Recored"
+          />{" "}
           <p className=" font-bold text-xl">Recent Activities</p>
         </div>
         <div className="flex justify-center m-2">
@@ -208,12 +313,46 @@ function RecentActivitiesCard() {
   } else {
     return (
       <div>
-        <div className="topNavBar w-full mb-20">
+        <div className="topNavBar w-full mb-24">
           <NavBar />
         </div>
-        <div className="flex  items-center space-x-2 justify-center text-base align-middle ">
-          {" "}
-          <RxCounterClockwiseClock className=" mr-2 w-max " />
+        <div className=" float-none">
+          {/* הצגת המודל הראשוני עם המידע  */}
+          {displayPopUp && (
+            <Modal
+              open={true}
+              // once pop-up will close "closePopUp" function will be executed
+              onClose={closePopUp}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={PopUpInfoStyle}>
+                {/* what user will see in the modal is defined below */}
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Frecent.png?alt=media&token=f75db574-c9cc-4246-a350-ae9c2f3b3b40"
+                  className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"
+                />
+                <h1>Your recent activities</h1>
+                <p className="mt-2">
+                  Here you can track your actions in the system.
+                </p>
+                <p className="mt-2">
+                  You can switch between general actions and actions related to
+                  groups you've created or joined.
+                </p>
+                <button className="mt-2" onClick={closePopUp}>
+                  OK
+                </button>
+              </Box>
+            </Modal>
+          )}
+        </div>
+        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+          <img
+            className=" w-10 h-10 rounded-full "
+            src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Frecent.png?alt=media&token=f75db574-c9cc-4246-a350-ae9c2f3b3b40"
+            alt="Users Recored"
+          />{" "}
           <p className=" font-bold text-xl">Recent Activities</p>
         </div>
         <div className="flex justify-center m-2">

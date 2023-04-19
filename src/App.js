@@ -17,6 +17,7 @@ import RecentActivitiesCard from "./Pages/RecentActivitiesCard";
 import UserFriendsPage from "./Pages/UserFriendsPage";
 import RequestsToGroups from "./Pages/RequestsToGroups";
 function App() {
+  
   return (
     <>
     <script

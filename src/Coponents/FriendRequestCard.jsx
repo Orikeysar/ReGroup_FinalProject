@@ -30,13 +30,15 @@ function FriendRequestCard() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-
+useEffect(()=>{
   const unsub = onSnapshot(doc(db, "users", activeUser.userRef), (doc) => {
     let data = doc.data();
     setactiveUser(data);
     setReaustFriends(data.friendsListToAccept);
     localStorage.setItem("activeUser", JSON.stringify(data));
   });
+},[])
+  
 
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
@@ -241,12 +243,11 @@ function FriendRequestCard() {
   };
 
   return (
-    <div className="friendsList  mt-4 mb-4">
-      <div className="friendsListHeader   mb-4 ">
-        <div className="flex  items-center space-x-2 justify-center text-3xl align-middle ">
-          <TbFriends className=" mr-2 w-max " />
-          <p className=" font-bold text-lg">Friend request List</p>
-        </div>
+    <div className="  mt-4 mb-4">
+      <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+    <img className=" w-10 h-10 rounded-full " src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2FjoinGroup.png?alt=media&token=293b90df-3802-4736-b8cc-0d64a8c3faff" alt="Users Recored" />
+        {" "}
+        <p className=" font-bold text-xl">Friend request List</p>
       </div>
 
       <div className="card w-full justify-center">
