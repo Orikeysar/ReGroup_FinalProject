@@ -41,13 +41,10 @@ width: fit-content;
 }
 .p-orderlist-list{
 height: auto;
-max-height: none;
+max-height: 500px !important;
 
 }
-.p-orderlist{
-height: auto;
-  max-height: none;
-}	
+
 .p-orderlist-controls{
   
 display: none;
