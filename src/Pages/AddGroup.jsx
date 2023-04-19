@@ -15,12 +15,12 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import NavBar from "../Coponents/navbars/NavBar";
+import NavBar from "../Coponents/NavBarComponents/NavBar";
 import MyAddGroupMapComponent from "../Coponents/GroupsComponents/MyAddGroupMapComponent ";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
 import { uuidv4 } from "@firebase/util";
 import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
-import UserScoreCalculate from "../Coponents/UserScoreCalculate";
+import UserScoreCalculate from "../Coponents/UserProfileComponents/UserScoreCalculate";
 import SendAlertToUserForNewGroup from "../Coponents/GroupsComponents/SendAlertToUserForNewGroup";
 import { Modal, Box } from "@mui/material";
 

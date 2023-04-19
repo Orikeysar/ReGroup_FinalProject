@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
-import { db } from "../FirebaseSDK";
+import { db } from "../../FirebaseSDK";
 
 function UserScoreCalculate(item, type, user) {
   //בשביל התאריכים

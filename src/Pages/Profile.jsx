@@ -9,12 +9,12 @@ import {
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Spinner from "../Coponents/Spinner";
+import Spinner from "../Coponents/GeneralComponents/Spinner";
 import { FiEdit } from "react-icons/fi";
 import { AiOutlineMail } from "react-icons/ai";
 import { BsFilePerson } from "react-icons/bs";
 import { FaUniversity } from "react-icons/fa";
-import ProfileImgEdit from "../Coponents/profileComponents/ProfileImgEdit";
+import ProfileImgEdit from "../Coponents/UserProfileComponents/ProfileImgEdit";
 function Profile() {
   const auth = getAuth();
   const navigate = useNavigate();

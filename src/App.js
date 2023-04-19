@@ -1,17 +1,14 @@
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
-import FirstSignUpQuestions from "./Pages/FirstSignUpQuestions";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-import Profile from "./Pages/Profile";
-import PraivteRoute from "./Coponents/PraivteRoute.jsx";
+import PraivteRoute from "./Coponents/UserProfileComponents/PraivteRoute.jsx";
 import ForgotPassword from "./Pages/ForgotPassword";
 import FindGroups from "./Pages/FindGroups";
 import AddGroup from "./Pages/AddGroup";
 import MyGroupPage from "./Pages/MyGroupPage";
-import FriendsListCard from "./Coponents/FriendsListCard";
 import UserAchievemeant from "./Pages/UserAchievemeant";
 import RecentActivitiesCard from "./Pages/RecentActivitiesCard";
 import UserFriendsPage from "./Pages/UserFriendsPage";

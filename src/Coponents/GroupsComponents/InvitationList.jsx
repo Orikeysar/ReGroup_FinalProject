@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import UserProfileModal from "../../Coponents/profileComponents/UserProfileModal";
+import UserProfileModal from "../UserProfileComponents/UserProfileModal";
 import { db, alertGroupEdited } from "../../FirebaseSDK";
 import {
   doc,
@@ -14,7 +14,7 @@ import {
   where,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
-import UserScoreCalculate from "../../Coponents/UserScoreCalculate";
+import UserScoreCalculate from "../UserProfileComponents/UserScoreCalculate";
 import { uuidv4 } from "@firebase/util";
 import GroupInvationsCard from "./GroupInvationsCard";
 import { useNavigate } from "react-router-dom";

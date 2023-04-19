@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { RiGroup2Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-import NavBar from "../Coponents/navbars/NavBar";
+import NavBar from "../Coponents/NavBarComponents/NavBar";
 import { Modal, Box } from "@mui/material";
 import Map from "../Coponents/GroupsComponents/Map";
 import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";

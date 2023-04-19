@@ -3,12 +3,10 @@ import {
   GoogleMap,
   useLoadScript,
   Marker,
-  InfoWindow,
-  MarkerWithLabel 
+  InfoWindow, 
 } from "@react-google-maps/api";
-import Spinner from "../Spinner";
+import Spinner from "../GeneralComponents/Spinner";
 import { uuidv4 } from "@firebase/util";
-import iconImg from '../../asset/iconImg.jpeg'
 import JoinGroupCard from "./JoinGroupCard";
 
 export default function Map({ filteredGroups }) {

@@ -1,11 +1,11 @@
 import React from "react";
-import NavBar from "../Coponents/navbars/NavBar";
+import NavBar from "../Coponents/NavBarComponents/NavBar";
 import { useState, useEffect } from "react";
 import { db } from "../FirebaseSDK";
 import { doc, onSnapshot } from "firebase/firestore";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
-import RequestList from "../Coponents/RequestsComponets/RequestList";
-import InvitationList from "../Coponents/RequestsComponets/InvitationList"
+import RequestList from "../Coponents/GroupsComponents/RequestList";
+import InvitationList from "../Coponents/GroupsComponents/InvitationList"
 import { Modal, Box } from "@mui/material";
 
 function RequestsToGroups() {

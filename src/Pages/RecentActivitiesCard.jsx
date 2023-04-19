@@ -2,11 +2,10 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { RxCounterClockwiseClock } from "react-icons/rx";
 import { Avatar } from "primereact/avatar";
 import { OrderList } from "primereact/orderlist";
 import { Timestamp } from "firebase/firestore";
-import NavBar from "../Coponents/navbars/NavBar";
+import NavBar from "../Coponents/NavBarComponents/NavBar";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 import { Modal, Box } from "@mui/material";
 

@@ -1,9 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import NavBar from "../Coponents/navbars/NavBar";
-import FriendsListCard from "../Coponents/FriendsListCard";
+import NavBar from "../Coponents/NavBarComponents/NavBar";
+import FriendsListCard from "../Coponents/FriendsComponents/FriendsListCard";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
-import FriendRequestCard from "../Coponents/FriendRequestCard";
+import FriendRequestCard from "../Coponents/FriendsComponents/FriendRequestCard";
 import { Modal, Box } from "@mui/material";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../FirebaseSDK";

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Avatar } from "primereact/avatar";
 import { uuidv4 } from "@firebase/util";
 import { db, alertGroupEdited } from "../../FirebaseSDK";
@@ -8,18 +8,16 @@ import {
   setDoc,
   getDoc,
   updateDoc,
-  GeoPoint,
-  Timestamp,
   collection,
   query,
   where,
   getDocs,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
-import UserProfileModal from "../profileComponents/UserProfileModal";
+import UserProfileModal from "../UserProfileComponents/UserProfileModal";
 import { Dialog } from "primereact/dialog";
 import useFindMyGroups from "../../Hooks/useFindMyGroups";
-import UpdateRecentActivities from "../UpdateRecentActivities";
+import UpdateRecentActivities from "../UserProfileComponents/UpdateRecentActivities";
 import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import { useNavigate } from "react-router-dom";
@@ -28,8 +26,6 @@ import { FaCircle } from "react-icons/fa";
 function JoinGroupCard({ group }) {
   const navigate = useNavigate();
   const date = new Date();
-  const [showDropdown, setShowDropdown] = useState(false);
-
   const [btnStatus, setBtnStatus] = useState(false);
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
