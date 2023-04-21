@@ -57,6 +57,7 @@ function RecentActivitiesCard() {
   const [btnColorGroups, setBtnColorGroups] = useState(
     "btn m-2 text-sm  text-black glass shadow-md"
   );
+ 
   //ברירת מחדל יופיעו הכללי קודם
   const [type, setType] = useState("General");
   const handleDateTime = (timeStamp) => {

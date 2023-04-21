@@ -22,7 +22,7 @@ import Chip from "@mui/material/Chip";
 import randomColor from "randomcolor";
 import { useNavigate } from "react-router-dom";
 import { FaCircle } from "react-icons/fa";
-
+import { BsFilePerson } from "react-icons/bs";
 function JoinGroupCard({ group }) {
   const navigate = useNavigate();
   const date = new Date();
@@ -181,7 +181,7 @@ function JoinGroupCard({ group }) {
 
   let btn2 = false;
   return (
-    <div className=" w-auto  card h-46 m-2 p-2  overflow-hidden ">
+    <div className=" w-auto  card h-46 m-2 p-2  overflow-hidden bg-white ">
       <p className=" flex mt-1 justify-end ">
         {handleGroupTime(group.timeStamp)}
       </p>
@@ -214,11 +214,19 @@ function JoinGroupCard({ group }) {
           </div>
         </div>
         <div className=" border rounded-xl mt-2 mb-2">
-          <p className="ml-3 mt-3 text-sm underline">Description:</p>
+          <p className="ml-3 mt-3 text-start underline">Description:</p>
           <p className="ml-3 mt-3 text-lg text-center">{group.description}</p>
         </div>
-        <div className="w-full ">
+        <div className="w-full "> 
+        <div className="flex flex-row w-full ml-3 mt-2">
+                <BsFilePerson className="mr-1" />
+                <p>
+                  {group.participants.length} /{" "}
+                  {group.groupSize}
+                </p>
+              </div>
           <div className="flex flex-wrap lg:flex-nowrap">
+           
             {group.participants.map((participant) => {
               if (participant.userRef === activeUser.userRef) {
                 btn2 = true;
