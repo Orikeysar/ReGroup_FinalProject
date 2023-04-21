@@ -36,6 +36,7 @@ import Spinner from "../GeneralComponents/Spinner";
   const [type, setType] = useState("MyFriends");
 
 
+
   
   
   useEffect(() => {
@@ -144,7 +145,9 @@ import Spinner from "../GeneralComponents/Spinner";
             </Button>
           </div>
         </div>
-        {visible && (
+    {visible && (
+        <tr>
+          <td>
           <div>
             {/* המודל של המשתמש שנבחר */}
             <div className="card flex justify-content-center">
@@ -162,6 +165,8 @@ import Spinner from "../GeneralComponents/Spinner";
               </Dialog>
             </div>
           </div>
+          </td>
+          </tr>
         )}
       </div>
     );
@@ -192,7 +197,7 @@ import Spinner from "../GeneralComponents/Spinner";
           My Friends
           </button>
         </div>
-        {}
+        
         </div>
         <OrderList
         className="my-orderlist"
