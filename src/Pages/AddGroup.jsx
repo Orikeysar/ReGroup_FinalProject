@@ -129,6 +129,21 @@ function AddGroup() {
     setSelectedCourse(selectedCourse);
     setSelectedSubjects(selectedSubjects);
     setSelectedNumber(selectedNumber);
+    if(selectedSubjects){
+    if(selectedSubjects.length > 0){
+      if (filteredGroups.length > 0) {
+        if (
+          window.confirm(
+            "you want to see another active groups with same parameters?"
+          ) === true
+        ) {
+          setFillteredGroupShow(true);
+        } else {
+          setFillteredGroupShow(false);
+        
+        }
+      } 
+    }}
   };
 
   //הפונקציה תופסת שינויים בשהמשתמש מכניס למשתנים
