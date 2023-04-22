@@ -1,24 +1,18 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { getAuth, updateProfile } from "firebase/auth";
-import {
-  updateDoc,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { updateDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../FirebaseSDK";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Spinner from "../Coponents/GeneralComponents/Spinner";
 import { FiEdit } from "react-icons/fi";
-import { AiOutlineMail } from "react-icons/ai";
-import { BsFilePerson } from "react-icons/bs";
-import { FaUniversity } from "react-icons/fa";
 import ProfileImgEdit from "../Coponents/UserProfileComponents/ProfileImgEdit";
+import { MDBCard, MDBCardBody, MDBCardImage, MDBBtn } from "mdb-react-ui-kit";
 function Profile() {
   const auth = getAuth();
   const navigate = useNavigate();
-  
+
   const [componentChoosen, setComponentChoosen] = useState(
     localStorage.getItem("componentChoosen")
   );
@@ -106,93 +100,73 @@ function Profile() {
         <div className="col-md-4 animated fadeIn " key={activeUser.name}>
           <div className="card ">
             <div className="card-body flex-row ">
-              <div className="avatar w-2/5 ">
-                <button
-                  id="about"
-                  className="relative  right-0 flex-grow-0 max-h-4 w-5  "
-                >
-                  {" "}
-                  <FiEdit onClick={editImageIconClicked} />
-                </button>
-                <div className="w-28 rounded-full object-fill">
-                  <img
-                    src={activeUser.userImg}
-                    className="object-center object-fill"
-                    alt="תמונת פרופיל"
-                  />
-                </div>
-              </div>
-
-              <div className="userInfo justify-center w-3/5">
-                <div className="flex flex-row-reverse">
-                  <button>
-                    <FiEdit
-                      className="changePersonalDetails  "
-                      onClick={() => {
-                        changeDetails && onSubmitEdit();
-                        setChangeDetails((prevState) => !prevState);
-                      }}
-                    >
-                      {changeDetails ? "done" : "edit"}
-                    </FiEdit>
+              <MDBCard key={activeUser.name}>
+                <MDBCardBody className="text-center contents">
+                  <button
+                    id="about"
+                    className="relative  right-0 flex-grow-0 max-h-4 w-5  "
+                  >
+                    {" "}
+                    <FiEdit onClick={editImageIconClicked} />
                   </button>
-                </div>
-                <div className="text-xl text-center bg-transparent flex flex-row">
-                  <BsFilePerson className="self-center" />
-                  <input
-                    type="text"
-                    id="name"
-                    className={
-                      !changeDetails
-                        ? "underline w-5/6  ml-4"
-                        : "profileName ml-4 w-5/6 "
-                    }
-                    disabled={!changeDetails}
-                    value={name}
-                    onChange={onEdit}
+                  <MDBCardImage
+                    src={activeUser.userImg}
+                    alt="User Image"
+                    className=" rounded-full ml-10"
+                    style={{ width: "200px", height: "200px" }}
+                    fluid
                   />
-                </div>
-                <div className="flex flex-row ">
-                  <AiOutlineMail className="self-center" />
-                  <p className="card-text ml-4 ">{activeUser.email}</p>
-                </div>
-                <div className=" flex flex-row">
-                  <FaUniversity className="self-center" />
-                  <input
-                    type="text"
-                    id="degree"
-                    className={
-                      !changeDetails
-                        ? "underline w-5/6  ml-4"
-                        : "profileName ml-4 w-5/6 "
-                    }
-                    disabled={!changeDetails}
-                    value={degree}
-                    onChange={onEdit}
-                  />
-                </div>
-              </div>
+                  <div className="flex flex-row-reverse">
+                    <button>
+                      <FiEdit
+                        className="changePersonalDetails  "
+                        onClick={() => {
+                          changeDetails && onSubmitEdit();
+                          setChangeDetails((prevState) => !prevState);
+                        }}
+                      >
+                        {changeDetails ? "done" : "edit"}
+                      </FiEdit>
+                    </button>
+                  </div>
+                  <p className="text-gray-600 mb-2 text-2xl ml-2">
+                    <input
+                      type="text"
+                      id="name"
+                      className={!changeDetails ? " bg-white text-center" : " underline text-center"}
+                      disabled={!changeDetails}
+                      value={name}
+                      onChange={onEdit}
+                    />
+                  </p>
+                  <p className="text-gray-500 mb-2 text-xl ml-2">
+                    {activeUser.email}
+                  </p>
+                  <p className="text-gray-500 mb-4 text-xl ml-2">
+                    <input
+                      type="text"
+                      id="degree"
+                      className={!changeDetails ? "bg-white text-center" : "underline text-center"}
+                      disabled={!changeDetails}
+                      value={degree}
+                      onChange={onEdit}
+                    />
+                  </p>
+                  <div className="d-flex justify-content-center ml-2">
+                    <MDBBtn outline className="" onClick={onLogout}>
+                      Log Out
+                    </MDBBtn>
+                  </div>
+                </MDBCardBody>
+              </MDBCard>
             </div>
           </div>
         </div>
       </div>
-      {/* //LAST ACTIVITIES  */}
-      <div className=" mt-4 mb-4">
+
+      <div className=" mb-4">
         {/* //select between components */}
-        {componentChoosen === "EditImage"?<ProfileImgEdit />:null}
-        {/* <div>
-          {componentChoosen === "RecentActivities" ? (
-            <RecentActivitiesCard />
-          ) : componentChoosen === "CoursesList" ? (
-            <CoursesList />
-          ) : componentChoosen === "FriendsList" ? (
-            <FriendsListCard />
-          ) : componentChoosen === "EditImage" ? (
-            <ProfileImgEdit />
-          ) : (
-            <UserAchievemeant />
-          )}
-        </div> */}
+        {componentChoosen === "EditImage" ? <ProfileImgEdit /> : null}
       </div>
     </div>
   );
