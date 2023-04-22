@@ -96,64 +96,77 @@ function Profile() {
 
   return (
     <div className="container">
-      <div className="row userInfo">
-        <div className="col-md-4 animated fadeIn " key={activeUser.name}>
+      <div className="mx-auto">
+        <div className="md:w-1/2 mx-auto">
           <div className="card ">
-            <div className="card-body flex-row ">
+            <div className="card-body flex flex-col items-center">
+              <div className=" ml-32">
+                <button
+                  id="about"
+                  className="relative right-0 flex-grow-0 max-h-4 w-5  "
+                >
+                  {" "}
+                  <FiEdit onClick={editImageIconClicked} />
+                </button>
+              </div>
               <MDBCard key={activeUser.name}>
                 <MDBCardBody className="text-center contents">
-                  <button
-                    id="about"
-                    className="relative  right-0 flex-grow-0 max-h-4 w-5  "
-                  >
-                    {" "}
-                    <FiEdit onClick={editImageIconClicked} />
-                  </button>
-                  <MDBCardImage
-                    src={activeUser.userImg}
-                    alt="User Image"
-                    className=" rounded-full ml-10"
-                    style={{ width: "200px", height: "200px" }}
-                    fluid
-                  />
-                  <div className="flex flex-row-reverse">
-                    <button>
-                      <FiEdit
-                        className="changePersonalDetails  "
-                        onClick={() => {
-                          changeDetails && onSubmitEdit();
-                          setChangeDetails((prevState) => !prevState);
-                        }}
-                      >
-                        {changeDetails ? "done" : "edit"}
-                      </FiEdit>
-                    </button>
-                  </div>
-                  <p className="text-gray-600 mb-2 text-2xl ml-2">
-                    <input
-                      type="text"
-                      id="name"
-                      className={!changeDetails ? " bg-white text-center" : " underline text-center"}
-                      disabled={!changeDetails}
-                      value={name}
-                      onChange={onEdit}
+                  <div className="flex justify-center">
+                    <MDBCardImage
+                      src={activeUser.userImg}
+                      alt="User Image"
+                      className="rounded-full w-48 h-48 mb-4"
+                      fluid
                     />
-                  </p>
-                  <p className="text-gray-500 mb-2 text-xl ml-2">
+                  </div>
+                  <div>
+                    <div className="flex flex-row-reverse">
+                      <button>
+                        <FiEdit
+                          className="changePersonalDetails  "
+                          onClick={() => {
+                            changeDetails && onSubmitEdit();
+                            setChangeDetails((prevState) => !prevState);
+                          }}
+                        >
+                          {changeDetails ? "done" : "edit"}
+                        </FiEdit>
+                      </button>
+                    </div>
+                    <p className="text-gray-600 text-2xl mb-2">
+                      <input
+                        type="text"
+                        id="name"
+                        className={
+                          !changeDetails
+                            ? "bg-white text-center"
+                            : "underline text-center"
+                        }
+                        disabled={!changeDetails}
+                        value={name}
+                        onChange={onEdit}
+                      />
+                    </p>
+                  </div>
+                  <p className="text-gray-500 text-xl mb-2">
                     {activeUser.email}
                   </p>
-                  <p className="text-gray-500 mb-4 text-xl ml-2">
+                  <p className="text-gray-500 text-xl mb-4">
                     <input
                       type="text"
                       id="degree"
-                      className={!changeDetails ? "bg-white text-center" : "underline text-center"}
+                      className={
+                        !changeDetails
+                          ? "bg-white text-center"
+                          : "underline text-center"
+                      }
                       disabled={!changeDetails}
                       value={degree}
                       onChange={onEdit}
                     />
                   </p>
-                  <div className="d-flex justify-content-center ml-2">
-                    <MDBBtn outline className="" onClick={onLogout}>
+                  <div className="flex justify-center">
+                    <MDBBtn outline onClick={onLogout}>
                       Log Out
                     </MDBBtn>
                   </div>
