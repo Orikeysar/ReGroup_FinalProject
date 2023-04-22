@@ -8,6 +8,7 @@ import Map from "../Coponents/GroupsComponents/Map";
 import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
 import CoursesList from "../Coponents/GroupsComponents/CoursesList";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
+import JoinGroupCard from "../Coponents/GroupsComponents/JoinGroupCard";
 //מציאת קבוצה
 function FindGroups() {
   const navigate = useNavigate();
@@ -48,7 +49,9 @@ function FindGroups() {
     borderRadius: "10px",
     boxShadow: "0 0 20px rgba(0,0,0,0.3)",
   };
-
+   //מציג את הדיב של קבוצותת ברשימת כרטיסים
+   const [groupsInCards, setGroupsInCards] = useState(false);
+  
   //מציג את הדיב של קבלת התראות על קבוצות
   const [groupsAlert, setGroupsAlert] = useState(false);
   //יצירת מערך ופונקציה שנשלח לקומפוננט פילטרגרופ כדי לקבל את הקבוצות שנשלח למפה
@@ -99,7 +102,7 @@ function FindGroups() {
         </div>
       <div>
         {/* סינון קבוצות */}
-        <FillterGroups handleFillterGroups={handleFillterGroups} />
+        <FillterGroups handleFillterGroups={handleFillterGroups} page="find" />
       </div>
       <button className="btn btn-md mb-2 ml-1" onClick={()=>setGroupsAlert(!groupsAlert)}>
         set alert
@@ -112,6 +115,17 @@ function FindGroups() {
             <br /> groups who opened with this choosen course as title .
           </p>
           <CoursesList />
+        </div>
+      ) : null}
+       <button className="btn btn-md mb-2 ml-1" onClick={()=>setGroupsInCards(!groupsInCards)}>
+        Show Groups As A List
+      </button>
+      {groupsInCards ? (
+        <div className="text-center m-2 border rounded-xl bg-gray-100">
+          <div className="m-2">
+      {fillteredGroups.map((group)=>{
+return <JoinGroupCard group={group}/>
+      })}</div>
         </div>
       ) : null}
 <CreateGroupButton/>

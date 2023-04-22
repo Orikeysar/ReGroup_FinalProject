@@ -9,7 +9,7 @@ import { onSnapshot, collection, query } from "firebase/firestore";
 import { FaInfoCircle } from "react-icons/fa";
 import { Modal, Box } from "@mui/material";
 
-function FillterGroups({ handleFillterGroups }) {
+function FillterGroups({ handleFillterGroups ,page}) {
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
@@ -67,6 +67,7 @@ function FillterGroups({ handleFillterGroups }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState(null);
   const [selectedNumber, setSelectedNumber] = useState(null);
+  const [selectedFriendChange, setSelectedfriendChange] = useState(null);
   //בעת בחירת קורס - הכנסתו לבחירה ויצירת מערך שיראה רק את הנושאים הקשורים לאותו הקורס
   const handleCourseChange = (event, value) => {
     setSelectedCourse(value);
@@ -89,6 +90,10 @@ function FillterGroups({ handleFillterGroups }) {
   const handleNumberChange = (event, value) => {
     setSelectedNumber(value);
   };
+  const handleInviteFriendChange = (event, value) => {
+    setSelectedfriendChange(value);
+  };
+  
   //יצירת המערך המעודכן של הקבוצות המסוננות לשליחה למפה ליצירת מארקרים
   useEffect(() => {
     const filterMarkers = () => {
@@ -108,12 +113,17 @@ function FillterGroups({ handleFillterGroups }) {
           (group) => group.groupSize <= parseInt(selectedNumber)
         );
       }
-
+      if (selectedFriendChange) {
+        newFilter = newFilter.filter((group) =>
+  group.participants.find((p) => p.email === selectedFriendChange.email)
+);
+      }
       handleFillterGroups(
         newFilter,
         selectedCourse,
         selectedSubjects,
-        selectedNumber
+        selectedNumber,
+        selectedFriendChange
       );
       setTotalGroupsCount(newFilter.length);
       handleAvailableGroups(newFilter);
@@ -122,7 +132,8 @@ function FillterGroups({ handleFillterGroups }) {
     if (
       selectedCourse !== null ||
       selectedSubjects !== null ||
-      selectedNumber !== null
+      selectedNumber !== null ||
+      selectedFriendChange !==null
     ) {
       filterMarkers();
     } else {
@@ -130,12 +141,13 @@ function FillterGroups({ handleFillterGroups }) {
         activeGroups,
         selectedCourse,
         selectedSubjects,
-        selectedNumber
+        selectedNumber,
+        selectedFriendChange
       );
       setTotalGroupsCount(activeGroups.length);
       handleAvailableGroups(activeGroups);
     }
-  }, [activeGroups, selectedCourse, selectedNumber, selectedSubjects]);
+  }, [activeGroups, selectedCourse, selectedNumber, selectedSubjects,selectedFriendChange]);
 //אחראי על המודל של המידע
 const [isInfoModalOpen, setInfoIsModalOpen] = useState(false);
 //אחראי על סטייל החלונות מידע
@@ -156,7 +168,7 @@ const PopUpInfoStyle = {
   return (
     <div className=" grid justify-center w-full mb-4 ">
       <div>
-      <div className=" relative top-20 pb-1">
+      <div className=" relative top-12 pb-1">
         <FaInfoCircle
           className="cursor-pointer text-gray-400 "
           onClick={() => setInfoIsModalOpen(true)}
@@ -164,26 +176,26 @@ const PopUpInfoStyle = {
       </div>
         <Autocomplete
         onChange={handleCourseChange}
-        className="w-full pl-6 pr-6"
+        className="pl-6 pr-6"
         id="free-solo-demo"
         freeSolo
-        sx={{ width: "100%", marginTop: 5 }}
+        sx={{ width: "100%", marginTop: 2 }}
         options={courses.map((option) => option.id)}
         renderInput={(params) => <TextField {...params} label="Course" />}
       />
       </div>
       <div>
-      <div className=" relative top-20 pb-1">
+      <div className=" relative top-12 pb-1">
         <FaInfoCircle
           className="cursor-pointer text-gray-400 "
           onClick={() => setInfoIsModalOpen(true)}
         />
       </div>
       <Autocomplete
-        className=" my-5 pl-6 pr-6"
+        className="pl-6 pr-6"
         onChange={handleSubjectsChange}
         multiple
-        sx={{ width: "100%", marginTop: 5 }}
+        sx={{ width: "100%", marginTop: 2 }}
         id="tags-filled"
         options={subjectsOfCourses ? subjectsOfCourses : subjects}
         freeSolo
@@ -203,7 +215,7 @@ const PopUpInfoStyle = {
       />
       </div>
       <div>
-      <div className=" relative top-14 pb-1">
+      <div className=" relative top-12 pb-1">
         <FaInfoCircle
           className="cursor-pointer text-gray-400 "
           onClick={() => setInfoIsModalOpen(true)}
@@ -216,9 +228,50 @@ const PopUpInfoStyle = {
         freeSolo
         sx={{ width: "100%", marginTop: 2 }}
         options={["2", "3", "4", "5"]}
-        renderInput={(params) => <TextField {...params} label="Group size" />}
+        renderInput={(params) => <TextField {...params} label="Group max size" />}
       />
       </div>
+      {page !== "create"?(
+
+      <div>
+      <div className=" relative top-12 pb-1">
+        <FaInfoCircle
+          className="cursor-pointer text-gray-400 "
+          onClick={() => setInfoIsModalOpen(true)}
+        />
+      </div>
+        
+        <div>
+            <Autocomplete
+              className="pl-6 pr-6"
+              onChange={handleInviteFriendChange}
+              sx={{ width: "100%", marginTop: 2 }}
+              id="tags-filled"
+              options={activeUser.friendsList}
+              getOptionLabel={(option) => option.name}
+              freeSolo
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant="outlined"
+                    label={option.name}
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Find Friend Group"
+                  placeholder="Find Friend Group and join"
+                />
+              )}
+            />
+          </div>
+</div>
+
+      ):(null)}
+      
       
       <div className="  my-5 p-2 rounded-lg shadow-md">
         <label className=" text-lg ">Total active groups: </label>

@@ -24,7 +24,7 @@ import {
 function ProfileImgEdit() {
   const auth = getAuth();
   const navigate = useNavigate();
-  const [profileImage, setProfileImage] = useState();
+  const [profileImage, setProfileImage] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState();
 
   const [activeUser, setactiveUser] = useState(() => {
@@ -117,8 +117,12 @@ function ProfileImgEdit() {
         );
       });
     };
-
-    storeImage(profileImage);
+if(profileImage !=null || profileImage !== undefined ||profileImage !== ""){
+ storeImage(profileImage);
+}else{
+  toast.info("please choose an image")
+}
+   
   };
 
   const UpdateFriendsListImg = async (friend, downloadURL) => {

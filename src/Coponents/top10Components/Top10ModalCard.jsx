@@ -71,8 +71,7 @@ function Top10ModalCard() {
         </tr>
       ))}
       {visible && (
-        <tr>
-          <td>
+        
           <div>
             {/* המודל של המשתמש שנבחר */}
             <div className="card flex justify-content-center">
@@ -90,8 +89,7 @@ function Top10ModalCard() {
               </Dialog>
             </div>
           </div>
-          </td>
-          </tr>
+        
         )}
     </>
   );
