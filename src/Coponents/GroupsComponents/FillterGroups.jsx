@@ -168,7 +168,7 @@ const PopUpInfoStyle = {
   return (
     <div className=" grid justify-center w-full mb-4 ">
       <div>
-      <div className=" relative top-20 pb-1">
+      <div className=" relative top-12 pb-1">
         <FaInfoCircle
           className="cursor-pointer text-gray-400 "
           onClick={() => setInfoIsModalOpen(true)}
@@ -185,7 +185,7 @@ const PopUpInfoStyle = {
       />
       </div>
       <div>
-      <div className=" relative top-20 pb-1">
+      <div className=" relative top-12 pb-1">
         <FaInfoCircle
           className="cursor-pointer text-gray-400 "
           onClick={() => setInfoIsModalOpen(true)}
@@ -215,7 +215,7 @@ const PopUpInfoStyle = {
       />
       </div>
       <div>
-      <div className=" relative top-14 pb-1">
+      <div className=" relative top-12 pb-1">
         <FaInfoCircle
           className="cursor-pointer text-gray-400 "
           onClick={() => setInfoIsModalOpen(true)}
@@ -231,14 +231,16 @@ const PopUpInfoStyle = {
         renderInput={(params) => <TextField {...params} label="Group max size" />}
       />
       </div>
+      {page !== "create"?(
+
       <div>
-      <div className=" relative top-14 pb-1">
+      <div className=" relative top-12 pb-1">
         <FaInfoCircle
           className="cursor-pointer text-gray-400 "
           onClick={() => setInfoIsModalOpen(true)}
         />
       </div>
-      {page !== "create"?(
+        
         <div>
             <Autocomplete
               className="pl-6 pr-6"
@@ -266,9 +268,11 @@ const PopUpInfoStyle = {
               )}
             />
           </div>
+</div>
+
       ):(null)}
       
-      </div>
+      
       <div className="  my-5 p-2 rounded-lg shadow-md">
         <label className=" text-lg ">Total active groups: </label>
         <label className=" text-xl font-bold"> {totalGroupsCount} </label>
