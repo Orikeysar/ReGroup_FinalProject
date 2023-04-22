@@ -102,7 +102,7 @@ function FindGroups() {
         </div>
       <div>
         {/* סינון קבוצות */}
-        <FillterGroups handleFillterGroups={handleFillterGroups} />
+        <FillterGroups handleFillterGroups={handleFillterGroups} page="find" />
       </div>
       <button className="btn btn-md mb-2 ml-1" onClick={()=>setGroupsAlert(!groupsAlert)}>
         set alert

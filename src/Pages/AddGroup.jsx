@@ -73,6 +73,7 @@ function AddGroup() {
   const [selectedNumber, setSelectedNumber] = useState([]); //גודל
   const [selectTimeStamp, setSelectTimeStamp] = useState(null); //זמן
 
+
   // איתחול רשימת הקבוצות שיוצגו על המפה
   const [filteredGroups, setFilteredGroups] = useState([]);
   //במקרה ובחר להראות קבוצות דומות נשנה את האובייקט ל״אמת״ וזה יציג את הקבוצות
@@ -462,7 +463,7 @@ function AddGroup() {
       <div className="form grid justify-center mb-4 w-full text-center">
         {/* //Fillters group component */}
         <div className="self-center justify-center">
-          <FillterGroups handleFillterGroups={handleFillterGroups} />
+          <FillterGroups handleFillterGroups={handleFillterGroups} page="create"/>
           {/* //address description */}
           <div>
             <input
