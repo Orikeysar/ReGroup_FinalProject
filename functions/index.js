@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 const cors = require("cors")({origin: true});
 // runs every day at 00:00 am and reset the actionsNuumber for users
 exports.scheduledFunction = functions.pubsub
-    .schedule("0 0 * * *")
+    .schedule("0 14 * * *")
     .onRun(async (context) => {
       const usersSnapshot = await admin.firestore().collection("users").get();
       const users = usersSnapshot.docs.map((doc) => ({
@@ -263,7 +263,7 @@ exports.FCMNotification5MinGroup = functions.pubsub.schedule("every 3 minutes")
     });
 
 // delete active groups on 00:00 am
-exports.DeleteActiveGroups = functions.pubsub.schedule("0 0 * * *")
+exports.DeleteActiveGroups = functions.pubsub.schedule("0 14 * * *")
     .onRun(async (context) => {
       const activeGroupsRef = db.collection("activeGroups");
       const activeGroupsSnapshot = await activeGroupsRef.get();
