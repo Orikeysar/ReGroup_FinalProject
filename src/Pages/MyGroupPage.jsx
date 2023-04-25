@@ -247,6 +247,7 @@ const handleParticipantScoreLoyalPartner=(user)=>{
       .catch((error) => {
         console.error(error);
       });
+      
   UserScoreCalculate("Loyal Partner", user,userAchievements,userTopLevelList);
 };
   //מהנהל הקבוצה מוחק משתתף בקבוצה
