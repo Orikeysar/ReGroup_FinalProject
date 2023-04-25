@@ -51,8 +51,7 @@ function MyGroupPage() {
     // setting state to false to not display pop-up
     setDisplayPopUp(false);
   };
- //איתחול המשתנים שתופסים את ההישגים ששייכים למשתמש
- let { userAchievements, userTopLevelList } = useTablesSQL();
+ 
   // check if  user seen and closed the pop-up
   useEffect(() => {
     // getting value of "seenPopUp" key from localStorage
@@ -214,7 +213,42 @@ function MyGroupPage() {
     //מסנן את הקבוצות שלי לתוך המפה
     setFilteredGroups(filteredGroups);
   };
+const handleParticipantScoreLoyalPartner=(user)=>{
+  let userAchievements=null;
+  let userTopLevelList=null;
+  fetch(
+    `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${user.userRef}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => {
+       userAchievements=data;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 
+  // יבוא כל הרמות של ההישגים
+    fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+         userTopLevelList=data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  UserScoreCalculate("Loyal Partner", user,userAchievements,userTopLevelList);
+};
   //מהנהל הקבוצה מוחק משתתף בקבוצה
   const handlePaticipantDeleteFromManagerGroup = async (id) => {
     console.log("delet participant", id);
@@ -599,7 +633,7 @@ function MyGroupPage() {
                   "JoinedGroup",
                   user
                 );
-                UserScoreCalculate("Loyal Partner", user,userAchievements,userTopLevelList);
+                handleParticipantScoreLoyalPartner(user);
               }
             }
           }
