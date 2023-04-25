@@ -2,257 +2,323 @@ import React, { useState, useEffect } from "react";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../../FirebaseSDK";
 
-function UserScoreCalculate(item, type, user) {
-  //בשביל התאריכים
-  const now = new Date();
-  
-  let userAchievements=[]
-  let userTopLevelList = []
-
-  fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${user.userRef}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(response => response.json())
-    .then(data => {
-      userAchievements= data
-    })
-    .catch(error => {
-      console.error(error);
-    });
-
-// יבוא כל הרמות של ההישגים
-
-        fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-            .then(response => response.json())
-            .then(data => {
-              userTopLevelList= data
-            })
-            .catch(error => {
-              console.error(error);
-            });
-      
-
-
-
-
-
-
+function UserScoreCalculate(type, user, userAchievements, userTopLevelList) {
   //קישור לדאטהבייס
   const userRef = doc(db, "users", user.userRef);
   //קישור לטופ10
   const top10Ref = doc(db, "top10", user.userRef);
   //טיפול בהוספת חבר
-  if (type === "friend") {
+  if (type === "Community Member") {
+    let item = null;
+    let level = null;
+    userAchievements.forEach((element) => {
+      if (element.name === type) {
+        item = element;
+      }
+    });
+    userTopLevelList.forEach((element) => {
+      if (element.achievementName === type) {
+        level = element;
+      }
+    });
     item.numberOfAchievementDoing += item.valuePerAction;
     if (
       item.activeLevel === 1 &&
-      item.numberOfAchievementDoing >= item.topLevelOne
+      item.numberOfAchievementDoing >= level.topLevelOne
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
     if (
       item.activeLevel === 2 &&
-      item.numberOfAchievementDoing >= item.topLevelTwo
+      item.numberOfAchievementDoing >= level.topLevelTwo
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
     if (
       item.activeLevel === 3 &&
-      item.numberOfAchievementDoing >= item.topLevelThree
+      item.numberOfAchievementDoing >= level.topLevelThree
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
-    for (let index = 0; index < user.userAchievements.length; index++) {
-      if (user.userAchievements[index].name === "Community Member") {
-        user.userAchievements[index] = item;
-      }
-    }
     user.points = user.points + item.valuePerAction;
-    console.log(user.userAchievements);
     updateDoc(userRef, {
-      userAchievements: user.userAchievements,
       points: user.points,
     });
     updateDoc(top10Ref, {
       points: user.points,
     });
-
-
-
-    return null
-
+    fetch(
+      `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(item),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    return null;
   }
 
-  //טיפול בקבלת לייק על תשובה
-  if (type === "LikeOnAnswer") {
+  // השתתפות חבר בקבוצה במלואה
+  if (type === "Loyal Partner") {
+    let item = null;
+    let level = null;
+    userAchievements.forEach((element) => {
+      if (element.name === type) {
+        item = element;
+      }
+    });
+    userTopLevelList.forEach((element) => {
+      if (element.achievementName === type) {
+        level = element;
+      }
+    });
+
     item.numberOfAchievementDoing += item.valuePerAction;
     if (
       item.activeLevel === 1 &&
-      item.numberOfAchievementDoing >= item.topLevelOne
+      item.numberOfAchievementDoing >= level.topLevelOne
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
     if (
       item.activeLevel === 2 &&
-      item.numberOfAchievementDoing >= item.topLevelTwo
+      item.numberOfAchievementDoing >= level.topLevelTwo
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
     if (
       item.activeLevel === 3 &&
-      item.numberOfAchievementDoing >= item.topLevelThree
+      item.numberOfAchievementDoing >= level.topLevelThree
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
-    for (let index = 0; index < user.userAchievements.length; index++) {
-      if (user.userAchievements[index].name === "Helped Answered") {
-        user.userAchievements[index] = item;
-      }
-    }
+
     user.points = user.points + item.valuePerAction;
-    console.log(user.userAchievements);
     updateDoc(userRef, {
-      userAchievements: user.userAchievements,
       points: user.points,
     });
     updateDoc(top10Ref, {
       points: user.points,
     });
-    return null
-
+    fetch(
+      `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(item),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    return null;
   }
 
-  //טיפול בקבלת לייק על שאלה
-  if (type === "LikeOnQuestion") {
+  // דירוג מנהל קבוצה
+  if (type === "Participant Review") {
+    let item = null;
+    let level = null;
+    userAchievements.forEach((element) => {
+      if (element.name === type) {
+        item = element;
+      }
+    });
+    userTopLevelList.forEach((element) => {
+      if (element.achievementName === type) {
+        level = element;
+      }
+    });
+
     item.numberOfAchievementDoing += item.valuePerAction;
     if (
       item.activeLevel === 1 &&
-      item.numberOfAchievementDoing >= item.topLevelOne
+      item.numberOfAchievementDoing >= level.topLevelOne
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
     if (
       item.activeLevel === 2 &&
-      item.numberOfAchievementDoing >= item.topLevelTwo
+      item.numberOfAchievementDoing >= level.topLevelTwo
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
     if (
       item.activeLevel === 3 &&
-      item.numberOfAchievementDoing >= item.topLevelThree
+      item.numberOfAchievementDoing >= level.topLevelThree
     ) {
       item.activeLevel = item.activeLevel + 1;
     }
-    for (let index = 0; index < user.userAchievements.length; index++) {
-      if (user.userAchievements[index].name === "Like From Community") {
-        user.userAchievements[index] = item;
-      }
-    }
     user.points = user.points + item.valuePerAction;
-    console.log(user.userAchievements);
     updateDoc(userRef, {
-      userAchievements: user.userAchievements,
       points: user.points,
     });
     updateDoc(top10Ref, {
       points: user.points,
     });
-    return null
+    fetch(
+      `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(item),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    return null;
   }
 
   //טיפול ביצירת קבוצה
-  if (type === "CreatedGroups") {
-    item.actionsNumber ++;
+  if (type === "Opened Groups" && userAchievements.length > 0) {
+    let item = null;
+    let level = null;
+    userAchievements.forEach((element) => {
+      if (element.name === type) {
+        item = element;
+      }
+    });
+    userTopLevelList.forEach((element) => {
+      if (element.achievementName === type) {
+        level = element;
+      }
+    });
+    item.actionsNumber++;
     if (item.actionsNumber > 4) {
       return null;
     } else {
       item.numberOfAchievementDoing += item.valuePerAction;
       if (
         item.activeLevel === 1 &&
-        item.numberOfAchievementDoing >= item.topLevelOne
+        item.numberOfAchievementDoing >= level.topLevelOne
       ) {
         item.activeLevel = item.activeLevel + 1;
       }
       if (
         item.activeLevel === 2 &&
-        item.numberOfAchievementDoing >= item.topLevelTwo
+        item.numberOfAchievementDoing >= level.topLevelTwo
       ) {
         item.activeLevel = item.activeLevel + 1;
       }
       if (
         item.activeLevel === 3 &&
-        item.numberOfAchievementDoing >= item.topLevelThree
+        item.numberOfAchievementDoing >= level.topLevelThree
       ) {
         item.activeLevel = item.activeLevel + 1;
       }
-      for (let index = 0; index < user.userAchievements.length; index++) {
-        if (user.userAchievements[index].name === "Opened Groups") {
-          user.userAchievements[index] = item;
-        }
-      }
       user.points = user.points + item.valuePerAction;
-      console.log(user.userAchievements);
       updateDoc(userRef, {
-        userAchievements: user.userAchievements,
         points: user.points,
       });
       updateDoc(top10Ref, {
         points: user.points,
       });
+      fetch(
+        `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(item),
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
     return null;
   }
 
   //טיפול הצטרפות לקבוצה
-  if (type === "JoinedGroup") {
-    item.actionsNumber ++;
-    if (item.actionsNumber >4 ) {
+  if (type === "Joined Groups") {
+    let item = null;
+    let level = null;
+    userAchievements.forEach((element) => {
+      if (element.name === type) {
+        item = element;
+      }
+    });
+    userTopLevelList.forEach((element) => {
+      if (element.achievementName === type) {
+        level = element;
+      }
+    });
+
+    item.actionsNumber++;
+    if (item.actionsNumber > 4) {
       return null;
     } else {
       item.numberOfAchievementDoing += item.valuePerAction;
       if (
         item.activeLevel === 1 &&
-        item.numberOfAchievementDoing >= item.topLevelOne
+        item.numberOfAchievementDoing >= level.topLevelOne
       ) {
         item.activeLevel = item.activeLevel + 1;
       }
       if (
         item.activeLevel === 2 &&
-        item.numberOfAchievementDoing >= item.topLevelTwo
+        item.numberOfAchievementDoing >= level.topLevelTwo
       ) {
         item.activeLevel = item.activeLevel + 1;
       }
       if (
         item.activeLevel === 3 &&
-        item.numberOfAchievementDoing >= item.topLevelThree
+        item.numberOfAchievementDoing >= level.topLevelThree
       ) {
         item.activeLevel = item.activeLevel + 1;
       }
-      for (let index = 0; index < user.userAchievements.length; index++) {
-        if (user.userAchievements[index].name === "Join Groups") {
-          user.userAchievements[index] = item;
-        }
-      }
       user.points = user.points + item.valuePerAction;
-      console.log(user.userAchievements);
       updateDoc(userRef, {
-        userAchievements: user.userAchievements,
         points: user.points,
       });
       updateDoc(top10Ref, {
         points: user.points,
       });
+      fetch(
+        `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(item),
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
     return null;
-
   }
 
   return null;

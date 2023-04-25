@@ -19,7 +19,6 @@ import { toast } from "react-toastify";
 import GoogleSign from "../Coponents/Sign-In-UpComponents/GoogleSign";
 import { saveMessagingDeviceToken } from "../messaging";
 
-
 function SignUp() {
   //SET ICON SHOW PASSWORD
   const [showPassword, setShowPassword] = useState(false);
@@ -29,71 +28,17 @@ function SignUp() {
     email: "",
     password: "",
     userImg: "",
-    userRef:"",
+    userRef: "",
     degree: "",
     friendsList: [],
     courses: [],
     points: 0,
     recentActivities: [],
-    friendsListToAccept:[],
-    friendsWaitingToAcceptByAnotherUser:[],
-    groupParticipantsToApproval:[],
-    userAchievements: [
-      {
-        name: "Joined Groups",
-        numberOfAchievementDoing: 0,
-        activeLevel: 1,
-        achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fjoin.png?alt=media&token=4395691e-43bf-4f76-9dab-a5aae3841bec",
-        topLevelOne: 100,
-        topLeveTwo: 200,
-        topLevelThree: 500,
-        valuePerAction: 5,
-        actionsNumber:0
-      },
-      {
-        name: "Opened Groups",
-        numberOfAchievementDoing: 0,
-        activeLevel: 1,
-        achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fteamwork.png?alt=media&token=21523315-cbdc-42e3-b046-2fe14652b1b4",
-        topLevelOne: 200,
-        topLeveTwo: 400,
-        topLevelThree: 800,
-        valuePerAction: 10,
-        actionsNumber:0
-
-      },
-      {
-        name: "Helped Answered",
-        numberOfAchievementDoing: 0,
-        activeLevel: 1,
-        achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fhelp.png?alt=media&token=bf9b9c24-fd26-440b-893b-7a68437377fb",
-        topLevelOne: 100,
-        topLeveTwo: 200,
-        topLevelThree: 500,
-        valuePerAction: 2,
-      },
-      {
-        name: "Like From Community",
-        numberOfAchievementDoing: 0,
-        activeLevel: 1,
-        achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fheart.png?alt=media&token=682793cd-cca9-4b4c-8615-d265a5bac2bb",
-        topLevelOne: 200,
-        topLeveTwo: 500,
-        topLevelThree: 1000,
-        valuePerAction: 1,
-      },
-      {
-        name: "Community Member",
-        numberOfAchievementDoing: 0,
-        activeLevel: 1,
-        achievementImg: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fpeople.png?alt=media&token=9b1c3358-d184-4397-89d8-5898044a3556",
-        topLevelOne: 400,
-        topLeveTwo: 1000,
-        topLevelThree: 1800,
-        valuePerAction: 5,
-      },
-    ],
+    friendsListToAccept: [],
+    friendsWaitingToAcceptByAnotherUser: [],
+    groupParticipantsToApproval: [],
   });
+
   //INSERT INTO THE EMAIL AND PASSWORD VARIABLES
   const { name, email, password, degree } = formData;
 
@@ -153,7 +98,76 @@ function SignUp() {
       const formDataCopy = { ...formData };
       delete formDataCopy.password;
       formDataCopy.timeStamp = serverTimestamp();
-      formDataCopy.userRef=user.uid;
+      formDataCopy.userRef = user.uid;
+      //יצירת מערך ההישגים של המשתמש והכנסה לדאטה
+      const userAchievements = [
+        {
+          userId: user.uid,
+          name: "Joined Groups",
+          numberOfAchievementDoing: 0,
+          activeLevel: 1,
+          achievementImg:
+            "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fjoin.png?alt=media&token=4395691e-43bf-4f76-9dab-a5aae3841bec",
+          valuePerAction: 5,
+          actionsNumber: 0,
+        },
+        {
+          userId: user.uid,
+          name: "Opened Groups",
+          numberOfAchievementDoing: 0,
+          activeLevel: 1,
+          achievementImg:
+            "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fteamwork.png?alt=media&token=21523315-cbdc-42e3-b046-2fe14652b1b4",
+          valuePerAction: 10,
+          actionsNumber: 0,
+        },
+        {
+          userId: user.uid,
+          name: "Loyal Partner",
+          numberOfAchievementDoing: 0,
+          activeLevel: 1,
+          achievementImg:
+            "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fhelp.png?alt=media&token=bf9b9c24-fd26-440b-893b-7a68437377fb",
+          valuePerAction: 3,
+          actionsNumber: 0,
+        },
+        {
+          userId: user.uid,
+          name: "Participant Review",
+          numberOfAchievementDoing: 0,
+          activeLevel: 1,
+          achievementImg:
+            "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fheart.png?alt=media&token=682793cd-cca9-4b4c-8615-d265a5bac2bb",
+          valuePerAction: 0,
+          actionsNumber: 0,
+        },
+        {
+          userId: user.uid,
+          name: "Community Member",
+          numberOfAchievementDoing: 0,
+          activeLevel: 1,
+          achievementImg:
+            "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fpeople.png?alt=media&token=9b1c3358-d184-4397-89d8-5898044a3556",
+          valuePerAction: 5,
+          actionsNumber: 0,
+        },
+      ];
+      userAchievements.forEach((item) => {
+        fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(item),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      });
 
       await setDoc(doc(db, "users", user.uid), formDataCopy);
       //SET USER TOP10
@@ -183,25 +197,25 @@ function SignUp() {
       <form onSubmit={onSubmit} className=" text-center">
         {/* INSERT NAME */}
         <div className="mt-4">
-            <input
-              id="name"
-              type="text"
-              placeholder="Name"
-              onChange={onChange}
-              value={name}
-              className="nameInput input input-bordered"
-            />
+          <input
+            id="name"
+            type="text"
+            placeholder="Name"
+            onChange={onChange}
+            value={name}
+            className="nameInput input input-bordered"
+          />
         </div>
         {/* IMSERT EMAIL */}
         <div className="mt-4">
-            <input
-              id="email"
-              type="email"
-              placeholder="Email"
-              onChange={onChange}
-              value={email}
-              className="emailInput input input-bordered"
-            />
+          <input
+            id="email"
+            type="email"
+            placeholder="Email"
+            onChange={onChange}
+            value={email}
+            className="emailInput input input-bordered"
+          />
         </div>
         {/* INPUT PASSWORD */}
         <div className="mt-4">
@@ -228,14 +242,14 @@ function SignUp() {
           {/* DEGREE INPUT */}
 
           <div className="mt-4">
-              <input
-                id="degree"
-                type="text"
-                placeholder="Degree"
-                onChange={onChange}
-                value={degree}
-                className="degreeInput input input-bordered"
-              />
+            <input
+              id="degree"
+              type="text"
+              placeholder="Degree"
+              onChange={onChange}
+              value={degree}
+              className="degreeInput input input-bordered"
+            />
           </div>
         </div>
 

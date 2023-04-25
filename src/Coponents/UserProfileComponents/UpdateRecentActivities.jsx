@@ -31,52 +31,6 @@ function UpdateRecentActivities(item, type, user) {
     });
   }
 
-  //טיפול בקבלת לייק על תשובה
-  if (type === "LikeOnAnswer") {
-    let LikeOnAnswer = {
-      icon: "",
-      text: "",
-      type: "general",
-      timeStamp: Timestamp.fromDate(
-        new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          now.getHours(),
-          now.getMinutes()
-        )
-      ),
-    };
-    user.recentActivities.push(LikeOnAnswer);
-    console.log(user.recentActivities);
-    updateDoc(userRef, {
-      recentActivities: user.recentActivities,
-    });
-  }
-
-  //טיפול בקבלת לייק על שאלה
-  if (type === "LikeOnQuestion") {
-    let LikeOnQuestion = {
-      icon: "",
-      text: "",
-      type: "general",
-      timeStamp: Timestamp.fromDate(
-        new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          now.getHours(),
-          now.getMinutes()
-        )
-      ),
-    };
-    user.recentActivities.push(LikeOnQuestion);
-    console.log(user.recentActivities);
-    updateDoc(userRef, {
-      recentActivities: user.recentActivities,
-    });
-  }
-
   //טיפול ביצירת קבוצה
   if (type === "CreatedGroups") {
     let CreatedGroup = {

@@ -13,6 +13,8 @@ import { uuidv4 } from "@firebase/util";
 import { useFindMyGroups } from "../../Hooks/useFindMyGroups";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../GeneralComponents/Spinner";
+import useTablesSQL from "../../Hooks/useTablesSQL";
+
 function RequestList({ requestList }) {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(true);
@@ -25,7 +27,8 @@ function RequestList({ requestList }) {
       return null; // or some default value
     }
   });
-
+ //איתחול המשתנים שתופסים את ההישגים ששייכים למשתמש
+ let { userAchievements, userTopLevelList } = useTablesSQL();
   let { managerGroup, participantGroup } = useFindMyGroups();
 
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
@@ -60,11 +63,7 @@ function RequestList({ requestList }) {
         const docRef2 = doc(db, "users", anotherUserRef);
         const docSnap2 = await getDoc(docRef2);
         const userAchiev = docSnap2.data();
-        let achiev = userAchiev.userAchievements.filter(
-          (element) => element.name === "Joined Groups"
-        );
-        let item = achiev[0];
-        UserScoreCalculate(item, "JoinedGroup", userAchiev);
+        UserScoreCalculate("Joined Groups", userAchiev,userAchievements,userTopLevelList);
         toast.success("Join successfully!");
       })
       .catch((error) => {
