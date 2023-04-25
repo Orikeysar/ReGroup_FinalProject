@@ -41,7 +41,6 @@ function CoursesList() {
       friendsListToAccept:activeUser.friendsListToAccept,
       friendsWaitingToAcceptByAnotherUser:activeUser.friendsWaitingToAcceptByAnotherUser,
       groupParticipantsToApproval:activeUser.groupParticipantsToApproval,
-      userAchievements:activeUser.userAchievements
     };
     localStorage.setItem("activeUser", JSON.stringify(user));
     await setDoc(doc(db, "users", auth.currentUser.uid), user);

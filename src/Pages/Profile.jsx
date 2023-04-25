@@ -115,7 +115,7 @@ function Profile() {
                     <MDBCardImage
                       src={activeUser.userImg}
                       alt="User Image"
-                      className="rounded-full w-48 h-48 mb-4"
+                      className="rounded-full w-48 h-48 mb-4 border-slate-600 border-solid border-2"
                       fluid
                     />
                   </div>
@@ -133,7 +133,7 @@ function Profile() {
                         </FiEdit>
                       </button>
                     </div>
-                    <p className="text-gray-600 text-2xl mb-2">
+                    <p className=" text-2xl mb-2">
                       <input
                         type="text"
                         id="name"
@@ -148,10 +148,10 @@ function Profile() {
                       />
                     </p>
                   </div>
-                  <p className="text-gray-500 text-xl mb-2">
+                  <p className="text-gray-700 text-xl mb-2">
                     {activeUser.email}
                   </p>
-                  <p className="text-gray-500 text-xl mb-4">
+                  <p className="text-gray-700 text-xl mb-4">
                     <input
                       type="text"
                       id="degree"

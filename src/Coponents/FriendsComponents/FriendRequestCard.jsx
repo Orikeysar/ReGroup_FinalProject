@@ -16,6 +16,8 @@ import UpdateRecentActivities from "../UserProfileComponents/UpdateRecentActivit
 import UserScoreCalculate from "../UserProfileComponents/UserScoreCalculate";
 import { saveMessagingDeviceToken } from "../../messaging";
 import { onButtonClick } from "../../FirebaseSDK";
+import useTablesSQL from "../../Hooks/useTablesSQL";
+
 function FriendRequestCard() {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(true);
@@ -26,7 +28,8 @@ function FriendRequestCard() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-
+ //איתחול המשתנים שתופסים את ההישגים ששייכים למשתמש
+ let { userAchievements, userTopLevelList } = useTablesSQL();
 
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
@@ -115,12 +118,8 @@ function FriendRequestCard() {
         }).then(async () => {
           UpdateRecentActivities(newFriend, "friend", activeUser);
           UpdateRecentActivities(newFriend, "friend", anotherUserRef);
-          let achiev = activeUser.userAchievements.filter(
-            (element) => element.name === "Community Member"
-          );
-          let item = achiev[0];
-          UserScoreCalculate(item, "friend", activeUser);
-          UserScoreCalculate(item, "friend", anotherUserRef);
+          UserScoreCalculate("Community Member", activeUser,userAchievements,userTopLevelList);
+          UserScoreCalculate("Community Member", anotherUserRef,userAchievements,userTopLevelList);
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success(
             "you accepted" + anotherUser.name + "to your friends list "

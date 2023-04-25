@@ -35,7 +35,10 @@ import IconButton from "@mui/material/IconButton";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "animate.css/animate.min.css";
 import { Modal, Box } from "@mui/material";
-import welcomeIcon from '../asset/welcome-back.png'
+import welcomeIcon from '../asset/welcome-back.png';
+import UserScoreCalculate from "../Coponents/UserProfileComponents/UserScoreCalculate";
+import useTablesSQL from "../Hooks/useTablesSQL";
+
 function MyGroupPage() {
   const navigate = useNavigate();
   const date = new Date();
@@ -48,7 +51,8 @@ function MyGroupPage() {
     // setting state to false to not display pop-up
     setDisplayPopUp(false);
   };
-
+ //איתחול המשתנים שתופסים את ההישגים ששייכים למשתמש
+ let { userAchievements, userTopLevelList } = useTablesSQL();
   // check if  user seen and closed the pop-up
   useEffect(() => {
     // getting value of "seenPopUp" key from localStorage
@@ -576,7 +580,7 @@ function MyGroupPage() {
             timeStamp: now,
           };
 
-          //updat recent activites
+          //update recent activites
           for (const participant of newGroupActiviteis.participants) {
             // אם המשתתף הוא המחובר ישלח את הלוקאל שלו, אחרת ימשוך מהדאטה את המשתתף וישלח לפונקציה
             if (participant.userRef === activeUser.userRef) {
@@ -586,15 +590,16 @@ function MyGroupPage() {
                 activeUser
               );
             } else {
-              const docRefParticipant = doc(db, "user", participant.userRef);
+              const docRefParticipant = doc(db, "users", participant.userRef);
               const docSnapParticipant = await getDoc(docRefParticipant);
               if (docSnapParticipant.exists()) {
                 let user = docSnapParticipant.data();
                 UpdateRecentActivities(
                   newGroupActiviteis,
-                  "CreatedGroups",
+                  "JoinedGroup",
                   user
                 );
+                UserScoreCalculate("Loyal Partner", user,userAchievements,userTopLevelList);
               }
             }
           }

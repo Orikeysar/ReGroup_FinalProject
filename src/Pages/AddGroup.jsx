@@ -18,6 +18,7 @@ import {
 import NavBar from "../Coponents/NavBarComponents/NavBar";
 import MyAddGroupMapComponent from "../Coponents/GroupsComponents/MyAddGroupMapComponent ";
 import useFindMyGroups from "../Hooks/useFindMyGroups";
+import useTablesSQL from "../Hooks/useTablesSQL";
 import { uuidv4 } from "@firebase/util";
 import FillterGroups from "../Coponents/GroupsComponents/FillterGroups";
 import UserScoreCalculate from "../Coponents/UserProfileComponents/UserScoreCalculate";
@@ -96,7 +97,8 @@ function AddGroup() {
 
   //איתחול המשתנים שתופסים את הקבוצות ששיכות למשתמש
   let { managerGroup, participantGroup } = useFindMyGroups();
-
+    //איתחול המשתנים שתופסים את ההישגים ששייכים למשתמש
+  let { userAchievements, userTopLevelList } = useTablesSQL();
   useEffect(() => {
     if (managerGroup != null && btnState === "Create New Group") {
       setBtnState("Edit Your Group");
@@ -343,11 +345,8 @@ function AddGroup() {
       ),
     })
       .then(() => {
-        let achiev = activeUser.userAchievements.filter(
-          (element) => element.name === "Opened Groups"
-        );
-        let item = achiev[0];
-        UserScoreCalculate(item, "CreatedGroups", activeUser);
+        
+        UserScoreCalculate("Opened Groups", activeUser,userAchievements,userTopLevelList);
         toast.success("create success");
         handleFriendRequests(groupRef, groupDataTemp);
         //בודק מי מהמשתמשים ביקש לקבל התראה ושולח הודעה
