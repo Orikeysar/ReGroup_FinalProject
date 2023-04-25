@@ -14,9 +14,9 @@ function UserAchievemeant() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  const [userAchievements, setUserAchievements] = useState(
-    activeUser.userAchievements
-  );
+  const [userAchievements, setUserAchievements] = useState([]);
+  const [userTopLevelList, setUserTopLevelList] = useState([]);
+  
   //מודל מידע ראשוני
   const [displayPopUp, setDisplayPopUp] = useState(true);
   // when pop-up is closed this function triggers
@@ -29,6 +29,38 @@ function UserAchievemeant() {
 
   // check if  user seen and closed the pop-up
   useEffect(() => {
+// יבוא כל ההישגים של המשתמש
+    fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${activeUser.userRef}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setUserAchievements(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+
+// יבוא כל הרמות של ההישגים
+      if(userTopLevelList.length === 0){
+          fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+              .then(response => response.json())
+              .then(data => {
+                setUserTopLevelList(data);
+              })
+              .catch(error => {
+                console.error(error);
+              });
+        }
+
     // getting value of "seenPopUp" key from localStorage
     let returningUser = localStorage.getItem("seenPopUpAchievements");
     // setting the opposite to state, false for returning user, true for a new user
@@ -50,12 +82,21 @@ function UserAchievemeant() {
     boxShadow: "0 0 20px rgba(0,0,0,0.3)",
   };
   const currentTopUseForItem = (userAchive) => {
+    let currentTopLevel
+userTopLevelList.map((topAchieve)=>{
+if(topAchieve.achievementName === userAchive.name){
+  currentTopLevel = topAchieve;
+
+}
+
+})
+    
     if (userAchive.activeLevel === 3) {
-      return userAchive.topLevelThree;
+      return currentTopLevel.topLevelThree;
     } else if (userAchive.activeLevel === 2) {
-      return userAchive.topLevelTwo;
+      return currentTopLevel.topLevelTwo;
     } else {
-      return userAchive.topLevelOne;
+      return currentTopLevel.topLevelOne;
     }
   };
   const valueTemplate = (value) => {

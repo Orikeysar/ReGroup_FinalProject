@@ -6,6 +6,45 @@ function UserScoreCalculate(item, type, user) {
   //בשביל התאריכים
   const now = new Date();
   
+  const userAchievements=[]
+  const userTopLevelList = []
+
+  fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${activeUser.userRef}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(response => response.json())
+    .then(data => {
+      userAchievements= data
+    })
+    .catch(error => {
+      console.error(error);
+    });
+
+// יבוא כל הרמות של ההישגים
+
+        fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+            .then(response => response.json())
+            .then(data => {
+              userTopLevelList= data
+            })
+            .catch(error => {
+              console.error(error);
+            });
+      
+
+
+
+
+
+
   //קישור לדאטהבייס
   const userRef = doc(db, "users", user.userRef);
   //קישור לטופ10
@@ -45,6 +84,21 @@ function UserScoreCalculate(item, type, user) {
     updateDoc(top10Ref, {
       points: user.points,
     });
+
+//לא נכון צריך לשנות את אופן המשיכה ככה שזה יקבל ID
+    user.userAchievements.map((item)=>{
+     fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(item)
+    });
+
+    })
+    
+
+
     return null
 
   }
