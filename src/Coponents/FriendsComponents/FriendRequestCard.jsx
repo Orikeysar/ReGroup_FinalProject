@@ -30,7 +30,42 @@ function FriendRequestCard() {
   });
  //איתחול המשתנים שתופסים את ההישגים ששייכים למשתמש
  let { userAchievements, userTopLevelList } = useTablesSQL();
+ const handleParticipantScoreFriend=async(user)=>{
+  let userAchievements=null;
+  let userTopLevelList=null;
+  await fetch(
+    `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${user.userRef}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => {
+       userAchievements=data;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 
+  // יבוא כל הרמות של ההישגים
+    await fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+         userTopLevelList=data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+      UserScoreCalculate("Community Member", user,userAchievements,userTopLevelList);
+    }
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
       const firestoreTimestamp = new Timestamp(
@@ -117,9 +152,9 @@ function FriendRequestCard() {
             anotherUser.friendsWaitingToAcceptByAnotherUser,
         }).then(async () => {
           UpdateRecentActivities(newFriend, "friend", activeUser);
-          UpdateRecentActivities(newFriend, "friend", anotherUserRef);
+          UpdateRecentActivities(newFriend, "friend", anotherUser);
           UserScoreCalculate("Community Member", activeUser,userAchievements,userTopLevelList);
-          UserScoreCalculate("Community Member", anotherUserRef,userAchievements,userTopLevelList);
+          handleParticipantScoreFriend(anotherUser)
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success(
             "you accepted" + anotherUser.name + "to your friends list "

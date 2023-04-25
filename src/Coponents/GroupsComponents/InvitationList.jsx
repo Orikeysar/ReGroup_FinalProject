@@ -71,10 +71,8 @@ function InvitationList({ invitationList }) {
         .then(async () => {
           const docRef2 = doc(db, "users", activeUser.userRef);
           const docSnap2 = await getDoc(docRef2);
-          const userAchiev = docSnap2.data();
-          
-          UserScoreCalculate( "Joined Groups", userAchiev,userAchievements,userTopLevelList);
-          
+          const user = docSnap2.data();
+          UserScoreCalculate( "Joined Groups", user,userAchievements,userTopLevelList);
           toast.success("Join successfully!");
         })
         .catch((error) => {

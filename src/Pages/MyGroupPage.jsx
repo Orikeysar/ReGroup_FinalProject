@@ -213,10 +213,10 @@ function MyGroupPage() {
     //מסנן את הקבוצות שלי לתוך המפה
     setFilteredGroups(filteredGroups);
   };
-const handleParticipantScoreLoyalPartner=(user)=>{
+const handleParticipantScoreLoyalPartner=async(user)=>{
   let userAchievements=null;
   let userTopLevelList=null;
-  fetch(
+  await fetch(
     `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${user.userRef}`,
     {
       method: "GET",
@@ -234,7 +234,7 @@ const handleParticipantScoreLoyalPartner=(user)=>{
     });
 
   // יבוא כל הרמות של ההישגים
-    fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+    await fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
