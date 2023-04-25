@@ -11,7 +11,8 @@ function UserProfileModal({ id }) {
   const [activeUser, setActiveUser] = useState(
     JSON.parse(localStorage.getItem("activeUser"))
   );
-
+  const [userAchievements, setUserAchievements] = useState([]);
+  const [userTopLevelList, setUserTopLevelList] = useState([]);
   const [btnStatus, setBtnStatus] = useState("add");
   //בדיקה האם הם כבר חברים ושינוי הכפתור בהתאם
   const handleBtnStatus = () => {
@@ -43,14 +44,61 @@ function UserProfileModal({ id }) {
       const data = docSnap.data();
       setUser(data);
     }
-  };
-  useEffect(() => {
-    handleBtnStatus();
-  }, []);
+  }; 
   if (!user) {
     fetchUser();
     return null;
   }
+  const fetchDataFromSql=async()=>{
+
+  await  fetch(
+         `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${user.userRef}`,
+         {
+           method: "GET",
+           headers: {
+             "Content-Type": "application/json",
+           },
+         }
+       )
+         .then((response) => response.json())
+         .then((data) => {
+           setUserAchievements(data);
+         })
+         .catch((error) => {
+           console.error(error);
+         });
+   
+       // יבוא כל הרמות של ההישגים
+     
+      await   fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+           method: "GET",
+           headers: {
+             "Content-Type": "application/json",
+           },
+         })
+           .then((response) => response.json())
+           .then((data) => {
+             setUserTopLevelList(data);
+           })
+           .catch((error) => {
+             console.error(error);
+           });
+   
+   
+       }
+  useEffect(() => {
+
+if(user){
+    // יבוא כל ההישגים של המשתמש
+    fetchDataFromSql()
+
+}else{
+  fetchUser();
+  fetchDataFromSql()
+}
+    handleBtnStatus();
+  }, []);
+ 
   //שולח הודעה לחבר
 const handleSendAlert=async()=>{
 try{
@@ -190,7 +238,7 @@ setBtnStatus("add");
       </div>
       <div className=" mt-1">
         <div className="flex flex-wrap">
-          {user.userAchievements.map((item) => (
+          {userAchievements.map((item) => (
             <div
               className="grid grid-cols-8 mt-1 p-2 rounded-lg shadow-md"
               key={uuidv4()}

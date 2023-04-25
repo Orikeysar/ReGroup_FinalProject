@@ -25,11 +25,9 @@ function UserAchievemeant() {
     // setting state to false to not display pop-up
     setDisplayPopUp(false);
   };
+const fetchDataFromSql=()=>{
 
-  // check if  user seen and closed the pop-up
-  useEffect(() => {
-    // יבוא כל ההישגים של המשתמש
-    fetch(
+ fetch(
       `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${activeUser.userRef}`,
       {
         method: "GET",
@@ -47,7 +45,7 @@ function UserAchievemeant() {
       });
 
     // יבוא כל הרמות של ההישגים
-    if (userTopLevelList.length === 0) {
+  
       fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
         method: "GET",
         headers: {
@@ -61,7 +59,15 @@ function UserAchievemeant() {
         .catch((error) => {
           console.error(error);
         });
+
+
     }
+  // check if  user seen and closed the pop-up
+  useEffect(() => {
+    
+    // יבוא כל ההישגים של המשתמש
+    fetchDataFromSql()
+    
 
     // getting value of "seenPopUp" key from localStorage
     let returningUser = localStorage.getItem("seenPopUpAchievements");
@@ -85,6 +91,7 @@ function UserAchievemeant() {
   };
   const currentTopUseForItem = (userAchive) => {
     let currentTopLevel;
+    if(userTopLevelList.length >0){
     userTopLevelList.map((topAchieve) => {
       if (topAchieve.achievementName === userAchive.name) {
         currentTopLevel = topAchieve;
@@ -98,6 +105,12 @@ function UserAchievemeant() {
     } else {
       return currentTopLevel.topLevelOne;
     }
+  }else{
+
+    fetchDataFromSql()
+    currentTopUseForItem(userAchive)
+    window.location.reload()
+  }
   };
   const valueTemplate = (value) => {
     return (
