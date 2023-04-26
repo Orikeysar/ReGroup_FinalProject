@@ -18,7 +18,6 @@ function Top10ModalCard() {
 
   const colRef = collection(db, "top10");
   const q = query(colRef, orderBy("points","desc"));
-  
 
   onSnapshot(q, (snapshot) => {
     let newTop10list = [];
@@ -36,7 +35,6 @@ function Top10ModalCard() {
     setSelectedUserId(id);
     setVisible(true);
   };
-
   return (
     <>
       {top10list.map((item) => (
@@ -71,7 +69,6 @@ function Top10ModalCard() {
         </tr>
       ))}
       {visible && (
-        
           <div>
             {/* המודל של המשתמש שנבחר */}
             <div className="card flex justify-content-center">

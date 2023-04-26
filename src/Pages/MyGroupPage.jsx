@@ -35,7 +35,10 @@ import IconButton from "@mui/material/IconButton";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "animate.css/animate.min.css";
 import { Modal, Box } from "@mui/material";
-import welcomeIcon from '../asset/welcome-back.png'
+import welcomeIcon from '../asset/welcome-back.png';
+import UserScoreCalculate from "../Coponents/UserProfileComponents/UserScoreCalculate";
+import useTablesSQL from "../Hooks/useTablesSQL";
+
 function MyGroupPage() {
   const navigate = useNavigate();
   const date = new Date();
@@ -48,7 +51,7 @@ function MyGroupPage() {
     // setting state to false to not display pop-up
     setDisplayPopUp(false);
   };
-
+ 
   // check if  user seen and closed the pop-up
   useEffect(() => {
     // getting value of "seenPopUp" key from localStorage
@@ -210,7 +213,43 @@ function MyGroupPage() {
     //מסנן את הקבוצות שלי לתוך המפה
     setFilteredGroups(filteredGroups);
   };
+const handleParticipantScoreLoyalPartner=async(user)=>{
+  let userAchievements=null;
+  let userTopLevelList=null;
+  await fetch(
+    `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${user.userRef}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => {
+       userAchievements=data;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 
+  // יבוא כל הרמות של ההישגים
+    await fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+         userTopLevelList=data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+      
+  UserScoreCalculate("Loyal Partner", user,userAchievements,userTopLevelList);
+};
   //מהנהל הקבוצה מוחק משתתף בקבוצה
   const handlePaticipantDeleteFromManagerGroup = async (id) => {
     console.log("delet participant", id);
@@ -576,7 +615,7 @@ function MyGroupPage() {
             timeStamp: now,
           };
 
-          //updat recent activites
+          //update recent activites
           for (const participant of newGroupActiviteis.participants) {
             // אם המשתתף הוא המחובר ישלח את הלוקאל שלו, אחרת ימשוך מהדאטה את המשתתף וישלח לפונקציה
             if (participant.userRef === activeUser.userRef) {
@@ -586,15 +625,16 @@ function MyGroupPage() {
                 activeUser
               );
             } else {
-              const docRefParticipant = doc(db, "user", participant.userRef);
+              const docRefParticipant = doc(db, "users", participant.userRef);
               const docSnapParticipant = await getDoc(docRefParticipant);
               if (docSnapParticipant.exists()) {
                 let user = docSnapParticipant.data();
                 UpdateRecentActivities(
                   newGroupActiviteis,
-                  "CreatedGroups",
+                  "JoinedGroup",
                   user
                 );
+                handleParticipantScoreLoyalPartner(user);
               }
             }
           }

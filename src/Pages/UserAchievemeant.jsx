@@ -7,16 +7,16 @@ import { faCoins } from "@fortawesome/free-solid-svg-icons";
 import NavBar from "../Coponents/NavBarComponents/NavBar";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 import { Modal, Box } from "@mui/material";
-
+import Spinner from "../Coponents/GeneralComponents/Spinner";
 
 function UserAchievemeant() {
   const [activeUser, setActiveUser] = useState(() => {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
-  const [userAchievements, setUserAchievements] = useState(
-    activeUser.userAchievements
-  );
+  const [userAchievements, setUserAchievements] = useState([]);
+  const [userTopLevelList, setUserTopLevelList] = useState([]);
+
   //מודל מידע ראשוני
   const [displayPopUp, setDisplayPopUp] = useState(true);
   // when pop-up is closed this function triggers
@@ -26,7 +26,43 @@ function UserAchievemeant() {
     // setting state to false to not display pop-up
     setDisplayPopUp(false);
   };
+const fetchDataFromSql=async()=>{
 
+ await fetch(
+      `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${activeUser.userRef}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setUserAchievements(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    // יבוא כל הרמות של ההישגים
+  
+      await fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setUserTopLevelList(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+
+    }
   // check if  user seen and closed the pop-up
   useEffect(() => {
     // getting value of "seenPopUp" key from localStorage
@@ -50,13 +86,27 @@ function UserAchievemeant() {
     boxShadow: "0 0 20px rgba(0,0,0,0.3)",
   };
   const currentTopUseForItem = (userAchive) => {
+    let currentTopLevel;
+    if(userTopLevelList.length >0){
+    userTopLevelList.map((topAchieve) => {
+      if (topAchieve.achievementName === userAchive.name) {
+        currentTopLevel = topAchieve;
+      }
+    });
+
     if (userAchive.activeLevel === 3) {
-      return userAchive.topLevelThree;
+      return currentTopLevel.topLevelThree;
     } else if (userAchive.activeLevel === 2) {
-      return userAchive.topLevelTwo;
+      return currentTopLevel.topLevelTwo;
     } else {
-      return userAchive.topLevelOne;
+      return currentTopLevel.topLevelOne;
     }
+  }else{
+
+    fetchDataFromSql()
+    currentTopUseForItem(userAchive)
+    window.location.reload()
+  }
   };
   const valueTemplate = (value) => {
     return (
@@ -117,13 +167,20 @@ function UserAchievemeant() {
       </div>
     );
   };
-  return (
-    <>
-    <div className="topNavBar w-full mb-24">
-        <NavBar />
-      </div>
-      {/* הצגת המודל הראשוני עם המידע  */}
-      <div className=" float-none">
+  if(userTopLevelList.length===0){
+    fetchDataFromSql();
+    return <div>
+     <div className="topNavBar w-full mb-24">
+          <NavBar />
+        </div><Spinner/></div>;
+  }else {
+    return (
+      <>
+        <div className="topNavBar w-full mb-24">
+          <NavBar />
+        </div>
+        {/* הצגת המודל הראשוני עם המידע  */}
+        <div className=" float-none">
           {displayPopUp && (
             <Modal
               open={true}
@@ -134,13 +191,18 @@ function UserAchievemeant() {
             >
               <Box sx={PopUpInfoStyle}>
                 {/* what user will see in the modal is defined below */}
-                <img src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fachievement.png?alt=media&token=13f69c5c-c5e2-4fe8-a99e-3010975735a0" className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"/>
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fachievement.png?alt=media&token=13f69c5c-c5e2-4fe8-a99e-3010975735a0"
+                  className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"
+                />
                 <h1>Your personal achievements</h1>
                 <p className="mt-2">
-                In certain actions in the app, you gain the accumulated score and show your level in that achievement.
+                  In certain actions in the app, you gain the accumulated score
+                  and show your level in that achievement.
                 </p>
                 <p className="mt-2">
-                Besides the individual achievements you will be able to see your total cumulative score in the student comparison.
+                  Besides the individual achievements you will be able to see your
+                  total cumulative score in the student comparison.
                 </p>
                 <button className="mt-2" onClick={closePopUp}>
                   OK
@@ -149,23 +211,28 @@ function UserAchievemeant() {
             </Modal>
           )}
         </div>
-    <div className="  mt-4 mb-4">
-    <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
-    <img className=" w-10 h-10 rounded-full " src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fachievement.png?alt=media&token=13f69c5c-c5e2-4fe8-a99e-3010975735a0" alt="Users Recored" />
-        {" "}
-        <p className=" font-bold text-xl">Achievements</p>
-      </div>
-      <div className="card w-full justify-center shadow-md">
-        <OrderList  
-        className="h-full max-h-full my-orderlist"
-          value={userAchievements}
-          itemTemplate={itemTemplate}
-        ></OrderList>
-      </div>
-    </div>
-    <CreateGroupButton/>
-    </>
-  );
+        <div className="  mt-4 mb-4">
+          <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+            <img
+              className=" w-10 h-10 rounded-full "
+              src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fachievement.png?alt=media&token=13f69c5c-c5e2-4fe8-a99e-3010975735a0"
+              alt="Users Recored"
+            />{" "}
+            <p className=" font-bold text-xl">Achievements</p>
+          </div>
+          <div className="card w-full justify-center shadow-md">
+            <OrderList
+              className="h-full max-h-full my-orderlist"
+              value={userAchievements}
+              itemTemplate={itemTemplate}
+            ></OrderList>
+          </div>
+        </div>
+        <CreateGroupButton />
+      </>
+    );
+  }
+  
 }
 
 export default UserAchievemeant;

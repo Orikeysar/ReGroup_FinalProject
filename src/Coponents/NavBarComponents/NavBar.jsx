@@ -17,7 +17,7 @@ function NavBar() {
     localStorage.setItem("componentChoosen", "UserAchievemeant");
     navigate("/");
   };
-  
+
   //אחראי על מודל המשתמש שלוחצים עליו
   const [visible, setVisible] = useState(false);
   const handleUserClick = () => {
@@ -25,7 +25,6 @@ function NavBar() {
   };
 
   return (
- 
     <div className="">
       <div
         className="navbar bg-base-100 mb-4 fixed w-full top-0 z-50"
@@ -36,26 +35,26 @@ function NavBar() {
         }}
       >
         <div className="navbar-start">
-        <HamburgerMenu/>
-
+          <HamburgerMenu />
         </div>
-        <div className="navbar-center"><img
+        <div className="navbar-center">
+          <img
             src={Logo}
             alt=""
             className="btn btn-ghost left-0 normal-case w-40   "
             onClick={handleLogoClick}
           ></img>
-          </div>
-        <div className="navbar-end ">
-        <Top10Modal />
-        <div className="relative flex justify-center">
-          <img
-            className="rounded-full cursor-pointer transition duration-300 hover:scale-110 w-10 h-10 ml-4 "
-            src={activeUser.userImg}
-            alt={activeUser.name}
-            onClick={handleUserClick}
-          />
         </div>
+        <div className="navbar-end ">
+          <Top10Modal />
+          <div className="relative flex justify-center">
+            <img
+              className="cursor-pointer transition duration-300 hover:scale-110 w-10 h-10 ml-4 border-2 border-gray-300 rounded-full animate-pulse"
+              src={activeUser.userImg}
+              alt={activeUser.name}
+              onClick={handleUserClick}
+            />
+          </div>
         </div>
       </div>
       {visible && (
@@ -72,7 +71,7 @@ function NavBar() {
                 >
                   <div className="m-0">
                     {/* הפרטים של המשתמש */}
-                    <Profile/>
+                    <Profile />
                   </div>
                 </Dialog>
               </div>
@@ -80,8 +79,7 @@ function NavBar() {
           </td>
         </tr>
       )}
-      </div>
-   
+    </div>
   );
 }
 

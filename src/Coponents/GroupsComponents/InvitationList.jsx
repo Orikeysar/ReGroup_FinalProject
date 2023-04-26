@@ -17,6 +17,8 @@ import randomColor from "randomcolor";
 import { Avatar } from "primereact/avatar";
 import { Dialog } from "primereact/dialog";
 import Spinner from "../GeneralComponents/Spinner";
+import useTablesSQL from "../../Hooks/useTablesSQL";
+
 function InvitationList({ invitationList }) {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(true);
@@ -29,6 +31,8 @@ function InvitationList({ invitationList }) {
       return null; // or some default value
     }
   });
+  //איתחול המשתנים שתופסים את ההישגים ששייכים למשתמש
+ let { userAchievements, userTopLevelList } = useTablesSQL();
  //אחראי על המודל של המשתמש לאחר לחיצה
  const [visible, setVisible] = useState(false);
  const [selectedUserId, setSelectedUserId] = useState(null);
@@ -67,13 +71,8 @@ function InvitationList({ invitationList }) {
         .then(async () => {
           const docRef2 = doc(db, "users", activeUser.userRef);
           const docSnap2 = await getDoc(docRef2);
-          const userAchiev = docSnap2.data();
-          let achiev = userAchiev.userAchievements.filter(
-            (element) => element.name === "Joined Groups"
-          );
-          let item = achiev[0];
-          UserScoreCalculate(item, "JoinedGroup", userAchiev);
-          
+          const user = docSnap2.data();
+          UserScoreCalculate( "Joined Groups", user,userAchievements,userTopLevelList);
           toast.success("Join successfully!");
         })
         .catch((error) => {

@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 const cors = require("cors")({origin: true});
 // runs every day at 00:00 am and reset the actionsNuumber for users
 exports.scheduledFunction = functions.pubsub
-    .schedule("0 0 * * *")
+    .schedule("0 14 * * *")
     .onRun(async (context) => {
       const usersSnapshot = await admin.firestore().collection("users").get();
       const users = usersSnapshot.docs.map((doc) => ({
@@ -260,4 +260,45 @@ exports.FCMNotification5MinGroup = functions.pubsub.schedule("every 3 minutes")
           }
         }
       });
+    });
+
+// delete active groups on 00:00 am
+exports.DeleteActiveGroups = functions.pubsub.schedule("0 14 * * *")
+    .onRun(async (context) => {
+      const activeGroupsRef = db.collection("activeGroups");
+      const activeGroupsSnapshot = await activeGroupsRef.get();
+      const updatePromises = [];
+      activeGroupsSnapshot.forEach(async (doc) => {
+        const group = doc.data();
+        const groupId = doc.id;
+        if (groupId !== "test") {
+          const participants = group.participants;
+          for (const participant of participants) {
+            const docRef = db.doc(`users/${participant.userRef}`);
+            const docSnap = await docRef.get();
+            const data = docSnap.data();
+            // אם קיים מעדכן את הקבוצה בדאטה של היוזר
+            if (data) {
+              const JoinedGroup = {
+                course: group.groupTittle,
+                subjects: group.groupTags,
+                icon: "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2FjoinGroup.png?alt=media&token=293b90df-3802-4736-b8cc-0d64a8c3faff",
+                text: group.description,
+                type: "groups",
+                timeStamp: group.timeStamp,
+              };
+              data.recentActivities.push(JoinedGroup);
+            }
+            updatePromises.push(admin.firestore()
+                .doc(`users/${participant.userRef}`)
+                .update({
+                  recentActivities: data.recentActivities,
+                }));
+          }
+          // מוחק את הקבוצה
+          updatePromises.push(admin.firestore()
+              .doc(`activeGroups/${groupId}`).delete());
+        }
+      });
+      await Promise.all(updatePromises);
     });

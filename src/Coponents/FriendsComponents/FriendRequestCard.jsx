@@ -16,6 +16,8 @@ import UpdateRecentActivities from "../UserProfileComponents/UpdateRecentActivit
 import UserScoreCalculate from "../UserProfileComponents/UserScoreCalculate";
 import { saveMessagingDeviceToken } from "../../messaging";
 import { onButtonClick } from "../../FirebaseSDK";
+import useTablesSQL from "../../Hooks/useTablesSQL";
+
 function FriendRequestCard() {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(true);
@@ -26,8 +28,44 @@ function FriendRequestCard() {
     const user = JSON.parse(localStorage.getItem("activeUser"));
     return user;
   });
+ //איתחול המשתנים שתופסים את ההישגים ששייכים למשתמש
+ let { userAchievements, userTopLevelList } = useTablesSQL();
+ const handleParticipantScoreFriend=async(user)=>{
+  let userAchievements=null;
+  let userTopLevelList=null;
+  await fetch(
+    `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${user.userRef}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => {
+       userAchievements=data;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 
-
+  // יבוא כל הרמות של ההישגים
+    await fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+         userTopLevelList=data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+      UserScoreCalculate("Community Member", user,userAchievements,userTopLevelList);
+    }
   const handleGroupTime = (timeStamp) => {
     if (timeStamp) {
       const firestoreTimestamp = new Timestamp(
@@ -114,13 +152,9 @@ function FriendRequestCard() {
             anotherUser.friendsWaitingToAcceptByAnotherUser,
         }).then(async () => {
           UpdateRecentActivities(newFriend, "friend", activeUser);
-          UpdateRecentActivities(newFriend, "friend", anotherUserRef);
-          let achiev = activeUser.userAchievements.filter(
-            (element) => element.name === "Community Member"
-          );
-          let item = achiev[0];
-          UserScoreCalculate(item, "friend", activeUser);
-          UserScoreCalculate(item, "friend", anotherUserRef);
+          UpdateRecentActivities(newFriend, "friend", anotherUser);
+          UserScoreCalculate("Community Member", activeUser,userAchievements,userTopLevelList);
+          handleParticipantScoreFriend(anotherUser)
           localStorage.setItem("activeUser", JSON.stringify(activeUser));
           toast.success(
             "you accepted" + anotherUser.name + "to your friends list "

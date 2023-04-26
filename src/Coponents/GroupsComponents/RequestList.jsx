@@ -13,6 +13,7 @@ import { uuidv4 } from "@firebase/util";
 import { useFindMyGroups } from "../../Hooks/useFindMyGroups";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../GeneralComponents/Spinner";
+
 function RequestList({ requestList }) {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(true);
@@ -25,9 +26,44 @@ function RequestList({ requestList }) {
       return null; // or some default value
     }
   });
-
+ 
   let { managerGroup, participantGroup } = useFindMyGroups();
+  const handleParticipantScoreJoinGroup=async(user)=>{
+  let userAchievements=null;
+  let userTopLevelList=null;
+  await fetch(
+    `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${user.userRef}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => {
+       userAchievements=data;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 
+  // יבוא כל הרמות של ההישגים
+    await fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+         userTopLevelList=data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  UserScoreCalculate("Joined Groups", user,userAchievements,userTopLevelList);
+}
   //הפונקציה מוחקת את הבקשה של היוזר מהדאטה ומכניסה אותו כמשתתף לקבוצה
   const handleAccept = async (anotherUserRef) => {
     setIsLoaded(false)
@@ -59,13 +95,9 @@ function RequestList({ requestList }) {
       .then(async () => {
         const docRef2 = doc(db, "users", anotherUserRef);
         const docSnap2 = await getDoc(docRef2);
-        const userAchiev = docSnap2.data();
-        let achiev = userAchiev.userAchievements.filter(
-          (element) => element.name === "Joined Groups"
-        );
-        let item = achiev[0];
-        UserScoreCalculate(item, "JoinedGroup", userAchiev);
+        const user = docSnap2.data();
         toast.success("Join successfully!");
+        handleParticipantScoreJoinGroup(user);
       })
       .catch((error) => {
         toast.error("An error occurred. Please try again.");
