@@ -133,16 +133,6 @@ function SignUp() {
         },
         {
           userId: user.uid,
-          name: "Participant Review",
-          numberOfAchievementDoing: 0,
-          activeLevel: 1,
-          achievementImg:
-            "https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fheart.png?alt=media&token=682793cd-cca9-4b4c-8615-d265a5bac2bb",
-          valuePerAction: 0,
-          actionsNumber: 0,
-        },
-        {
-          userId: user.uid,
           name: "Community Member",
           numberOfAchievementDoing: 0,
           activeLevel: 1,

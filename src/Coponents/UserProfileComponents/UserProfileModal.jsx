@@ -7,12 +7,12 @@ import { uuidv4 } from "@firebase/util";
 import Rating from "@mui/material/Rating";
 import { saveMessagingDeviceToken } from "../../messaging";
 import { onButtonClick } from "../../FirebaseSDK";
+import Spinner from "../GeneralComponents/Spinner";
+
 function UserProfileModal({ id }) {
   const [activeUser, setActiveUser] = useState(
     JSON.parse(localStorage.getItem("activeUser"))
   );
-  const [userAchievements, setUserAchievements] = useState([]);
-  const [userTopLevelList, setUserTopLevelList] = useState([]);
   const [btnStatus, setBtnStatus] = useState("add");
   //בדיקה האם הם כבר חברים ושינוי הכפתור בהתאם
   const handleBtnStatus = () => {
@@ -32,89 +32,54 @@ function UserProfileModal({ id }) {
       }
     });
   };
-  //משיכת המשתמש מהדאטה
-
   const [user, setUser] = useState(null);
-  const userRef = doc(db, "users", id);
+const [userAchievements,setUserAchievements]=useState([])
+  //משיכת המשתמש מהדאטה
   const activeUserRef = doc(db, "users", activeUser.userRef);
-
-  const fetchUser = async () => {
-    const docSnap = await getDoc(userRef);
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      setUser(data);
+  const userRef = doc(db, "users", id);
+  const handleAnotherUserData = async () => {
+      const docSnap = await getDoc(userRef);
+      if (docSnap.exists()) {
+        let data = docSnap.data();
+        setUser(data);
+        await fetch(
+          `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${data.userRef}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            setUserAchievements(data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
     }
-  }; 
-  if (!user) {
-    fetchUser();
-    return null;
-  }
-  const fetchDataFromSql=async()=>{
-
-  await  fetch(
-         `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${user.userRef}`,
-         {
-           method: "GET",
-           headers: {
-             "Content-Type": "application/json",
-           },
-         }
-       )
-         .then((response) => response.json())
-         .then((data) => {
-           setUserAchievements(data);
-         })
-         .catch((error) => {
-           console.error(error);
-         });
-   
-       // יבוא כל הרמות של ההישגים
-     
-      await   fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
-           method: "GET",
-           headers: {
-             "Content-Type": "application/json",
-           },
-         })
-           .then((response) => response.json())
-           .then((data) => {
-             setUserTopLevelList(data);
-           })
-           .catch((error) => {
-             console.error(error);
-           });
-   
-   
-       }
-  useEffect(() => {
-
-if(user){
-    // יבוא כל ההישגים של המשתמש
-    fetchDataFromSql()
-
-}else{
-  fetchUser();
-  fetchDataFromSql()
+  };
+const handleAnotherUserAchievments=async()=>{
+  
 }
+  useEffect(() => {
     handleBtnStatus();
   }, []);
- 
   //שולח הודעה לחבר
-const handleSendAlert=async()=>{
-try{
-  saveMessagingDeviceToken(activeUser.userRef);
-  const docRef = doc(db, "fcmTokens", id);
-  const docSnap = await getDoc(docRef);
-  const data = docSnap.data();
-  const token = data.fcmToken;
-  onButtonClick(token);
-  }catch{
-toast.error("this user dont accept messageing")
-setBtnStatus("add");
-  }
-  
-
-}
+  const handleSendAlert = async () => {
+    try {
+      saveMessagingDeviceToken(activeUser.userRef);
+      const docRef = doc(db, "fcmTokens", id);
+      const docSnap = await getDoc(docRef);
+      const data = docSnap.data();
+      const token = data.fcmToken;
+      onButtonClick(token);
+    } catch {
+      toast.error("this user dont accept messageing");
+      setBtnStatus("add");
+    }
+  };
   //הוספת המשתמש לרשימה בדאטה
   const handleAddFriend = async () => {
     setBtnStatus("wait");
@@ -138,7 +103,6 @@ setBtnStatus("add");
     if (friendExists) {
       toast.error(`${newFriend.name} already get your request`);
     } else {
-     
       //הכנסת משתמש לרשימה שמחכה לאישור או דחיה אצל המשתמש המחובר
       activeUser.friendsWaitingToAcceptByAnotherUser.push(newFriend);
       //הכנסת משתמש לרשימה שמחכה לאישור או דחיה אצל המשתמש שנשלחה לו הבקשה(לא המחובר) ר
@@ -165,13 +129,12 @@ setBtnStatus("add");
             toast.success(
               "congrats ! you send " + newFriend.name + " friend requst"
             );
-             setBtnStatus("wait");
-           
-    
+            setBtnStatus("wait");
+
             localStorage.setItem("activeUser", JSON.stringify(activeUser));
-             //שולח הודעה למשתמש שיש לו בקשה ממתינה
-      handleSendAlert();
-      //שליחה סיום
+            //שולח הודעה למשתמש שיש לו בקשה ממתינה
+            handleSendAlert();
+            //שליחה סיום
           });
         })
         .catch((error) => {
@@ -211,8 +174,8 @@ setBtnStatus("add");
             setBtnStatus("add");
             localStorage.setItem("activeUser", JSON.stringify(activeUser));
             //שולח הודעה למשתמש שיש לו בקשה ממתינה
-      handleSendAlert();
-      //שליחה סיום
+            handleSendAlert();
+            //שליחה סיום
           });
         })
         .catch((error) => {
@@ -221,7 +184,12 @@ setBtnStatus("add");
         });
     }
   };
-
+if(user===null){
+  handleAnotherUserData();
+  console.log(user)
+  return <div>Loading...</div>;
+} 
+  else{
   return (
     <div>
       <div className="grid grid-cols-5 pt-3 ">
@@ -259,38 +227,41 @@ setBtnStatus("add");
             </div>
           ))}
           <div className=" ml-auto justify-end col-span-1 mt-4">
-{activeUser.userRef !== user.userRef?(
-  btnStatus==="remove" ? (
-            <button
-              onClick={handleRemoveFriend}
-              className="btn btn-sm bg-red-600 mt-3 justify-self-end"
-            >
-              Remove friend
-            </button>
-          ) :btnStatus==="add" ? (
-            <button
-              onClick={handleAddFriend}
-              className="btn btn-sm mt-3 justify-self-end"
-              disabled={id === activeUser.userRef ? true : false}
-            >
-              send request
-            </button>
-          ):(
-<button
-              className="btn btn-sm mt-3 justify-self-end"
-              disabled={true}
-            >
-              request sended
-            </button>
-          )
-          ):("")}
-          
-        </div>
-
+            {activeUser.userRef !== user.userRef ? (
+              btnStatus === "remove" ? (
+                <button
+                  onClick={handleRemoveFriend}
+                  className="btn btn-sm bg-red-600 mt-3 justify-self-end"
+                >
+                  Remove friend
+                </button>
+              ) : btnStatus === "add" ? (
+                <button
+                  onClick={handleAddFriend}
+                  className="btn btn-sm mt-3 justify-self-end"
+                  disabled={id === activeUser.userRef ? true : false}
+                >
+                  send request
+                </button>
+              ) : (
+                <button
+                  className="btn btn-sm mt-3 justify-self-end"
+                  disabled={true}
+                >
+                  request sended
+                </button>
+              )
+            ) : (
+              ""
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
+}
+
+  
 }
 
 export default UserProfileModal;

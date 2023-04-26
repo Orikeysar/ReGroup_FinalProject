@@ -25,9 +25,9 @@ function UserAchievemeant() {
     // setting state to false to not display pop-up
     setDisplayPopUp(false);
   };
-const fetchDataFromSql=()=>{
+const fetchDataFromSql=async()=>{
 
- fetch(
+ await fetch(
       `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${activeUser.userRef}`,
       {
         method: "GET",
@@ -46,7 +46,7 @@ const fetchDataFromSql=()=>{
 
     // יבוא כל הרמות של ההישגים
   
-      fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
+      await fetch(`https://proj.ruppin.ac.il/cgroup33/prod/api/TopLevelsControler`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -64,11 +64,6 @@ const fetchDataFromSql=()=>{
     }
   // check if  user seen and closed the pop-up
   useEffect(() => {
-    
-    // יבוא כל ההישגים של המשתמש
-    fetchDataFromSql()
-    
-
     // getting value of "seenPopUp" key from localStorage
     let returningUser = localStorage.getItem("seenPopUpAchievements");
     // setting the opposite to state, false for returning user, true for a new user
@@ -171,63 +166,69 @@ const fetchDataFromSql=()=>{
       </div>
     );
   };
-  return (
-    <>
-      <div className="topNavBar w-full mb-24">
-        <NavBar />
-      </div>
-      {/* הצגת המודל הראשוני עם המידע  */}
-      <div className=" float-none">
-        {displayPopUp && (
-          <Modal
-            open={true}
-            // once pop-up will close "closePopUp" function will be executed
-            onClose={closePopUp}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={PopUpInfoStyle}>
-              {/* what user will see in the modal is defined below */}
-              <img
-                src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fachievement.png?alt=media&token=13f69c5c-c5e2-4fe8-a99e-3010975735a0"
-                className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"
-              />
-              <h1>Your personal achievements</h1>
-              <p className="mt-2">
-                In certain actions in the app, you gain the accumulated score
-                and show your level in that achievement.
-              </p>
-              <p className="mt-2">
-                Besides the individual achievements you will be able to see your
-                total cumulative score in the student comparison.
-              </p>
-              <button className="mt-2" onClick={closePopUp}>
-                OK
-              </button>
-            </Box>
-          </Modal>
-        )}
-      </div>
-      <div className="  mt-4 mb-4">
-        <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
-          <img
-            className=" w-10 h-10 rounded-full "
-            src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fachievement.png?alt=media&token=13f69c5c-c5e2-4fe8-a99e-3010975735a0"
-            alt="Users Recored"
-          />{" "}
-          <p className=" font-bold text-xl">Achievements</p>
+  if(userTopLevelList.length===0){
+    fetchDataFromSql();
+    return <div>Loading...</div>;
+  }else {
+    return (
+      <>
+        <div className="topNavBar w-full mb-24">
+          <NavBar />
         </div>
-        <div className="card w-full justify-center shadow-md">
-          <OrderList
-            className="h-full max-h-full my-orderlist"
-            value={userAchievements}
-            itemTemplate={itemTemplate}
-          ></OrderList>
+        {/* הצגת המודל הראשוני עם המידע  */}
+        <div className=" float-none">
+          {displayPopUp && (
+            <Modal
+              open={true}
+              // once pop-up will close "closePopUp" function will be executed
+              onClose={closePopUp}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={PopUpInfoStyle}>
+                {/* what user will see in the modal is defined below */}
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fachievement.png?alt=media&token=13f69c5c-c5e2-4fe8-a99e-3010975735a0"
+                  className=" flex rounded-2xl h-20 w-20 mb-2 mx-auto"
+                />
+                <h1>Your personal achievements</h1>
+                <p className="mt-2">
+                  In certain actions in the app, you gain the accumulated score
+                  and show your level in that achievement.
+                </p>
+                <p className="mt-2">
+                  Besides the individual achievements you will be able to see your
+                  total cumulative score in the student comparison.
+                </p>
+                <button className="mt-2" onClick={closePopUp}>
+                  OK
+                </button>
+              </Box>
+            </Modal>
+          )}
         </div>
-      </div>
-      <CreateGroupButton />
-    </>
-  );
+        <div className="  mt-4 mb-4">
+          <div className="rounded-xl flex items-center space-x-2 justify-center text-base align-middle mb-4 ">
+            <img
+              className=" w-10 h-10 rounded-full "
+              src="https://firebasestorage.googleapis.com/v0/b/regroup-a4654.appspot.com/o/images%2Fachievement.png?alt=media&token=13f69c5c-c5e2-4fe8-a99e-3010975735a0"
+              alt="Users Recored"
+            />{" "}
+            <p className=" font-bold text-xl">Achievements</p>
+          </div>
+          <div className="card w-full justify-center shadow-md">
+            <OrderList
+              className="h-full max-h-full my-orderlist"
+              value={userAchievements}
+              itemTemplate={itemTemplate}
+            ></OrderList>
+          </div>
+        </div>
+        <CreateGroupButton />
+      </>
+    );
+  }
+  
 }
 
 export default UserAchievemeant;
