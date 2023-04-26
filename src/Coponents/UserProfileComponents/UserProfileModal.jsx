@@ -187,7 +187,10 @@ const handleAnotherUserAchievments=async()=>{
 if(user===null){
   handleAnotherUserData();
   console.log(user)
-  return <div>Loading...</div>;
+  return <div>
+  <div className="topNavBar w-full mb-24">
+      
+     </div><Spinner/></div>;
 } 
   else{
   return (
