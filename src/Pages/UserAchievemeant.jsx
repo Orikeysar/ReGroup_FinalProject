@@ -7,6 +7,7 @@ import { faCoins } from "@fortawesome/free-solid-svg-icons";
 import NavBar from "../Coponents/NavBarComponents/NavBar";
 import CreateGroupButton from "../Coponents/GroupsComponents/CreateGroupButton";
 import { Modal, Box } from "@mui/material";
+import Spinner from "../Coponents/GeneralComponents/Spinner";
 
 function UserAchievemeant() {
   const [activeUser, setActiveUser] = useState(() => {
@@ -168,7 +169,10 @@ const fetchDataFromSql=async()=>{
   };
   if(userTopLevelList.length===0){
     fetchDataFromSql();
-    return <div>Loading...</div>;
+    return <div>
+     <div className="topNavBar w-full mb-24">
+          <NavBar />
+        </div><Spinner/></div>;
   }else {
     return (
       <>
