@@ -8,30 +8,55 @@ const express = require("express");
 const app = express();
 app.use(bodyParser.json());
 const cors = require("cors")({origin: true});
-// runs every day at 00:00 am and reset the actionsNuumber for users
+// runs every day at 00:00 am and reset the actionsNumber for users
 exports.scheduledFunction = functions.pubsub
     .schedule("0 14 * * *")
     .onRun(async (context) => {
       const usersSnapshot = await admin.firestore().collection("users").get();
-      const users = usersSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        userAchievements: doc.data().userAchievements || [],
-      }));
-
-      const promises = users.map((user) => {
-        const achievements = user.userAchievements.map((achievement) => {
-          if (achievement.actionsNumber !== undefined) {
-            return {...achievement, actionsNumber: 0};
-          } else {
-            return achievement;
-          }
-        });
-
-        return admin.firestore().doc(`users/${user.id}`).update({
-          userAchievements: achievements,
-        });
+      const users = usersSnapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+        };
       });
-
+      console.log("users => " + JSON.stringify(users));
+      const promises = users.map((user) => {
+        console.log("user => " + JSON.stringify(user));
+        const userId = user.id;
+        console.log("userId => " + userId);
+        return fetch(
+            `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${userId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+        )
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("data => " + JSON.stringify(data));
+              const updatedData = data.map((achievement) => {
+                return {
+                  ...achievement,
+                  actionsNumber: 0,
+                };
+              });
+              return fetch(
+                  `https://proj.ruppin.ac.il/cgroup33/prod/api/usersAchievement/userId/${userId}`,
+                  {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updatedData),
+                  },
+              );
+            })
+            .then((response) => response.json())
+            .catch((error) => {
+              console.error("error => " + error);
+            });
+      });
       await Promise.all(promises);
       console.log("Actions number reset complete");
     });
