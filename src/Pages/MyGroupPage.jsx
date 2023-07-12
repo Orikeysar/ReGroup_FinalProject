@@ -638,7 +638,7 @@ const handleParticipantScoreLoyalPartner=async(user)=>{
               }
             }
           }
-          navigate("/myGroups");
+          window.location.reload();
         }
       } else {
         console.log("No document found with the specified managerRef.");

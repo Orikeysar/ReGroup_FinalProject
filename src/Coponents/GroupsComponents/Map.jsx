@@ -19,7 +19,7 @@ export default function Map({ filteredGroups }) {
   const [activeGroups, setActiveGroups] = useState([]);
   //אישור מגוגל
   const { isLoaded } = useLoadScript({
-   
+    googleMapsApiKey: "AIzaSyCt1tGfbI6o0A6dcCFTstFsPlAUEQYaYS4",
   });
 
   //מרכז ברירת המחדל של המפה הוא רופין

@@ -135,16 +135,16 @@ function AddGroup() {
     if(selectedSubjects){
     if(selectedSubjects.length > 0){
       if (filteredGroups.length > 0) {
-        if (
-          window.confirm(
-            "you want to see another active groups with same parameters?"
-          ) === true
-        ) {
-          setFillteredGroupShow(true);
-        } else {
-          setFillteredGroupShow(false);
+        // if (
+        //   window.confirm(
+        //     "you want to see another active groups with same parameters?"
+        //   ) === true
+        // ) {
+        //   setFillteredGroupShow(true);
+        // } else {
+        //   setFillteredGroupShow(false);
         
-        }
+        // }
       } 
     }}
   };
@@ -217,7 +217,7 @@ function AddGroup() {
         ) {
           UpdateEditedGroup(managerGroup.id);
         } else {
-          navigate("/myGroups");
+          window.location.reload();
         }
       } else {
         //במידה ואין למשתמש קבוצה שהוא מנהל
